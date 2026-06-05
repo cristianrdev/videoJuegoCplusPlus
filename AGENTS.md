@@ -1,4 +1,29 @@
-# Project Instructions
+# Proyecto
+
+Shooter vertical arcade inspirado en Batsugun.
+
+Tecnologías:
+
+- C++17
+- SFML 3
+- CMake
+
+Skills disponibles:
+
+- sfml-architecture
+- sfml-shmup-architecture
+- bullet-pattern-designer
+- pixel-art-shmup-style
+
+Reglas generales:
+
+- Resolución lógica 240x320.
+- Nave jugador 32x32.
+- Todo patrón de balas debe ser data-driven.
+- Stages deben ser configurables mediante JSON.
+- Utilizar StageDirector para progresión.
+- Utilizar EventQueue para desacoplamiento.
+- Mantener entidades simples.
 
 This project is a 2D vertical arcade shooter built with C++17 and SFML.
 

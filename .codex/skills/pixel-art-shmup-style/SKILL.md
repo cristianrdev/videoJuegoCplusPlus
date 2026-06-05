@@ -24,6 +24,14 @@ Todos los sprites deben diseñarse pensando en ese marco de resolución.
 
 ## Regla principal
 
+Escalar el render target lógico 240x320 a una ventana 1080p.
+Priorizar pixel perfect:
+- renderizar internamente a 240x320
+- escalar con nearest-neighbor
+- usar escala entera x3 cuando sea posible: 720x960
+- centrar la imagen dentro de una ventana 1920x1080 o 1080x1080 según configuración
+- no deformar aspect ratio
+
 No crear sprites demasiado grandes ni demasiado pequeños para la pantalla.
 
 Cada sprite debe respetar el porcentaje que ocupa dentro de una pantalla de 240x320.
