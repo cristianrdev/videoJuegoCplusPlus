@@ -20,6 +20,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
+#include <string>
 #include <vector>
 
 class Game {
@@ -45,6 +46,7 @@ private:
     void renderMuzzleFlash(sf::RenderTarget& target) const;
     void renderDebugHud();
     void updatePresentationSprite();
+    const sf::Texture* bulletTextureForPattern(const std::string& patternId) const;
 
     static constexpr unsigned int LogicalWidth = 240;
     static constexpr unsigned int LogicalHeight = 320;
@@ -72,6 +74,7 @@ private:
     const sf::Texture* explosionDroneTexture_{nullptr};
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
+    const sf::Texture* enemyOrbPurpleTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;

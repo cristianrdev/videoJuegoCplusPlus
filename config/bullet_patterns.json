@@ -23,6 +23,15 @@
       "bullet_speed": 64.0,
       "streams": 5,
       "angle_step": 17.0
+    },
+    {
+      "id": "enemy_interceptor_purple_orb_aimed",
+      "type": "spread",
+      "fire_interval": 1.25,
+      "bullet_speed": 62.0,
+      "aimed": true,
+      "angle_offsets": [0.0],
+      "bullet": "enemy_orb_purple"
     }
   ]
 }

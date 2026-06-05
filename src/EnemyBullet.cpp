@@ -5,8 +5,21 @@
 #include <cmath>
 
 EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity)
+    : EnemyBullet(position, velocity, nullptr) {
+}
+
+EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity, const sf::Texture* texture)
     : position_(position)
     , velocity_(velocity) {
+    if (texture) {
+        sprite_.emplace(*texture);
+        const auto textureSize = texture->getSize();
+        size_ = {
+            static_cast<float>(textureSize.x),
+            static_cast<float>(textureSize.y)
+        };
+        sprite_->setOrigin({size_.x * 0.5f, size_.y * 0.5f});
+    }
 }
 
 void EnemyBullet::update(sf::Time deltaTime) {
@@ -14,6 +27,13 @@ void EnemyBullet::update(sf::Time deltaTime) {
 }
 
 void EnemyBullet::render(sf::RenderTarget& target) const {
+    if (sprite_) {
+        auto sprite = *sprite_;
+        sprite.setPosition({std::round(position_.x), std::round(position_.y)});
+        target.draw(sprite);
+        return;
+    }
+
     auto shape = sf::RectangleShape(size_);
     shape.setOrigin({size_.x * 0.5f, size_.y * 0.5f});
     shape.setPosition({std::round(position_.x), std::round(position_.y)});

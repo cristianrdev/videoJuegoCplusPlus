@@ -2,6 +2,7 @@
 
 #include "EnemyBullet.hpp"
 
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <string>
@@ -11,11 +12,17 @@
 class BulletPatternSystem {
 public:
     void loadFromFile(const std::string& path);
-    std::vector<EnemyBullet> spawn(const std::string& patternId, sf::Vector2f origin, sf::Vector2f target);
+    std::vector<EnemyBullet> spawn(
+        const std::string& patternId,
+        sf::Vector2f origin,
+        sf::Vector2f target,
+        const sf::Texture* bulletTexture = nullptr
+    );
 
 private:
     struct Pattern {
         std::string id;
+        std::string bulletId{"default"};
         std::string type{"spread"};
         float fireInterval{1.f};
         float bulletSpeed{60.f};
@@ -33,6 +40,7 @@ private:
 
 public:
     float fireInterval(const std::string& patternId) const;
+    const std::string& bulletId(const std::string& patternId) const;
 
 private:
     const Pattern& patternFor(const std::string& patternId) const;

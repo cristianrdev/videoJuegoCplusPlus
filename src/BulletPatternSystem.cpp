@@ -132,6 +132,7 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         const auto object = (*it)[0].str();
         auto pattern = Pattern{};
         pattern.id = matchString(object, "id");
+        pattern.bulletId = matchStringOr(object, "bullet", "default");
         pattern.type = matchStringOr(object, "type", "spread");
         pattern.fireInterval = matchFloat(object, "fire_interval");
         pattern.bulletSpeed = matchFloatOr(object, "bullet_speed", 60.f);
@@ -156,7 +157,8 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
 std::vector<EnemyBullet> BulletPatternSystem::spawn(
     const std::string& patternId,
     sf::Vector2f origin,
-    sf::Vector2f target
+    sf::Vector2f target,
+    const sf::Texture* bulletTexture
 ) {
     auto patternIt = patterns_.find(patternId);
     if (patternIt == patterns_.end()) {
@@ -179,7 +181,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 const auto angle = degreesToRadians(offset);
                 bullets.emplace_back(
                     origin,
-                    sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed}
+                    sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed},
+                    bulletTexture
                 );
             }
         }
@@ -191,7 +194,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             const auto angle = degreesToRadians(offset);
             bullets.emplace_back(
                 origin,
-                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed}
+                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
+                bulletTexture
             );
         }
     } else {
@@ -205,7 +209,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             const auto angle = degreesToRadians(baseAngle + offset);
             bullets.emplace_back(
                 origin,
-                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed}
+                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
+                bulletTexture
             );
         }
     }
@@ -216,6 +221,10 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
 
 float BulletPatternSystem::fireInterval(const std::string& patternId) const {
     return patternFor(patternId).fireInterval;
+}
+
+const std::string& BulletPatternSystem::bulletId(const std::string& patternId) const {
+    return patternFor(patternId).bulletId;
 }
 
 const BulletPatternSystem::Pattern& BulletPatternSystem::patternFor(const std::string& patternId) const {

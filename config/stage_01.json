@@ -72,7 +72,7 @@
       "enemy": "enemy_interceptor",
       "x": 106,
       "y": -24,
-      "pattern": "enemy_interceptor_wave_5",
+      "pattern": "enemy_interceptor_purple_orb_aimed",
       "movement": "edge_patrol"
     }
   ]

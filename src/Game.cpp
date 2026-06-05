@@ -91,6 +91,7 @@ Game::Game()
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
+    enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01.json");
@@ -297,7 +298,8 @@ void Game::updateEnemyShooting() {
         auto bullets = bulletPatternSystem_.spawn(
             enemy.patternId(),
             enemy.bulletSpawnPosition(),
-            player_->position()
+            player_->position(),
+            bulletTextureForPattern(enemy.patternId())
         );
         enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
         enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -405,6 +407,14 @@ void Game::renderMuzzleFlash(sf::RenderTarget& target) const {
     });
     flash.setPosition({std::round(spawn.x), std::round(spawn.y + 4.f)});
     target.draw(flash);
+}
+
+const sf::Texture* Game::bulletTextureForPattern(const std::string& patternId) const {
+    if (bulletPatternSystem_.bulletId(patternId) == "enemy_orb_purple") {
+        return enemyOrbPurpleTexture_;
+    }
+
+    return nullptr;
 }
 
 void Game::updatePresentationSprite() {
