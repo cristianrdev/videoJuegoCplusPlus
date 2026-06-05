@@ -1,0 +1,45 @@
+{
+  "stage": "stage_01",
+  "elements": [
+    {
+      "time": 2.0,
+      "tileset": "floating_red_rocks",
+      "tile": 0,
+      "x": 8,
+      "y": -100,
+      "speed_y": 18.0
+    },
+    {
+      "time": 6.0,
+      "tileset": "floating_red_rocks",
+      "tile": 1,
+      "x": 132,
+      "y": -100,
+      "speed_y": 22.0
+    },
+    {
+      "time": 10.0,
+      "tileset": "floating_red_rocks",
+      "tile": 2,
+      "x": 58,
+      "y": -100,
+      "speed_y": 16.0
+    },
+    {
+      "time": 14.0,
+      "tileset": "floating_red_rocks",
+      "tile": 3,
+      "x": -18,
+      "y": -100,
+      "speed_y": 24.0
+    },
+    {
+      "time": 18.0,
+      "tileset": "floating_red_rocks",
+      "tile": 4,
+      "x": 140,
+      "y": -100,
+      "speed_y": 19.0
+    }
+  ]
+}

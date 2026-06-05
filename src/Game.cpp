@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <initializer_list>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 namespace {
@@ -92,9 +93,11 @@ Game::Game()
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
+    floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01.json");
+    backgroundElementDirector_.loadFromFile("config/stage_01_background_elements.json");
 
     player_ = std::make_unique<Player>(
         assets_,
@@ -166,6 +169,20 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
     );
 }
 
+void Game::spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn) {
+    if (spawn.tilesetId != "floating_red_rocks") {
+        throw std::runtime_error("Tileset de fondo no configurado: " + spawn.tilesetId);
+    }
+
+    backgroundElements_.emplace_back(
+        sf::Vector2f{spawn.x, spawn.y},
+        spawn.speedY,
+        *floatingRedRocksTexture_,
+        spawn.tileIndex,
+        sf::Vector2i{100, 100}
+    );
+}
+
 void Game::spawnExplosion(const Enemy& enemy) {
     auto texture = explosionDroneTexture_;
 
@@ -210,7 +227,15 @@ void Game::update(sf::Time deltaTime) {
         spawnEnemy(spawn);
     }
 
+    for (const auto& spawn : backgroundElementDirector_.update(deltaTime)) {
+        spawnBackgroundElement(spawn);
+    }
+
     starfield_.update(deltaTime);
+    for (auto& element : backgroundElements_) {
+        element.update(deltaTime);
+    }
+
     player_->update(deltaTime);
 
     for (auto& laser : playerLasers_) {
@@ -258,6 +283,17 @@ void Game::update(sf::Time deltaTime) {
             }
         ),
         enemyBullets_.end()
+    );
+
+    backgroundElements_.erase(
+        std::remove_if(
+            backgroundElements_.begin(),
+            backgroundElements_.end(),
+            [](const BackgroundElement& element) {
+                return !element.isAlive(static_cast<float>(LogicalHeight));
+            }
+        ),
+        backgroundElements_.end()
     );
 
     updateCollisions();
@@ -349,6 +385,9 @@ void Game::updateCollisions() {
 void Game::render() {
     logicalTarget_.clear(sf::Color(8, 12, 20));
     starfield_.render(logicalTarget_);
+    for (const auto& element : backgroundElements_) {
+        element.render(logicalTarget_);
+    }
     for (const auto& enemy : enemies_) {
         enemy.render(logicalTarget_);
     }

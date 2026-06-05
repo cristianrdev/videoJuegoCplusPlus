@@ -1,6 +1,8 @@
 #pragma once
 
 #include "AssetManager.hpp"
+#include "BackgroundElement.hpp"
+#include "BackgroundElementDirector.hpp"
 #include "BulletPatternSystem.hpp"
 #include "Enemy.hpp"
 #include "EnemyBullet.hpp"
@@ -38,6 +40,7 @@ private:
     void processEvents();
     void fireLaserNormal();
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);
+    void spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn);
     void spawnExplosion(const Enemy& enemy);
     void update(sf::Time deltaTime);
     void updateEnemyShooting();
@@ -61,6 +64,7 @@ private:
     sf::Time stageClock_{sf::Time::Zero};
     float smoothedFps_{0.f};
     std::vector<LaserNormal> playerLasers_;
+    std::vector<BackgroundElement> backgroundElements_;
     std::vector<Enemy> enemies_;
     std::vector<EnemyBullet> enemyBullets_;
     std::vector<Explosion> explosions_;
@@ -75,9 +79,11 @@ private:
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
     const sf::Texture* enemyOrbPurpleTexture_{nullptr};
+    const sf::Texture* floatingRedRocksTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
+    BackgroundElementDirector backgroundElementDirector_;
     Starfield starfield_;
 
     AssetManager assets_;
