@@ -82,6 +82,14 @@
       "y": -170,
       "pattern": "enemy_robot_fish_mouth_laser",
       "movement": "robot_fish_slow_drop"
+    },
+    {
+      "time": 36.0,
+      "enemy": "enemy_metal_squid",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
     }
   ]
 }

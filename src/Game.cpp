@@ -71,7 +71,7 @@ bool joystickPauseButton(unsigned int button) {
 }
 
 Game::Game()
-    : window_(sf::VideoMode({WindowWidth, WindowHeight}), "Shooter vertical")
+    : window_(sf::VideoMode::getDesktopMode(), "Shooter vertical", sf::State::Fullscreen)
     , logicalTarget_({LogicalWidth, LogicalHeight})
     , presentationSprite_(logicalTarget_.getTexture())
     , debugText_(debugFont_)
@@ -95,6 +95,7 @@ Game::Game()
     enemyTurretPodTexture_ = &assets_.loadTexture("enemy_turret_pod", "textures/enemies/enemy_turret_pod.png");
     enemyInterceptorTexture_ = &assets_.loadTexture("enemy_interceptor", "textures/enemies/enemy_interceptor.png");
     enemyRobotFishTexture_ = &assets_.loadTexture("enemy_robot_fish", "textures/enemies/enemy_robot_fish_sheet.png");
+    enemyMetalSquidTexture_ = &assets_.loadTexture("enemy_metal_squid", "textures/enemies/enemy_metal_squid.png");
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
@@ -180,6 +181,8 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
         texture = enemyInterceptorTexture_;
     } else if (spawn.enemyId == "enemy_robot_fish") {
         texture = enemyRobotFishTexture_;
+    } else if (spawn.enemyId == "enemy_metal_squid") {
+        texture = enemyMetalSquidTexture_;
     } else if (spawn.enemyId != "enemy_drone") {
         throw std::runtime_error("Enemigo no configurado: " + spawn.enemyId);
     }

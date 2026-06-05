@@ -39,6 +39,14 @@
       "type": "linear",
       "velocity_x": 0.0,
       "velocity_y": 8.0
+    },
+    {
+      "id": "metal_squid_cosine_medium",
+      "type": "cosine",
+      "velocity_y": 32.0,
+      "amplitude_x": 48.0,
+      "frequency": 0.38,
+      "phase": 0.0
     }
   ]
 }
