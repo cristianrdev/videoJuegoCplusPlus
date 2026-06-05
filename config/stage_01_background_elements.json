@@ -2,7 +2,7 @@
   "stage": "stage_01",
   "elements": [
     {
-      "time": 2.0,
+      "time": 12.0,
       "tileset": "floating_red_rocks",
       "tile": 0,
       "x": 8,
@@ -10,7 +10,7 @@
       "speed_y": 18.0
     },
     {
-      "time": 6.0,
+      "time": 16.0,
       "tileset": "floating_red_rocks",
       "tile": 1,
       "x": 132,
@@ -18,7 +18,7 @@
       "speed_y": 22.0
     },
     {
-      "time": 10.0,
+      "time": 20.0,
       "tileset": "floating_red_rocks",
       "tile": 2,
       "x": 58,
@@ -26,7 +26,7 @@
       "speed_y": 16.0
     },
     {
-      "time": 14.0,
+      "time": 34.0,
       "tileset": "floating_red_rocks",
       "tile": 3,
       "x": -18,
@@ -34,7 +34,7 @@
       "speed_y": 24.0
     },
     {
-      "time": 18.0,
+      "time": 28.0,
       "tileset": "floating_red_rocks",
       "tile": 4,
       "x": 140,
