@@ -11,7 +11,7 @@
       "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 6.35,
+      "time": 6.50,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
@@ -19,7 +19,7 @@
       "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 6.7,
+      "time": 7.0,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
@@ -27,7 +27,7 @@
       "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 7.05,
+      "time": 7.50,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
@@ -35,28 +35,45 @@
       "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 7.4,
+      "time": 8.0,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
+    },
+    
+    {
+      "time": 10.0,
+      "enemy": "enemy_drone",
+      "x": 80,
+      "y": -24,
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
     },
     {
       "time": 10.0,
+      "enemy": "enemy_drone",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
+    },
+     {
+      "time": 10.0,
+      "enemy": "enemy_drone",
+      "x": 190,
+      "y": -24,
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
+    },
+    {
+      "time": 13.0,
       "enemy": "enemy_interceptor",
-      "x": 186,
+      "x": 106,
       "y": -24,
       "pattern": "enemy_interceptor_wave_5",
       "movement": "edge_patrol"
-    },
-    {
-      "time": 20.5,
-      "enemy": "enemy_drone",
-      "x": 54,
-      "y": -24,
-      "pattern": "enemy_drone_aimed_single",
-      "movement": "slow_drop"
     }
   ]
 }
