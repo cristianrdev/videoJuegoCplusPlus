@@ -566,6 +566,98 @@ Fondo scroll:         240x640, 240x960, 240x1280
 
 ---
 
+## Herramientas recomendadas para generar sprites
+
+Codex no debe intentar reemplazar una herramienta de arte pixel art.
+
+Codex debe encargarse de:
+
+- Definir tamaño exacto del sprite.
+- Definir cantidad de frames.
+- Crear prompts consistentes.
+- Validar que el sprite respete la resolución lógica 240x320.
+- Crear carpetas y nombres de archivos.
+- Integrar los PNG al proyecto SFML.
+- Generar scripts de postproceso si es necesario.
+
+Herramientas recomendadas:
+
+### GPT Image / ChatGPT Image
+
+Usar para:
+
+- Concept art rápido.
+- Sprites base.
+- Variantes de naves.
+- Enemigos.
+- Bosses.
+- Power-ups.
+- Fondos conceptuales.
+
+Regla:
+
+La imagen generada debe revisarse y limpiarse antes de usarla como asset final.
+
+### PixelLab
+
+Usar para:
+
+- Pixel art más orientado a juegos.
+- Tiles.
+- Fondos.
+- Entornos.
+- Spritesheets.
+- Variantes de estilo.
+
+### Aseprite
+
+Usar como herramienta principal de acabado.
+
+Usar para:
+
+- Limpiar píxeles incorrectos.
+- Ajustar silueta.
+- Corregir animaciones.
+- Separar frames.
+- Revisar transparencia.
+- Exportar spritesheets.
+
+### PixelAI para Aseprite
+
+Usar si se quiere generar arte directamente dentro de Aseprite.
+
+Útil para:
+
+- Prototipos rápidos.
+- Variantes de sprites.
+- Capas nuevas.
+- Frames adicionales.
+
+### Pixie.haus
+
+Usar para:
+
+- Sprites pequeños.
+- Pixel art con grilla estricta.
+- Fondos transparentes.
+- Paletas limitadas.
+- Prototipos exportables.
+
+## Flujo recomendado
+
+Para cada sprite, Codex debe entregar:
+
+```txt
+Nombre:
+Tamaño:
+Cantidad de frames:
+Uso:
+Paleta:
+Hitbox:
+Prompt para IA de imagen:
+Ruta destino:
+Notas para limpiar en Aseprite:
+
 # Resultado esperado
 
 Cuando Codex use esta skill debe mantener coherencia visual en todos los gráficos pixel art del juego, evitando sprites desproporcionados y respetando siempre la resolución lógica vertical de 240x320 inspirada en Batsugun.

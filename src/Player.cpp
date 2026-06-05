@@ -7,11 +7,22 @@
 Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
     : logicalSize_(logicalSize)
     , position_({logicalSize.x * 0.5f, logicalSize.y - 40.f})
-    , centerTexture_(&assets.getTexture("player_ship_center"))
-    , leftTexture_(&assets.getTexture("player_ship_left"))
-    , rightTexture_(&assets.getTexture("player_ship_right"))
-    , sprite_(*centerTexture_) {
-    sprite_.setOrigin({16.f, 16.f});
+    , spriteSheetTexture_(&assets.getTexture("player_ship_sheet"))
+    , sprite_(*spriteSheetTexture_) {
+    const auto textureSize = spriteSheetTexture_->getSize();
+    frameSize_ = {
+        static_cast<int>(textureSize.x / 3u),
+        static_cast<int>(textureSize.y)
+    };
+    updateSpriteFrame();
+    sprite_.setOrigin({
+        static_cast<float>(frameSize_.x) * 0.5f,
+        static_cast<float>(frameSize_.y) * 0.5f
+    });
+    sprite_.setScale({
+        32.f / static_cast<float>(frameSize_.x),
+        32.f / static_cast<float>(frameSize_.y)
+    });
     sprite_.setPosition(position_);
 }
 
@@ -72,23 +83,31 @@ void Player::setVisualState(VisualState state) {
     }
 
     visualState_ = state;
-    switch (visualState_) {
-    case VisualState::Center:
-        sprite_.setTexture(*centerTexture_, true);
-        break;
-    case VisualState::Left:
-        sprite_.setTexture(*leftTexture_, true);
-        break;
-    case VisualState::Right:
-        sprite_.setTexture(*rightTexture_, true);
-        break;
-    }
-
-    sprite_.setOrigin({16.f, 16.f});
+    updateSpriteFrame();
 }
 
 void Player::clampToLogicalArea() {
     constexpr auto halfSprite = 16.f;
     position_.x = std::clamp(position_.x, halfSprite, logicalSize_.x - halfSprite);
     position_.y = std::clamp(position_.y, halfSprite, logicalSize_.y - halfSprite);
+}
+
+void Player::updateSpriteFrame() {
+    auto frameIndex = 0;
+    switch (visualState_) {
+    case VisualState::Center:
+        frameIndex = 1;
+        break;
+    case VisualState::Left:
+        frameIndex = 0;
+        break;
+    case VisualState::Right:
+        frameIndex = 2;
+        break;
+    }
+
+    sprite_.setTextureRect({
+        {frameIndex * frameSize_.x, 0},
+        frameSize_
+    });
 }

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <algorithm>
@@ -20,9 +21,7 @@ Game::Game()
     window_.setVerticalSyncEnabled(true);
     logicalTarget_.setSmooth(false);
 
-    assets_.loadTexture("player_ship_center", "textures/player/player_ship_center.png");
-    assets_.loadTexture("player_ship_left", "textures/player/player_ship_left.png");
-    assets_.loadTexture("player_ship_right", "textures/player/player_ship_right.png");
+    assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_sheet_ai_transparent.png");
 
     player_ = std::make_unique<Player>(
         assets_,
@@ -46,6 +45,16 @@ void Game::processEvents() {
         if (event->is<sf::Event::Closed>()) {
             window_.close();
         }
+
+        if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            if (keyPressed->code == sf::Keyboard::Key::Num1) {
+                presentationScaleMode_ = PresentationScaleMode::Native;
+                updatePresentationSprite();
+            } else if (keyPressed->code == sf::Keyboard::Key::Num2) {
+                presentationScaleMode_ = PresentationScaleMode::IntegerFit;
+                updatePresentationSprite();
+            }
+        }
     }
 }
 
@@ -67,7 +76,11 @@ void Game::updatePresentationSprite() {
     const auto windowSize = window_.getSize();
     const auto scaleX = static_cast<float>(windowSize.x) / static_cast<float>(LogicalWidth);
     const auto scaleY = static_cast<float>(windowSize.y) / static_cast<float>(LogicalHeight);
-    const auto integerScale = std::max(1.f, std::floor(std::min(scaleX, scaleY)));
+    auto integerScale = 1.f;
+
+    if (presentationScaleMode_ == PresentationScaleMode::IntegerFit) {
+        integerScale = std::max(1.f, std::floor(std::min(scaleX, scaleY)));
+    }
 
     presentationSprite_.setTexture(logicalTarget_.getTexture(), true);
     presentationSprite_.setScale({integerScale, integerScale});

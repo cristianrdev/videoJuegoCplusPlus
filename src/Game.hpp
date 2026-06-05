@@ -18,6 +18,11 @@ public:
     void run();
 
 private:
+    enum class PresentationScaleMode {
+        Native,
+        IntegerFit
+    };
+
     void processEvents();
     void update(sf::Time deltaTime);
     void render();
@@ -30,6 +35,7 @@ private:
     sf::RenderTexture logicalTarget_;
     sf::Sprite presentationSprite_;
     sf::Clock clock_;
+    PresentationScaleMode presentationScaleMode_{PresentationScaleMode::IntegerFit};
 
     AssetManager assets_;
     std::unique_ptr<Player> player_;

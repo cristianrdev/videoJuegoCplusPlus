@@ -14,6 +14,7 @@ Skills disponibles:
 - sfml-shmup-architecture
 - bullet-pattern-designer
 - pixel-art-shmup-style
+- pixel-art-generation-pipeline
 
 Reglas generales:
 
@@ -44,6 +45,7 @@ Always:
 - Load resources through AssetManager.
 - Prefer JSON configuration over hardcoded gameplay.
 - Keep entities lightweight.
+- luego de generar una imagen pregunta para aprobar el diseño
 
 Never:
 
