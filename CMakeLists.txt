@@ -13,6 +13,11 @@ add_executable(videoJuegoCplusPlus
     src/Game.cpp
     src/AssetManager.cpp
     src/Player.cpp
+    src/LaserNormal.cpp
+    src/Enemy.cpp
+    src/EnemyBullet.cpp
+    src/BulletPatternSystem.cpp
+    src/StageDirector.cpp
 )
 
 target_include_directories(videoJuegoCplusPlus PRIVATE src)
@@ -22,4 +27,10 @@ add_custom_command(TARGET videoJuegoCplusPlus POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:videoJuegoCplusPlus>/assets
+)
+
+add_custom_command(TARGET videoJuegoCplusPlus POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/config
+        $<TARGET_FILE_DIR:videoJuegoCplusPlus>/config
 )

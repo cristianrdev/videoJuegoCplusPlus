@@ -83,6 +83,22 @@ sf::FloatRect Player::hitbox() const {
     };
 }
 
+sf::Vector2f Player::position() const {
+    return position_;
+}
+
+sf::Vector2f Player::laserSpawnPosition() const {
+    return {position_.x, position_.y - 18.f};
+}
+
+int Player::health() const {
+    return health_;
+}
+
+void Player::takeDamage(int damage) {
+    health_ = std::max(0, health_ - damage);
+}
+
 void Player::setVisualState(VisualState state) {
     if (visualState_ == state) {
         return;

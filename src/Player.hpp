@@ -17,6 +17,10 @@ public:
     void render(sf::RenderTarget& target) const;
 
     sf::FloatRect hitbox() const;
+    sf::Vector2f position() const;
+    sf::Vector2f laserSpawnPosition() const;
+    int health() const;
+    void takeDamage(int damage);
 
 private:
     enum class VisualState {
@@ -33,6 +37,7 @@ private:
     sf::Vector2f position_;
     sf::Vector2f hitboxSize_{6.f, 6.f};
     sf::Vector2i frameSize_{32, 32};
+    int health_{3};
     float speed_{120.f};
 
     const sf::Texture* spriteSheetTexture_{nullptr};

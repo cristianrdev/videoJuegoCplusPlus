@@ -1,0 +1,25 @@
+{
+  "patterns": [
+    {
+      "id": "enemy_drone_aimed_single",
+      "fire_interval": 1.10,
+      "bullet_speed": 72.0,
+      "aimed": true,
+      "angle_offsets": [0.0]
+    },
+    {
+      "id": "enemy_turret_spread_3",
+      "fire_interval": 1.55,
+      "bullet_speed": 58.0,
+      "aimed": false,
+      "angle_offsets": [-18.0, 0.0, 18.0]
+    },
+    {
+      "id": "enemy_interceptor_wave_5",
+      "fire_interval": 1.90,
+      "bullet_speed": 64.0,
+      "aimed": false,
+      "angle_offsets": [-32.0, -16.0, 0.0, 16.0, 32.0]
+    }
+  ]
+}
