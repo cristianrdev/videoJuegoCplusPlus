@@ -10,7 +10,14 @@
 
 class Enemy {
 public:
-    Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enemyId, std::string patternId, std::string movementId);
+    Enemy(
+        sf::Vector2f position,
+        const sf::Texture& texture,
+        std::string enemyId,
+        std::string patternId,
+        std::string movementId,
+        int health
+    );
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;

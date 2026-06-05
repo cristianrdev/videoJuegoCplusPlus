@@ -102,6 +102,7 @@ Game::Game()
     enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
     enemyRobotFishLaserTexture_ = &assets_.loadTexture("enemy_robot_fish_laser", "textures/projectiles/enemy_robot_fish_laser.png");
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
+    enemyConfigSystem_.loadFromFile("config/enemies.json");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01.json");
@@ -192,7 +193,8 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
         *texture,
         spawn.enemyId,
         spawn.patternId,
-        spawn.movementId
+        spawn.movementId,
+        enemyConfigSystem_.healthFor(spawn.enemyId)
     );
 }
 

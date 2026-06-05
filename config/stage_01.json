@@ -70,10 +70,34 @@
     {
       "time": 13.0,
       "enemy": "enemy_interceptor",
-      "x": 106,
+      "x": 80,
       "y": -24,
       "pattern": "enemy_interceptor_purple_orb_aimed",
       "movement": "edge_patrol"
+    },
+    {
+      "time": 13.0,
+      "enemy": "enemy_interceptor",
+      "x": 100,
+      "y": -24,
+      "pattern": "enemy_interceptor_purple_orb_aimed",
+      "movement": "edge_patrol"
+    },
+    {
+      "time": 18.0,
+      "enemy": "enemy_metal_squid",
+      "x": 100,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
+    },
+    {
+      "time": 20.0,
+      "enemy": "enemy_metal_squid",
+      "x": 140,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
     },
     {
       "time": 50.0,
@@ -82,14 +106,6 @@
       "y": -170,
       "pattern": "enemy_robot_fish_mouth_laser",
       "movement": "robot_fish_slow_drop"
-    },
-    {
-      "time": 18.0,
-      "enemy": "enemy_metal_squid",
-      "x": 120,
-      "y": -24,
-      "pattern": "enemy_metal_squid_flower_orbs",
-      "movement": "metal_squid_cosine_medium"
     }
   ]
 }

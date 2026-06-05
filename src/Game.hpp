@@ -6,6 +6,7 @@
 #include "BulletPatternSystem.hpp"
 #include "Enemy.hpp"
 #include "EnemyBullet.hpp"
+#include "EnemyConfigSystem.hpp"
 #include "EnemyLaser.hpp"
 #include "Explosion.hpp"
 #include "LaserNormal.hpp"
@@ -90,6 +91,7 @@ private:
     const sf::Texture* enemyRobotFishLaserTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
+    EnemyConfigSystem enemyConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;

@@ -1,0 +1,24 @@
+{
+  "enemies": [
+    {
+      "id": "enemy_drone",
+      "health": 3
+    },
+    {
+      "id": "enemy_turret_pod",
+      "health": 3
+    },
+    {
+      "id": "enemy_interceptor",
+      "health": 3
+    },
+    {
+      "id": "enemy_robot_fish",
+      "health": 80
+    },
+    {
+      "id": "enemy_metal_squid",
+      "health": 6
+    }
+  ]
+}

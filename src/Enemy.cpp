@@ -4,9 +4,17 @@
 #include <cmath>
 #include <utility>
 
-Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enemyId, std::string patternId, std::string movementId)
+Enemy::Enemy(
+    sf::Vector2f position,
+    const sf::Texture& texture,
+    std::string enemyId,
+    std::string patternId,
+    std::string movementId,
+    int health
+)
     : startPosition_(position)
     , position_(position)
+    , health_(health)
     , enemyId_(std::move(enemyId))
     , patternId_(std::move(patternId))
     , movementId_(std::move(movementId))
@@ -14,7 +22,6 @@ Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enem
     if (enemyId_ == "enemy_robot_fish") {
         size_ = {82.f, 252.f};
         visualSize_ = {120.f, 300.f};
-        health_ = 80;
         sprite_.setTextureRect({
             {0, 0},
             {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}

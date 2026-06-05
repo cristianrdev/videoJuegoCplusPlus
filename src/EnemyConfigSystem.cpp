@@ -1,0 +1,68 @@
+#include "EnemyConfigSystem.hpp"
+
+#include <fstream>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
+
+namespace {
+std::string readTextFile(const std::string& path) {
+    auto file = std::ifstream(path);
+    if (!file) {
+        throw std::runtime_error("No se pudo abrir configuracion de enemigos: " + path);
+    }
+
+    auto buffer = std::ostringstream{};
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+std::string matchString(const std::string& text, const std::string& field) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\"([^\"]+)\"");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        throw std::runtime_error("Falta campo string en configuracion de enemigo: " + field);
+    }
+
+    return match[1].str();
+}
+
+int matchInt(const std::string& text, const std::string& field, int fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stoi(match[1].str());
+}
+}
+
+void EnemyConfigSystem::loadFromFile(const std::string& path) {
+    const auto text = readTextFile(path);
+    const auto objectPattern = std::regex("\\{[^\\{\\}]*\"id\"[^\\{\\}]*\\}");
+
+    configs_.clear();
+    for (auto it = std::sregex_iterator(text.begin(), text.end(), objectPattern);
+         it != std::sregex_iterator{};
+         ++it) {
+        const auto object = (*it)[0].str();
+        auto config = EnemyConfig{};
+        config.id = matchString(object, "id");
+        config.health = matchInt(object, "health", 3);
+        configs_[config.id] = std::move(config);
+    }
+
+    if (configs_.empty()) {
+        throw std::runtime_error("No se cargaron configuraciones de enemigos desde: " + path);
+    }
+}
+
+int EnemyConfigSystem::healthFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return 3;
+    }
+
+    return it->second.health;
+}
