@@ -2,6 +2,7 @@
   "patterns": [
     {
       "id": "enemy_drone_aimed_single",
+      "type": "spread",
       "fire_interval": 1.10,
       "bullet_speed": 72.0,
       "aimed": true,
@@ -9,17 +10,21 @@
     },
     {
       "id": "enemy_turret_spread_3",
+      "type": "radial_burst",
       "fire_interval": 1.55,
-      "bullet_speed": 58.0,
-      "aimed": false,
-      "angle_offsets": [-18.0, 0.0, 18.0]
+      "rings": 2,
+      "bullets_per_ring": 12,
+      "speed_start": 34.0,
+      "speed_step": 18.0,
+      "rotation_per_shot": 11.0
     },
     {
       "id": "enemy_interceptor_wave_5",
+      "type": "rotating_stream",
       "fire_interval": 1.90,
       "bullet_speed": 64.0,
-      "aimed": false,
-      "angle_offsets": [-32.0, -16.0, 0.0, 16.0, 32.0]
+      "streams": 5,
+      "angle_step": 17.0
     }
   ]
 }

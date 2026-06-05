@@ -36,6 +36,7 @@ Game::Game()
     enemyTurretPodTexture_ = &assets_.loadTexture("enemy_turret_pod", "textures/enemies/enemy_turret_pod.png");
     enemyInterceptorTexture_ = &assets_.loadTexture("enemy_interceptor", "textures/enemies/enemy_interceptor.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
+    movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01.json");
 
     player_ = std::make_unique<Player>(
@@ -100,7 +101,8 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
     enemies_.emplace_back(
         sf::Vector2f{spawn.x, spawn.y},
         *texture,
-        spawn.patternId
+        spawn.patternId,
+        spawn.movementId
     );
 }
 
@@ -136,6 +138,13 @@ void Game::update(sf::Time deltaTime) {
 
     for (auto& enemy : enemies_) {
         enemy.update(deltaTime);
+        enemy.setPosition(
+            movementPatternSystem_.positionFor(
+                enemy.movementId(),
+                enemy.startPosition(),
+                enemy.elapsed()
+            )
+        );
     }
 
     updateEnemyShooting();

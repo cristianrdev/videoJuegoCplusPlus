@@ -5,6 +5,7 @@
 #include "Enemy.hpp"
 #include "EnemyBullet.hpp"
 #include "LaserNormal.hpp"
+#include "MovementPatternSystem.hpp"
 #include "Player.hpp"
 #include "StageDirector.hpp"
 
@@ -58,6 +59,7 @@ private:
     const sf::Texture* enemyTurretPodTexture_{nullptr};
     const sf::Texture* enemyInterceptorTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
+    MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
 
     AssetManager assets_;

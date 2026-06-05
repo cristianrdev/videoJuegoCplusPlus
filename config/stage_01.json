@@ -6,21 +6,24 @@
       "enemy": "enemy_drone",
       "x": 54,
       "y": -24,
-      "pattern": "enemy_drone_aimed_single"
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "slow_drop"
     },
     {
-      "time": 1.4,
+      "time": 4.0,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
-      "pattern": "enemy_turret_spread_3"
+      "pattern": "enemy_turret_spread_3",
+      "movement": "cosine_sweep"
     },
     {
-      "time": 2.3,
+      "time": 5.3,
       "enemy": "enemy_interceptor",
       "x": 186,
       "y": -24,
-      "pattern": "enemy_interceptor_wave_5"
+      "pattern": "enemy_interceptor_wave_5",
+      "movement": "edge_patrol"
     }
   ]
 }

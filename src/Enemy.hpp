@@ -10,26 +10,32 @@
 
 class Enemy {
 public:
-    Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId);
+    Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId, std::string movementId);
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
     void takeDamage(int damage);
+    void setPosition(sf::Vector2f position);
 
     bool isAlive() const;
     bool shouldFire() const;
     void resetFireTimer(float intervalSeconds);
     sf::Vector2f bulletSpawnPosition() const;
     sf::Vector2f position() const;
+    sf::Vector2f startPosition() const;
+    sf::Time elapsed() const;
     sf::FloatRect hitbox() const;
     const std::string& patternId() const;
+    const std::string& movementId() const;
 
 private:
+    sf::Vector2f startPosition_;
     sf::Vector2f position_;
     sf::Vector2f size_{24.f, 24.f};
-    float driftSpeed_{14.f};
     int health_{3};
+    sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
     std::string patternId_;
+    std::string movementId_;
     sf::Sprite sprite_;
 };

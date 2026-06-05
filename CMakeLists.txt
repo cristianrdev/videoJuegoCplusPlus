@@ -18,6 +18,7 @@ add_executable(videoJuegoCplusPlus
     src/EnemyBullet.cpp
     src/BulletPatternSystem.cpp
     src/StageDirector.cpp
+    src/MovementPatternSystem.cpp
 )
 
 target_include_directories(videoJuegoCplusPlus PRIVATE src)

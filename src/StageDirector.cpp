@@ -56,6 +56,7 @@ void StageDirector::loadFromFile(const std::string& path) {
         spawn.x = matchFloat(object, "x");
         spawn.y = matchFloat(object, "y");
         spawn.patternId = matchString(object, "pattern");
+        spawn.movementId = matchString(object, "movement");
         spawns_.push_back(std::move(spawn));
     }
 

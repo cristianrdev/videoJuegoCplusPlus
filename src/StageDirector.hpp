@@ -13,6 +13,7 @@ public:
         float x{0.f};
         float y{0.f};
         std::string patternId;
+        std::string movementId;
     };
 
     void loadFromFile(const std::string& path);

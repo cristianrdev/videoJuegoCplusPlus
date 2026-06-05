@@ -1,0 +1,25 @@
+{
+  "patterns": [
+    {
+      "id": "slow_drop",
+      "type": "linear",
+      "velocity_x": 0.0,
+      "velocity_y": 14.0
+    },
+    {
+      "id": "cosine_sweep",
+      "type": "cosine",
+      "velocity_y": 18.0,
+      "amplitude_x": 42.0,
+      "frequency": 0.55,
+      "phase": 0.0
+    },
+    {
+      "id": "edge_patrol",
+      "type": "waypoints",
+      "point_times": [0.0, 1.2, 2.4, 3.8, 5.4],
+      "point_x": [186.0, 208.0, 208.0, 32.0, 32.0],
+      "point_y": [-24.0, 48.0, 112.0, 112.0, 360.0]
+    }
+  ]
+}

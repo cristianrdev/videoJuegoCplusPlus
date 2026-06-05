@@ -47,6 +47,46 @@ float matchFloat(const std::string& text, const std::string& field) {
     return std::stof(match[1].str());
 }
 
+float matchFloatOr(const std::string& text, const std::string& field, float fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stof(match[1].str());
+}
+
+int matchIntOr(const std::string& text, const std::string& field, int fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stoi(match[1].str());
+}
+
+std::string matchStringOr(const std::string& text, const std::string& field, const std::string& fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\"([^\"]+)\"");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str();
+}
+
+bool matchBoolOr(const std::string& text, const std::string& field, bool fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str() == "true";
+}
+
 bool matchBool(const std::string& text, const std::string& field) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
     auto match = std::smatch{};
@@ -61,7 +101,7 @@ std::vector<float> matchFloatArray(const std::string& text, const std::string& f
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\\[([^\\]]*)\\]");
     auto match = std::smatch{};
     if (!std::regex_search(text, match, pattern)) {
-        throw std::runtime_error("Falta arreglo numerico en patron: " + field);
+        return {};
     }
 
     auto values = std::vector<float>{};
@@ -92,10 +132,18 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         const auto object = (*it)[0].str();
         auto pattern = Pattern{};
         pattern.id = matchString(object, "id");
+        pattern.type = matchStringOr(object, "type", "spread");
         pattern.fireInterval = matchFloat(object, "fire_interval");
-        pattern.bulletSpeed = matchFloat(object, "bullet_speed");
-        pattern.aimed = matchBool(object, "aimed");
+        pattern.bulletSpeed = matchFloatOr(object, "bullet_speed", 60.f);
+        pattern.aimed = matchBoolOr(object, "aimed", false);
         pattern.angleOffsets = matchFloatArray(object, "angle_offsets");
+        pattern.rings = matchIntOr(object, "rings", 1);
+        pattern.bulletsPerRing = matchIntOr(object, "bullets_per_ring", 1);
+        pattern.streams = matchIntOr(object, "streams", 1);
+        pattern.speedStart = matchFloatOr(object, "speed_start", pattern.bulletSpeed);
+        pattern.speedStep = matchFloatOr(object, "speed_step", 0.f);
+        pattern.angleStep = matchFloatOr(object, "angle_step", 0.f);
+        pattern.rotationPerShot = matchFloatOr(object, "rotation_per_shot", 0.f);
 
         patterns_[pattern.id] = std::move(pattern);
     }
@@ -109,22 +157,60 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
     const std::string& patternId,
     sf::Vector2f origin,
     sf::Vector2f target
-) const {
-    const auto& pattern = patternFor(patternId);
+) {
+    auto patternIt = patterns_.find(patternId);
+    if (patternIt == patterns_.end()) {
+        throw std::runtime_error("Patron de bala no encontrado: " + patternId);
+    }
+
+    auto& pattern = patternIt->second;
     const auto baseAngle = pattern.aimed ? aimedBaseAngleDegrees(origin, target) : 0.f;
 
     auto bullets = std::vector<EnemyBullet>{};
-    bullets.reserve(pattern.angleOffsets.size());
 
-    for (const auto offset : pattern.angleOffsets) {
-        const auto angle = degreesToRadians(baseAngle + offset);
-        const auto velocity = sf::Vector2f{
-            std::sin(angle) * pattern.bulletSpeed,
-            std::cos(angle) * pattern.bulletSpeed
-        };
-        bullets.emplace_back(origin, velocity);
+    if (pattern.type == "radial_burst") {
+        bullets.reserve(static_cast<std::size_t>(pattern.rings * pattern.bulletsPerRing));
+        const auto rotation = static_cast<float>(pattern.shotCounter) * pattern.rotationPerShot;
+
+        for (auto ring = 0; ring < pattern.rings; ++ring) {
+            const auto speed = pattern.speedStart + static_cast<float>(ring) * pattern.speedStep;
+            for (auto bullet = 0; bullet < pattern.bulletsPerRing; ++bullet) {
+                const auto offset = rotation + static_cast<float>(bullet) * 360.f / static_cast<float>(pattern.bulletsPerRing);
+                const auto angle = degreesToRadians(offset);
+                bullets.emplace_back(
+                    origin,
+                    sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed}
+                );
+            }
+        }
+    } else if (pattern.type == "rotating_stream") {
+        bullets.reserve(static_cast<std::size_t>(pattern.streams));
+        const auto rotation = static_cast<float>(pattern.shotCounter) * pattern.angleStep;
+        for (auto stream = 0; stream < pattern.streams; ++stream) {
+            const auto offset = rotation + static_cast<float>(stream) * 360.f / static_cast<float>(pattern.streams);
+            const auto angle = degreesToRadians(offset);
+            bullets.emplace_back(
+                origin,
+                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed}
+            );
+        }
+    } else {
+        auto offsets = pattern.angleOffsets;
+        if (offsets.empty()) {
+            offsets.push_back(0.f);
+        }
+
+        bullets.reserve(offsets.size());
+        for (const auto offset : offsets) {
+            const auto angle = degreesToRadians(baseAngle + offset);
+            bullets.emplace_back(
+                origin,
+                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed}
+            );
+        }
     }
 
+    ++pattern.shotCounter;
     return bullets;
 }
 

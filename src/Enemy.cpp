@@ -4,9 +4,11 @@
 #include <cmath>
 #include <utility>
 
-Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId)
-    : position_(position)
+Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId, std::string movementId)
+    : startPosition_(position)
+    , position_(position)
     , patternId_(std::move(patternId))
+    , movementId_(std::move(movementId))
     , sprite_(texture) {
     const auto textureSize = texture.getSize();
     sprite_.setOrigin({
@@ -16,7 +18,7 @@ Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patt
 }
 
 void Enemy::update(sf::Time deltaTime) {
-    position_.y += driftSpeed_ * deltaTime.asSeconds();
+    elapsed_ += deltaTime;
     fireTimer_ -= deltaTime;
 }
 
@@ -28,6 +30,10 @@ void Enemy::render(sf::RenderTarget& target) const {
 
 void Enemy::takeDamage(int damage) {
     health_ = std::max(0, health_ - damage);
+}
+
+void Enemy::setPosition(sf::Vector2f position) {
+    position_ = position;
 }
 
 bool Enemy::isAlive() const {
@@ -50,6 +56,14 @@ sf::Vector2f Enemy::position() const {
     return position_;
 }
 
+sf::Vector2f Enemy::startPosition() const {
+    return startPosition_;
+}
+
+sf::Time Enemy::elapsed() const {
+    return elapsed_;
+}
+
 sf::FloatRect Enemy::hitbox() const {
     return {
         {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
@@ -59,4 +73,8 @@ sf::FloatRect Enemy::hitbox() const {
 
 const std::string& Enemy::patternId() const {
     return patternId_;
+}
+
+const std::string& Enemy::movementId() const {
+    return movementId_;
 }
