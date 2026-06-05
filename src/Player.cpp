@@ -1,9 +1,57 @@
 #include "Player.hpp"
 
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
 #include <algorithm>
 #include <cmath>
+
+namespace {
+constexpr auto JoystickDeadZone = 18.f;
+
+int firstConnectedJoystick() {
+    for (auto joystick = 0u; joystick < sf::Joystick::Count; ++joystick) {
+        if (sf::Joystick::isConnected(joystick)) {
+            return static_cast<int>(joystick);
+        }
+    }
+
+    return -1;
+}
+
+float axisValue(unsigned int joystick, sf::Joystick::Axis axis) {
+    if (!sf::Joystick::hasAxis(joystick, axis)) {
+        return 0.f;
+    }
+
+    const auto raw = sf::Joystick::getAxisPosition(joystick, axis);
+    return std::abs(raw) >= JoystickDeadZone ? raw / 100.f : 0.f;
+}
+
+sf::Vector2f joystickDirection() {
+    const auto joystick = firstConnectedJoystick();
+    if (joystick < 0) {
+        return {0.f, 0.f};
+    }
+
+    const auto id = static_cast<unsigned int>(joystick);
+    auto direction = sf::Vector2f{
+        axisValue(id, sf::Joystick::Axis::X),
+        axisValue(id, sf::Joystick::Axis::Y)
+    };
+
+    const auto dpadX = axisValue(id, sf::Joystick::Axis::PovX);
+    const auto dpadY = axisValue(id, sf::Joystick::Axis::PovY);
+    if (dpadX != 0.f) {
+        direction.x = dpadX;
+    }
+    if (dpadY != 0.f) {
+        direction.y = -dpadY;
+    }
+
+    return direction;
+}
+}
 
 Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
     : logicalSize_(logicalSize)
@@ -50,6 +98,8 @@ void Player::update(sf::Time deltaTime) {
         direction.y += 1.f;
     }
 
+    direction += joystickDirection();
+
     if (direction.x < 0.f) {
         setVisualState(VisualState::Left);
     } else if (direction.x > 0.f) {
@@ -58,8 +108,9 @@ void Player::update(sf::Time deltaTime) {
         setVisualState(VisualState::Center);
     }
 
-    if (direction.x != 0.f && direction.y != 0.f) {
-        direction *= 0.70710678f;
+    const auto length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length > 1.f) {
+        direction /= length;
     }
 
     position_ += direction * speed_ * deltaTime.asSeconds();

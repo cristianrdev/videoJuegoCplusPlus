@@ -2,11 +2,15 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
+#include <initializer_list>
+#include <sstream>
 #include <vector>
 
 namespace {
@@ -19,15 +23,62 @@ bool intersects(sf::FloatRect left, sf::FloatRect right) {
         left.position.y < right.position.y + right.size.y &&
         left.position.y + left.size.y > right.position.y;
 }
+
+int firstConnectedJoystick() {
+    for (auto joystick = 0u; joystick < sf::Joystick::Count; ++joystick) {
+        if (sf::Joystick::isConnected(joystick)) {
+            return static_cast<int>(joystick);
+        }
+    }
+
+    return -1;
+}
+
+bool joystickButtonPressedAny(std::initializer_list<unsigned int> buttons) {
+    const auto joystick = firstConnectedJoystick();
+    if (joystick < 0) {
+        return false;
+    }
+
+    const auto id = static_cast<unsigned int>(joystick);
+    for (const auto button : buttons) {
+        if (button < sf::Joystick::getButtonCount(id) &&
+            sf::Joystick::isButtonPressed(id, button)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool joystickFirePressed() {
+    return joystickButtonPressedAny({
+        0,  // Xbox A / PlayStation Cross / many generic primary buttons
+        1,  // Xbox B / PlayStation Circle
+        2,  // Xbox X / PlayStation Square
+        3,  // Xbox Y / PlayStation Triangle
+        4,  // LB / L1
+        5,  // RB / R1
+        7   // common trigger/shoulder mapping on generic controllers
+    });
+}
 }
 
 Game::Game()
     : window_(sf::VideoMode({WindowWidth, WindowHeight}), "Shooter vertical")
     , logicalTarget_({LogicalWidth, LogicalHeight})
     , presentationSprite_(logicalTarget_.getTexture())
+    , debugText_(debugFont_)
     , assets_("assets") {
     window_.setVerticalSyncEnabled(true);
     logicalTarget_.setSmooth(false);
+
+    if (!debugFont_.openFromFile("C:/Windows/Fonts/consola.ttf")) {
+        throw std::runtime_error("No se pudo cargar fuente debug: C:/Windows/Fonts/consola.ttf");
+    }
+
+    debugText_.setCharacterSize(16);
+    debugText_.setFillColor(sf::Color(190, 220, 230));
 
     assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_sheet_ai_transparent.png");
     laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", "textures/player/player_laser_normal.png");
@@ -63,7 +114,9 @@ void Game::processEvents() {
         }
 
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-            if (keyPressed->code == sf::Keyboard::Key::Num1) {
+            if (keyPressed->code == sf::Keyboard::Key::Escape) {
+                window_.close();
+            } else if (keyPressed->code == sf::Keyboard::Key::Num1) {
                 presentationScaleMode_ = PresentationScaleMode::Native;
                 updatePresentationSprite();
             } else if (keyPressed->code == sf::Keyboard::Key::Num2) {
@@ -107,6 +160,13 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
 }
 
 void Game::update(sf::Time deltaTime) {
+    stageClock_ += deltaTime;
+    const auto frameSeconds = deltaTime.asSeconds();
+    if (frameSeconds > 0.f) {
+        const auto instantFps = 1.f / frameSeconds;
+        smoothedFps_ = smoothedFps_ == 0.f ? instantFps : smoothedFps_ * 0.90f + instantFps * 0.10f;
+    }
+
     if (fireCooldown_ > sf::Time::Zero) {
         fireCooldown_ -= deltaTime;
         if (fireCooldown_ < sf::Time::Zero) {
@@ -122,7 +182,8 @@ void Game::update(sf::Time deltaTime) {
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) {
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z) ||
+        joystickFirePressed()) {
         fireLaserNormal();
     }
 
@@ -259,7 +320,30 @@ void Game::render() {
 
     window_.clear(sf::Color::Black);
     window_.draw(presentationSprite_);
+    renderDebugHud();
     window_.display();
+}
+
+void Game::renderDebugHud() {
+    const auto spritePosition = presentationSprite_.getPosition();
+    const auto leftPanelWidth = spritePosition.x;
+
+    if (leftPanelWidth < 96.f) {
+        return;
+    }
+
+    auto text = std::ostringstream{};
+    text << std::fixed << std::setprecision(2)
+         << "TIME\n"
+         << stageClock_.asSeconds()
+         << " s\n\n"
+         << std::setprecision(1)
+         << "FPS\n"
+         << smoothedFps_;
+
+    debugText_.setString(text.str());
+    debugText_.setPosition({24.f, 24.f});
+    window_.draw(debugText_);
 }
 
 void Game::renderMuzzleFlash(sf::RenderTarget& target) const {

@@ -10,7 +10,7 @@
       "movement": "slow_drop"
     },
     {
-      "time": 4.0,
+      "time": 8.0,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
@@ -18,7 +18,7 @@
       "movement": "cosine_sweep"
     },
     {
-      "time": 5.3,
+      "time": 10.0,
       "enemy": "enemy_interceptor",
       "x": 186,
       "y": -24,

@@ -12,6 +12,8 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -38,6 +40,7 @@ private:
     void updateCollisions();
     void render();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
+    void renderDebugHud();
     void updatePresentationSprite();
 
     static constexpr unsigned int LogicalWidth = 240;
@@ -47,7 +50,11 @@ private:
     sf::RenderTexture logicalTarget_;
     sf::Sprite presentationSprite_;
     sf::Clock clock_;
+    sf::Font debugFont_;
+    sf::Text debugText_;
     PresentationScaleMode presentationScaleMode_{PresentationScaleMode::IntegerFit};
+    sf::Time stageClock_{sf::Time::Zero};
+    float smoothedFps_{0.f};
     std::vector<LaserNormal> playerLasers_;
     std::vector<Enemy> enemies_;
     std::vector<EnemyBullet> enemyBullets_;
