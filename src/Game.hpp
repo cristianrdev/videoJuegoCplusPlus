@@ -9,6 +9,7 @@
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
 #include "StageDirector.hpp"
+#include "Starfield.hpp"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -74,6 +75,7 @@ private:
     BulletPatternSystem bulletPatternSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
+    Starfield starfield_;
 
     AssetManager assets_;
     std::unique_ptr<Player> player_;

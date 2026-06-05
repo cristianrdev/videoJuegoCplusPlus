@@ -20,6 +20,7 @@ add_executable(videoJuegoCplusPlus
     src/StageDirector.cpp
     src/MovementPatternSystem.cpp
     src/Explosion.cpp
+    src/Starfield.cpp
 )
 
 target_include_directories(videoJuegoCplusPlus PRIVATE src)

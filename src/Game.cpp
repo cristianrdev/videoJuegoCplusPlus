@@ -69,6 +69,7 @@ Game::Game()
     , logicalTarget_({LogicalWidth, LogicalHeight})
     , presentationSprite_(logicalTarget_.getTexture())
     , debugText_(debugFont_)
+    , starfield_({static_cast<float>(LogicalWidth), static_cast<float>(LogicalHeight)})
     , assets_("assets") {
     window_.setVerticalSyncEnabled(true);
     logicalTarget_.setSmooth(false);
@@ -80,7 +81,7 @@ Game::Game()
     debugText_.setCharacterSize(16);
     debugText_.setFillColor(sf::Color(190, 220, 230));
 
-    assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_sheet_ai_transparent.png");
+    assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_red_triangle_test.png");
     assets_.loadTexture("player_thruster_flame", "textures/player/player_thruster_flame.png");
     laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", "textures/player/player_laser_normal.png");
     muzzleFlashTexture_ = &assets_.loadTexture("player_laser_muzzle_flash", "textures/player/player_laser_muzzle_flash.png");
@@ -208,6 +209,7 @@ void Game::update(sf::Time deltaTime) {
         spawnEnemy(spawn);
     }
 
+    starfield_.update(deltaTime);
     player_->update(deltaTime);
 
     for (auto& laser : playerLasers_) {
@@ -344,6 +346,7 @@ void Game::updateCollisions() {
 
 void Game::render() {
     logicalTarget_.clear(sf::Color(8, 12, 20));
+    starfield_.render(logicalTarget_);
     for (const auto& enemy : enemies_) {
         enemy.render(logicalTarget_);
     }
