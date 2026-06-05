@@ -133,8 +133,10 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         auto pattern = Pattern{};
         pattern.id = matchString(object, "id");
         pattern.bulletId = matchStringOr(object, "bullet", "default");
+        pattern.laserId = matchStringOr(object, "laser", "default");
         pattern.type = matchStringOr(object, "type", "spread");
         pattern.fireInterval = matchFloat(object, "fire_interval");
+        pattern.laserDuration = matchFloatOr(object, "laser_duration", 0.35f);
         pattern.bulletSpeed = matchFloatOr(object, "bullet_speed", 60.f);
         pattern.aimed = matchBoolOr(object, "aimed", false);
         pattern.angleOffsets = matchFloatArray(object, "angle_offsets");
@@ -225,6 +227,18 @@ float BulletPatternSystem::fireInterval(const std::string& patternId) const {
 
 const std::string& BulletPatternSystem::bulletId(const std::string& patternId) const {
     return patternFor(patternId).bulletId;
+}
+
+const std::string& BulletPatternSystem::laserId(const std::string& patternId) const {
+    return patternFor(patternId).laserId;
+}
+
+const std::string& BulletPatternSystem::patternType(const std::string& patternId) const {
+    return patternFor(patternId).type;
+}
+
+float BulletPatternSystem::laserDuration(const std::string& patternId) const {
+    return patternFor(patternId).laserDuration;
 }
 
 const BulletPatternSystem::Pattern& BulletPatternSystem::patternFor(const std::string& patternId) const {

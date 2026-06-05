@@ -74,6 +74,14 @@
       "y": -24,
       "pattern": "enemy_interceptor_purple_orb_aimed",
       "movement": "edge_patrol"
+    },
+    {
+      "time": 22.0,
+      "enemy": "enemy_robot_fish",
+      "x": 120,
+      "y": -170,
+      "pattern": "enemy_robot_fish_mouth_laser",
+      "movement": "robot_fish_slow_drop"
     }
   ]
 }

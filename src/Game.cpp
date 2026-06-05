@@ -59,9 +59,14 @@ bool joystickFirePressed() {
         2,  // Xbox X / PlayStation Square
         3,  // Xbox Y / PlayStation Triangle
         4,  // LB / L1
-        5,  // RB / R1
-        7   // common trigger/shoulder mapping on generic controllers
+        5   // RB / R1
     });
+}
+
+bool joystickPauseButton(unsigned int button) {
+    return button == 7 ||  // Xbox Menu / common Start mapping
+        button == 8 ||     // common generic Start mapping
+        button == 9;       // PlayStation Options on many mappings
 }
 }
 
@@ -89,10 +94,12 @@ Game::Game()
     enemyDroneTexture_ = &assets_.loadTexture("enemy_drone", "textures/enemies/enemy_drone.png");
     enemyTurretPodTexture_ = &assets_.loadTexture("enemy_turret_pod", "textures/enemies/enemy_turret_pod.png");
     enemyInterceptorTexture_ = &assets_.loadTexture("enemy_interceptor", "textures/enemies/enemy_interceptor.png");
+    enemyRobotFishTexture_ = &assets_.loadTexture("enemy_robot_fish", "textures/enemies/enemy_robot_fish_sheet.png");
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
+    enemyRobotFishLaserTexture_ = &assets_.loadTexture("enemy_robot_fish_laser", "textures/projectiles/enemy_robot_fish_laser.png");
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
@@ -125,6 +132,8 @@ void Game::processEvents() {
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             if (keyPressed->code == sf::Keyboard::Key::Escape) {
                 window_.close();
+            } else if (keyPressed->code == sf::Keyboard::Key::P) {
+                togglePause();
             } else if (keyPressed->code == sf::Keyboard::Key::Num1) {
                 presentationScaleMode_ = PresentationScaleMode::Native;
                 updatePresentationSprite();
@@ -136,11 +145,24 @@ void Game::processEvents() {
                 fireLaserNormal();
             }
         }
+
+        if (const auto* buttonPressed = event->getIf<sf::Event::JoystickButtonPressed>()) {
+            if (joystickPauseButton(buttonPressed->button)) {
+                togglePause();
+            }
+        }
+    }
+}
+
+void Game::togglePause() {
+    paused_ = !paused_;
+    if (paused_) {
+        muzzleFlashTime_ = sf::Time::Zero;
     }
 }
 
 void Game::fireLaserNormal() {
-    if (fireCooldown_ > sf::Time::Zero || !player_) {
+    if (paused_ || fireCooldown_ > sf::Time::Zero || !player_) {
         return;
     }
 
@@ -156,6 +178,8 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
         texture = enemyTurretPodTexture_;
     } else if (spawn.enemyId == "enemy_interceptor") {
         texture = enemyInterceptorTexture_;
+    } else if (spawn.enemyId == "enemy_robot_fish") {
+        texture = enemyRobotFishTexture_;
     } else if (spawn.enemyId != "enemy_drone") {
         throw std::runtime_error("Enemigo no configurado: " + spawn.enemyId);
     }
@@ -196,12 +220,17 @@ void Game::spawnExplosion(const Enemy& enemy) {
 }
 
 void Game::update(sf::Time deltaTime) {
-    stageClock_ += deltaTime;
     const auto frameSeconds = deltaTime.asSeconds();
     if (frameSeconds > 0.f) {
         const auto instantFps = 1.f / frameSeconds;
         smoothedFps_ = smoothedFps_ == 0.f ? instantFps : smoothedFps_ * 0.90f + instantFps * 0.10f;
     }
+
+    if (paused_) {
+        return;
+    }
+
+    stageClock_ += deltaTime;
 
     if (fireCooldown_ > sf::Time::Zero) {
         fireCooldown_ -= deltaTime;
@@ -259,6 +288,10 @@ void Game::update(sf::Time deltaTime) {
         bullet.update(deltaTime);
     }
 
+    for (auto& laser : enemyLasers_) {
+        laser.update(deltaTime);
+    }
+
     for (auto& explosion : explosions_) {
         explosion.update(deltaTime);
     }
@@ -283,6 +316,17 @@ void Game::update(sf::Time deltaTime) {
             }
         ),
         enemyBullets_.end()
+    );
+
+    enemyLasers_.erase(
+        std::remove_if(
+            enemyLasers_.begin(),
+            enemyLasers_.end(),
+            [](const EnemyLaser& laser) {
+                return !laser.isAlive();
+            }
+        ),
+        enemyLasers_.end()
     );
 
     backgroundElements_.erase(
@@ -328,6 +372,24 @@ void Game::updateEnemyShooting() {
 
     for (auto& enemy : enemies_) {
         if (!enemy.shouldFire()) {
+            continue;
+        }
+
+        if (bulletPatternSystem_.patternType(enemy.patternId()) == "continuous_laser") {
+            const auto origin = enemy.bulletSpawnPosition();
+            const auto length = std::max(0.f, static_cast<float>(LogicalHeight) - origin.y);
+            const auto duration = sf::seconds(bulletPatternSystem_.laserDuration(enemy.patternId()));
+            const auto* laserTexture = laserTextureForPattern(enemy.patternId());
+            if (length > 0.f && laserTexture) {
+                enemyLasers_.emplace_back(
+                    origin,
+                    length,
+                    duration,
+                    *laserTexture
+                );
+                enemy.startFiringVisual(duration);
+            }
+            enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
             continue;
         }
 
@@ -380,6 +442,13 @@ void Game::updateCollisions() {
             ++bulletIt;
         }
     }
+
+    for (auto& laser : enemyLasers_) {
+        if (laser.canHitPlayer() && intersects(laser.hitbox(), player_->hitbox())) {
+            player_->takeDamage(1);
+            laser.markPlayerHit();
+        }
+    }
 }
 
 void Game::render() {
@@ -400,14 +469,42 @@ void Game::render() {
     for (const auto& bullet : enemyBullets_) {
         bullet.render(logicalTarget_);
     }
+    for (const auto& laser : enemyLasers_) {
+        laser.render(logicalTarget_);
+    }
     renderMuzzleFlash(logicalTarget_);
     player_->render(logicalTarget_);
     logicalTarget_.display();
 
     window_.clear(sf::Color::Black);
     window_.draw(presentationSprite_);
+    renderPauseOverlay();
     renderDebugHud();
     window_.display();
+}
+
+void Game::renderPauseOverlay() {
+    if (!paused_) {
+        return;
+    }
+
+    auto pauseText = sf::Text(debugFont_);
+    pauseText.setString("PAUSE");
+    pauseText.setCharacterSize(36);
+    pauseText.setFillColor(sf::Color(235, 245, 255));
+    pauseText.setOutlineColor(sf::Color(8, 12, 20));
+    pauseText.setOutlineThickness(2.f);
+
+    const auto bounds = pauseText.getLocalBounds();
+    pauseText.setOrigin({
+        bounds.position.x + bounds.size.x * 0.5f,
+        bounds.position.y + bounds.size.y * 0.5f
+    });
+    pauseText.setPosition({
+        static_cast<float>(window_.getSize().x) * 0.5f,
+        static_cast<float>(window_.getSize().y) * 0.5f
+    });
+    window_.draw(pauseText);
 }
 
 void Game::renderDebugHud() {
@@ -451,6 +548,14 @@ void Game::renderMuzzleFlash(sf::RenderTarget& target) const {
 const sf::Texture* Game::bulletTextureForPattern(const std::string& patternId) const {
     if (bulletPatternSystem_.bulletId(patternId) == "enemy_orb_purple") {
         return enemyOrbPurpleTexture_;
+    }
+
+    return nullptr;
+}
+
+const sf::Texture* Game::laserTextureForPattern(const std::string& patternId) const {
+    if (bulletPatternSystem_.laserId(patternId) == "enemy_robot_fish_laser") {
+        return enemyRobotFishLaserTexture_;
     }
 
     return nullptr;

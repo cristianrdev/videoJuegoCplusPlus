@@ -20,6 +20,7 @@ public:
     bool isAlive() const;
     bool shouldFire() const;
     void resetFireTimer(float intervalSeconds);
+    void startFiringVisual(sf::Time duration);
     sf::Vector2f bulletSpawnPosition() const;
     sf::Vector2f position() const;
     sf::Vector2f startPosition() const;
@@ -33,9 +34,11 @@ private:
     sf::Vector2f startPosition_;
     sf::Vector2f position_;
     sf::Vector2f size_{24.f, 24.f};
+    sf::Vector2f visualSize_{24.f, 24.f};
     int health_{3};
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
+    sf::Time firingVisualTime_{sf::Time::Zero};
     std::string enemyId_;
     std::string patternId_;
     std::string movementId_;

@@ -16,6 +16,7 @@ add_executable(videoJuegoCplusPlus
     src/LaserNormal.cpp
     src/Enemy.cpp
     src/EnemyBullet.cpp
+    src/EnemyLaser.cpp
     src/BackgroundElement.cpp
     src/BackgroundElementDirector.cpp
     src/BulletPatternSystem.cpp

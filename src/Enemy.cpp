@@ -11,20 +11,46 @@ Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enem
     , patternId_(std::move(patternId))
     , movementId_(std::move(movementId))
     , sprite_(texture) {
-    const auto textureSize = texture.getSize();
+    if (enemyId_ == "enemy_robot_fish") {
+        size_ = {82.f, 252.f};
+        visualSize_ = {120.f, 300.f};
+        health_ = 80;
+        sprite_.setTextureRect({
+            {0, 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
+    } else {
+        const auto textureSize = texture.getSize();
+        visualSize_ = {
+            static_cast<float>(textureSize.x),
+            static_cast<float>(textureSize.y)
+        };
+    }
+
     sprite_.setOrigin({
-        static_cast<float>(textureSize.x) * 0.5f,
-        static_cast<float>(textureSize.y) * 0.5f
+        visualSize_.x * 0.5f,
+        visualSize_.y * 0.5f
     });
 }
 
 void Enemy::update(sf::Time deltaTime) {
     elapsed_ += deltaTime;
     fireTimer_ -= deltaTime;
+    firingVisualTime_ -= deltaTime;
+    if (firingVisualTime_ < sf::Time::Zero) {
+        firingVisualTime_ = sf::Time::Zero;
+    }
 }
 
 void Enemy::render(sf::RenderTarget& target) const {
     auto pixelSnappedSprite = sprite_;
+    if (enemyId_ == "enemy_robot_fish") {
+        const auto frameIndex = firingVisualTime_ > sf::Time::Zero ? 1 : 0;
+        pixelSnappedSprite.setTextureRect({
+            {frameIndex * static_cast<int>(visualSize_.x), 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
+    }
     pixelSnappedSprite.setPosition({std::round(position_.x), std::round(position_.y)});
     target.draw(pixelSnappedSprite);
 }
@@ -38,7 +64,7 @@ void Enemy::setPosition(sf::Vector2f position) {
 }
 
 bool Enemy::isAlive() const {
-    return health_ > 0 && position_.y < 344.f;
+    return health_ > 0 && position_.y - visualSize_.y * 0.5f < 344.f;
 }
 
 bool Enemy::shouldFire() const {
@@ -49,7 +75,15 @@ void Enemy::resetFireTimer(float intervalSeconds) {
     fireTimer_ = sf::seconds(intervalSeconds);
 }
 
+void Enemy::startFiringVisual(sf::Time duration) {
+    firingVisualTime_ = duration;
+}
+
 sf::Vector2f Enemy::bulletSpawnPosition() const {
+    if (enemyId_ == "enemy_robot_fish") {
+        return {position_.x, position_.y + 132.f};
+    }
+
     return {position_.x, position_.y + size_.y * 0.5f};
 }
 

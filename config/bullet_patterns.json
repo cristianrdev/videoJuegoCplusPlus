@@ -32,6 +32,13 @@
       "aimed": true,
       "angle_offsets": [0.0],
       "bullet": "enemy_orb_purple"
+    },
+    {
+      "id": "enemy_robot_fish_mouth_laser",
+      "type": "continuous_laser",
+      "fire_interval": 1.0,
+      "laser_duration": 0.42,
+      "laser": "enemy_robot_fish_laser"
     }
   ]
 }
