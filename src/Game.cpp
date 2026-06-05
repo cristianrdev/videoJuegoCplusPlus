@@ -81,6 +81,7 @@ Game::Game()
     debugText_.setFillColor(sf::Color(190, 220, 230));
 
     assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_sheet_ai_transparent.png");
+    assets_.loadTexture("player_thruster_flame", "textures/player/player_thruster_flame.png");
     laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", "textures/player/player_laser_normal.png");
     muzzleFlashTexture_ = &assets_.loadTexture("player_laser_muzzle_flash", "textures/player/player_laser_muzzle_flash.png");
     enemyDroneTexture_ = &assets_.loadTexture("enemy_drone", "textures/enemies/enemy_drone.png");

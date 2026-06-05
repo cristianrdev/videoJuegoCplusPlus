@@ -57,6 +57,7 @@ Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
     : logicalSize_(logicalSize)
     , position_({logicalSize.x * 0.5f, logicalSize.y - 40.f})
     , spriteSheetTexture_(&assets.getTexture("player_ship_sheet"))
+    , thrusterTexture_(&assets.getTexture("player_thruster_flame"))
     , sprite_(*spriteSheetTexture_) {
     const auto textureSize = spriteSheetTexture_->getSize();
     frameSize_ = {
@@ -113,12 +114,17 @@ void Player::update(sf::Time deltaTime) {
         direction /= length;
     }
 
+    verticalThrust_ = direction.y;
+    thrusterAnimationElapsed_ += deltaTime;
+
     position_ += direction * speed_ * deltaTime.asSeconds();
     clampToLogicalArea();
     sprite_.setPosition(position_);
 }
 
 void Player::render(sf::RenderTarget& target) const {
+    renderThrusters(target);
+
     auto pixelSnappedSprite = sprite_;
     pixelSnappedSprite.setPosition({
         std::round(position_.x),
@@ -183,4 +189,42 @@ void Player::updateSpriteFrame() {
         {frameIndex * frameSize_.x, 0},
         frameSize_
     });
+}
+
+void Player::renderThrusters(sf::RenderTarget& target) const {
+    if (!thrusterTexture_) {
+        return;
+    }
+
+    const auto frameIndex = static_cast<int>(thrusterAnimationElapsed_.asSeconds() / 0.06f) % 3;
+    auto flameHeight = 9;
+
+    if (verticalThrust_ < -0.1f) {
+        flameHeight = 12;
+    } else if (verticalThrust_ > 0.1f) {
+        flameHeight = 6;
+    }
+
+    auto flame = sf::Sprite(*thrusterTexture_);
+    flame.setTextureRect({
+        {frameIndex * thrusterFrameSize_.x, 0},
+        {thrusterFrameSize_.x, flameHeight}
+    });
+    flame.setOrigin({
+        static_cast<float>(thrusterFrameSize_.x) * 0.5f,
+        0.f
+    });
+
+    const auto basePosition = sf::Vector2f{
+        std::round(position_.x),
+        std::round(position_.y)
+    };
+
+    for (const auto offsetX : {-3.f, 3.f}) {
+        flame.setPosition({
+            basePosition.x + offsetX,
+            basePosition.y + 13.f
+        });
+        target.draw(flame);
+    }
 }

@@ -32,15 +32,20 @@ private:
     void setVisualState(VisualState state);
     void clampToLogicalArea();
     void updateSpriteFrame();
+    void renderThrusters(sf::RenderTarget& target) const;
 
     sf::Vector2f logicalSize_;
     sf::Vector2f position_;
     sf::Vector2f hitboxSize_{6.f, 6.f};
     sf::Vector2i frameSize_{32, 32};
+    sf::Vector2i thrusterFrameSize_{8, 12};
     int health_{3};
     float speed_{120.f};
+    float verticalThrust_{0.f};
+    sf::Time thrusterAnimationElapsed_{sf::Time::Zero};
 
     const sf::Texture* spriteSheetTexture_{nullptr};
+    const sf::Texture* thrusterTexture_{nullptr};
     VisualState visualState_{VisualState::Center};
     sf::Sprite sprite_;
 };
