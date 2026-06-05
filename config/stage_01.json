@@ -1,21 +1,46 @@
 {
   "stage": "stage_01",
   "spawns": [
+
     {
-      "time": 0.5,
-      "enemy": "enemy_drone",
-      "x": 54,
-      "y": -24,
-      "pattern": "enemy_drone_aimed_single",
-      "movement": "slow_drop"
-    },
-    {
-      "time": 8.0,
+      "time": 6.0,
       "enemy": "enemy_turret_pod",
       "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
-      "movement": "cosine_sweep"
+      "movement": "drop_then_diagonal_right"
+    },
+    {
+      "time": 6.35,
+      "enemy": "enemy_turret_pod",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "drop_then_diagonal_right"
+    },
+    {
+      "time": 6.7,
+      "enemy": "enemy_turret_pod",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "drop_then_diagonal_right"
+    },
+    {
+      "time": 7.05,
+      "enemy": "enemy_turret_pod",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "drop_then_diagonal_right"
+    },
+    {
+      "time": 7.4,
+      "enemy": "enemy_turret_pod",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "drop_then_diagonal_right"
     },
     {
       "time": 10.0,
@@ -24,6 +49,14 @@
       "y": -24,
       "pattern": "enemy_interceptor_wave_5",
       "movement": "edge_patrol"
+    },
+    {
+      "time": 20.5,
+      "enemy": "enemy_drone",
+      "x": 54,
+      "y": -24,
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "slow_drop"
     }
   ]
 }

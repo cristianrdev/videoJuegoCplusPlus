@@ -86,6 +86,9 @@ Game::Game()
     enemyDroneTexture_ = &assets_.loadTexture("enemy_drone", "textures/enemies/enemy_drone.png");
     enemyTurretPodTexture_ = &assets_.loadTexture("enemy_turret_pod", "textures/enemies/enemy_turret_pod.png");
     enemyInterceptorTexture_ = &assets_.loadTexture("enemy_interceptor", "textures/enemies/enemy_interceptor.png");
+    explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
+    explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
+    explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01.json");
@@ -154,9 +157,22 @@ void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
     enemies_.emplace_back(
         sf::Vector2f{spawn.x, spawn.y},
         *texture,
+        spawn.enemyId,
         spawn.patternId,
         spawn.movementId
     );
+}
+
+void Game::spawnExplosion(const Enemy& enemy) {
+    auto texture = explosionDroneTexture_;
+
+    if (enemy.enemyId() == "enemy_turret_pod") {
+        texture = explosionTurretPodTexture_;
+    } else if (enemy.enemyId() == "enemy_interceptor") {
+        texture = explosionInterceptorTexture_;
+    }
+
+    explosions_.emplace_back(enemy.position(), *texture);
 }
 
 void Game::update(sf::Time deltaTime) {
@@ -214,6 +230,10 @@ void Game::update(sf::Time deltaTime) {
         bullet.update(deltaTime);
     }
 
+    for (auto& explosion : explosions_) {
+        explosion.update(deltaTime);
+    }
+
     playerLasers_.erase(
         std::remove_if(
             playerLasers_.begin(),
@@ -248,6 +268,17 @@ void Game::update(sf::Time deltaTime) {
         ),
         enemies_.end()
     );
+
+    explosions_.erase(
+        std::remove_if(
+            explosions_.begin(),
+            explosions_.end(),
+            [](const Explosion& explosion) {
+                return explosion.isFinished();
+            }
+        ),
+        explosions_.end()
+    );
 }
 
 void Game::updateEnemyShooting() {
@@ -275,8 +306,15 @@ void Game::updateCollisions() {
         auto hitEnemy = false;
 
         for (auto& enemy : enemies_) {
+            if (!enemy.isAlive()) {
+                continue;
+            }
+
             if (intersects(laserIt->hitbox(), enemy.hitbox())) {
                 enemy.takeDamage(LaserNormal::Damage);
+                if (!enemy.isAlive()) {
+                    spawnExplosion(enemy);
+                }
                 hitEnemy = true;
                 break;
             }
@@ -307,6 +345,9 @@ void Game::render() {
     logicalTarget_.clear(sf::Color(8, 12, 20));
     for (const auto& enemy : enemies_) {
         enemy.render(logicalTarget_);
+    }
+    for (const auto& explosion : explosions_) {
+        explosion.render(logicalTarget_);
     }
     for (const auto& laser : playerLasers_) {
         laser.render(logicalTarget_);

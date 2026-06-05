@@ -10,7 +10,7 @@
 
 class Enemy {
 public:
-    Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId, std::string movementId);
+    Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enemyId, std::string patternId, std::string movementId);
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
@@ -25,6 +25,7 @@ public:
     sf::Vector2f startPosition() const;
     sf::Time elapsed() const;
     sf::FloatRect hitbox() const;
+    const std::string& enemyId() const;
     const std::string& patternId() const;
     const std::string& movementId() const;
 
@@ -35,6 +36,7 @@ private:
     int health_{3};
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
+    std::string enemyId_;
     std::string patternId_;
     std::string movementId_;
     sf::Sprite sprite_;

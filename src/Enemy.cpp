@@ -4,9 +4,10 @@
 #include <cmath>
 #include <utility>
 
-Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string patternId, std::string movementId)
+Enemy::Enemy(sf::Vector2f position, const sf::Texture& texture, std::string enemyId, std::string patternId, std::string movementId)
     : startPosition_(position)
     , position_(position)
+    , enemyId_(std::move(enemyId))
     , patternId_(std::move(patternId))
     , movementId_(std::move(movementId))
     , sprite_(texture) {
@@ -69,6 +70,10 @@ sf::FloatRect Enemy::hitbox() const {
         {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
         size_
     };
+}
+
+const std::string& Enemy::enemyId() const {
+    return enemyId_;
 }
 
 const std::string& Enemy::patternId() const {

@@ -10,13 +10,11 @@
     },
     {
       "id": "enemy_turret_spread_3",
-      "type": "radial_burst",
-      "fire_interval": 1.55,
-      "rings": 2,
-      "bullets_per_ring": 12,
-      "speed_start": 34.0,
-      "speed_step": 18.0,
-      "rotation_per_shot": 11.0
+      "type": "spread",
+      "fire_interval": 1.25,
+      "bullet_speed": 70.0,
+      "aimed": true,
+      "angle_offsets": [0.0]
     },
     {
       "id": "enemy_interceptor_wave_5",

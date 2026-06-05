@@ -4,6 +4,7 @@
 #include "BulletPatternSystem.hpp"
 #include "Enemy.hpp"
 #include "EnemyBullet.hpp"
+#include "Explosion.hpp"
 #include "LaserNormal.hpp"
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
@@ -35,6 +36,7 @@ private:
     void processEvents();
     void fireLaserNormal();
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);
+    void spawnExplosion(const Enemy& enemy);
     void update(sf::Time deltaTime);
     void updateEnemyShooting();
     void updateCollisions();
@@ -58,6 +60,7 @@ private:
     std::vector<LaserNormal> playerLasers_;
     std::vector<Enemy> enemies_;
     std::vector<EnemyBullet> enemyBullets_;
+    std::vector<Explosion> explosions_;
     sf::Time fireCooldown_{sf::Time::Zero};
     sf::Time muzzleFlashTime_{sf::Time::Zero};
     const sf::Texture* laserNormalTexture_{nullptr};
@@ -65,6 +68,9 @@ private:
     const sf::Texture* enemyDroneTexture_{nullptr};
     const sf::Texture* enemyTurretPodTexture_{nullptr};
     const sf::Texture* enemyInterceptorTexture_{nullptr};
+    const sf::Texture* explosionDroneTexture_{nullptr};
+    const sf::Texture* explosionTurretPodTexture_{nullptr};
+    const sf::Texture* explosionInterceptorTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
