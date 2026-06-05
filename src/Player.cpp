@@ -3,6 +3,7 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include <algorithm>
+#include <cmath>
 
 Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
     : logicalSize_(logicalSize)
@@ -67,7 +68,12 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::render(sf::RenderTarget& target) const {
-    target.draw(sprite_);
+    auto pixelSnappedSprite = sprite_;
+    pixelSnappedSprite.setPosition({
+        std::round(position_.x),
+        std::round(position_.y)
+    });
+    target.draw(pixelSnappedSprite);
 }
 
 sf::FloatRect Player::hitbox() const {
