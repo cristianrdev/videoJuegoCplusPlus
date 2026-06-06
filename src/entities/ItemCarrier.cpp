@@ -12,8 +12,8 @@ ItemCarrier::ItemCarrier(sf::Vector2f position, const sf::Texture& texture, cons
     , sprite_(texture) {
     const auto size = texture.getSize();
     sprite_.setOrigin({
-        static_cast<float>(size.x) * 0.5f,
-        static_cast<float>(size.y) * 0.5f
+        static_cast<float>(size.x / 2u),
+        static_cast<float>(size.y / 2u)
     });
 }
 

@@ -1,0 +1,5 @@
+Remove-Item -Force .\build\videoJuegoCplusPlus.exe -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\build\assets -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\build\config -ErrorAction SilentlyContinue
+cmake --build build
+.\build\videoJuegoCplusPlus.exe
