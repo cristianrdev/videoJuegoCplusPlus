@@ -109,6 +109,14 @@
       "y": -24,
       "pattern": "enemy_metal_squid_flower_orbs",
       "movement": "metal_squid_cosine_medium"
+    },
+    {
+      "time": 29.0,
+      "enemy": "enemy_rock_turret",
+      "x": 58,
+      "y": -62,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "floating_rock_turret_drop"
     }
   ]
 }

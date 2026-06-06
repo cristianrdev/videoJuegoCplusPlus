@@ -24,6 +24,11 @@
       "id": "enemy_metal_squid",
       "texture": "textures/enemies/enemy_metal_squid.png",
       "health": 6
+    },
+    {
+      "id": "enemy_rock_turret",
+      "texture": "textures/enemies/enemy_rock_turret.png",
+      "health": 5
     }
   ]
 }
