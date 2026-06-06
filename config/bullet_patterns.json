@@ -58,7 +58,8 @@
       "fire_interval": 0.48,
       "bullet_speed": 136.0,
       "aimed": true,
-      "angle_offsets": [0.0]
+      "angle_offsets": [0.0],
+      "bullet": "enemy_small_red_bullet"
     }
   ]
 }
