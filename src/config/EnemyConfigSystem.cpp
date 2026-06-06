@@ -36,6 +36,16 @@ int matchInt(const std::string& text, const std::string& field, int fallback) {
 
     return std::stoi(match[1].str());
 }
+
+bool matchBool(const std::string& text, const std::string& field, bool fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str() == "true";
+}
 }
 
 void EnemyConfigSystem::loadFromFile(const std::string& path) {
@@ -51,6 +61,8 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
         config.id = matchString(object, "id");
         config.texturePath = matchString(object, "texture");
         config.health = matchInt(object, "health", 3);
+        config.blinkEnabled = matchBool(object, "blink_enabled", false);
+        config.blinkHealthThreshold = matchInt(object, "blink_health_threshold", 0);
         configs_[config.id] = std::move(config);
     }
 
@@ -66,6 +78,24 @@ int EnemyConfigSystem::healthFor(const std::string& enemyId) const {
     }
 
     return it->second.health;
+}
+
+bool EnemyConfigSystem::blinkEnabledFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return false;
+    }
+
+    return it->second.blinkEnabled;
+}
+
+int EnemyConfigSystem::blinkHealthThresholdFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return 0;
+    }
+
+    return it->second.blinkHealthThreshold;
 }
 
 const std::string& EnemyConfigSystem::texturePathFor(const std::string& enemyId) const {

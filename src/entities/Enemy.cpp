@@ -1,8 +1,40 @@
 #include "Enemy.hpp"
 
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/Shader.hpp>
+
 #include <algorithm>
 #include <cmath>
 #include <utility>
+
+namespace {
+sf::Shader* negativeShader() {
+    static auto shader = sf::Shader{};
+    static auto initialized = false;
+    static auto available = false;
+
+    if (!initialized) {
+        initialized = true;
+        if (sf::Shader::isAvailable()) {
+            available = shader.loadFromMemory(
+                "uniform sampler2D texture;\n"
+                "void main()\n"
+                "{\n"
+                "    vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);\n"
+                "    gl_FragColor = vec4(1.0 - pixel.rgb, pixel.a) * gl_Color;\n"
+                "}\n",
+                sf::Shader::Type::Fragment
+            );
+
+            if (available) {
+                shader.setUniform("texture", sf::Shader::CurrentTexture);
+            }
+        }
+    }
+
+    return available ? &shader : nullptr;
+}
+}
 
 Enemy::Enemy(
     sf::Vector2f position,
@@ -10,11 +42,15 @@ Enemy::Enemy(
     std::string enemyId,
     std::string patternId,
     std::string movementId,
-    int health
+    int health,
+    bool blinkEnabled,
+    int blinkHealthThreshold
 )
     : startPosition_(position)
     , position_(position)
     , health_(health)
+    , blinkEnabled_(blinkEnabled)
+    , blinkHealthThreshold_(blinkHealthThreshold)
     , enemyId_(std::move(enemyId))
     , patternId_(std::move(patternId))
     , movementId_(std::move(movementId))
@@ -59,6 +95,16 @@ void Enemy::render(sf::RenderTarget& target) const {
         });
     }
     pixelSnappedSprite.setPosition({std::round(position_.x), std::round(position_.y)});
+
+    if (shouldRenderNegative()) {
+        if (auto* shader = negativeShader()) {
+            auto states = sf::RenderStates{};
+            states.shader = shader;
+            target.draw(pixelSnappedSprite, states);
+            return;
+        }
+    }
+
     target.draw(pixelSnappedSprite);
 }
 
@@ -84,6 +130,15 @@ void Enemy::resetFireTimer(float intervalSeconds) {
 
 void Enemy::startFiringVisual(sf::Time duration) {
     firingVisualTime_ = duration;
+}
+
+bool Enemy::shouldRenderNegative() const {
+    if (!blinkEnabled_ || blinkHealthThreshold_ <= 0 || health_ >= blinkHealthThreshold_) {
+        return false;
+    }
+
+    const auto blinkFrame = static_cast<int>(elapsed_.asSeconds() / 0.06f);
+    return blinkFrame % 2 == 0;
 }
 
 sf::Vector2f Enemy::bulletSpawnPosition() const {

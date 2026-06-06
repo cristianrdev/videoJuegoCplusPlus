@@ -16,7 +16,9 @@ public:
         std::string enemyId,
         std::string patternId,
         std::string movementId,
-        int health
+        int health,
+        bool blinkEnabled,
+        int blinkHealthThreshold
     );
 
     void update(sf::Time deltaTime);
@@ -28,6 +30,7 @@ public:
     bool shouldFire() const;
     void resetFireTimer(float intervalSeconds);
     void startFiringVisual(sf::Time duration);
+    bool shouldRenderNegative() const;
     sf::Vector2f bulletSpawnPosition() const;
     sf::Vector2f position() const;
     sf::Vector2f startPosition() const;
@@ -46,6 +49,8 @@ private:
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
     sf::Time firingVisualTime_{sf::Time::Zero};
+    bool blinkEnabled_{false};
+    int blinkHealthThreshold_{0};
     std::string enemyId_;
     std::string patternId_;
     std::string movementId_;

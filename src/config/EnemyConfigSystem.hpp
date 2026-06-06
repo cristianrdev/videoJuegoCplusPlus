@@ -8,6 +8,8 @@ class EnemyConfigSystem {
 public:
     void loadFromFile(const std::string& path);
     int healthFor(const std::string& enemyId) const;
+    bool blinkEnabledFor(const std::string& enemyId) const;
+    int blinkHealthThresholdFor(const std::string& enemyId) const;
     const std::string& texturePathFor(const std::string& enemyId) const;
     std::vector<std::string> enemyIds() const;
 
@@ -16,6 +18,8 @@ private:
         std::string id;
         std::string texturePath;
         int health{3};
+        bool blinkEnabled{false};
+        int blinkHealthThreshold{0};
     };
 
     std::unordered_map<std::string, EnemyConfig> configs_;

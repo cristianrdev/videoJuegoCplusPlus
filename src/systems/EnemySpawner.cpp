@@ -15,6 +15,8 @@ Enemy EnemySpawner::spawn(const StageDirector::SpawnEvent& spawn) const {
         spawn.enemyId,
         spawn.patternId,
         spawn.movementId,
-        enemyConfigSystem_.healthFor(spawn.enemyId)
+        enemyConfigSystem_.healthFor(spawn.enemyId),
+        enemyConfigSystem_.blinkEnabledFor(spawn.enemyId),
+        enemyConfigSystem_.blinkHealthThresholdFor(spawn.enemyId)
     );
 }
