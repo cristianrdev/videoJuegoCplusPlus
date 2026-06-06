@@ -27,6 +27,7 @@ private:
     void togglePause();
     void applyFramePacingMode(FramePacingMode mode);
     const char* framePacingLabel() const;
+    unsigned int largestFittingIntegerScale() const;
     void update(sf::Time deltaTime);
     void render();
     void renderPauseOverlay();

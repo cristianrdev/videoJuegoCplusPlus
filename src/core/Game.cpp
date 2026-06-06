@@ -76,6 +76,7 @@ Game::Game()
     debugText_.setCharacterSize(16);
     debugText_.setFillColor(sf::Color(190, 220, 230));
 
+    presentationIntegerScale_ = largestFittingIntegerScale();
     updatePresentationSprite();
 }
 
@@ -161,6 +162,15 @@ const char* Game::framePacingLabel() const {
     }
 
     return "UNKNOWN";
+}
+
+unsigned int Game::largestFittingIntegerScale() const {
+    const auto windowSize = window_.getSize();
+    const auto scaleX = windowSize.x / LogicalWidth;
+    const auto scaleY = windowSize.y / LogicalHeight;
+    const auto scale = std::min(scaleX, scaleY);
+
+    return std::clamp(scale, 1u, 4u);
 }
 
 void Game::togglePause() {
