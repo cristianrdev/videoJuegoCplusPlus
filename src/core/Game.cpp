@@ -106,10 +106,16 @@ void Game::processEvents() {
             } else if (keyPressed->code == sf::Keyboard::Key::E) {
                 applyFramePacingMode(FramePacingMode::Cap120);
             } else if (keyPressed->code == sf::Keyboard::Key::Num1) {
-                presentationScaleMode_ = PresentationScaleMode::Native;
+                presentationIntegerScale_ = 1;
                 updatePresentationSprite();
             } else if (keyPressed->code == sf::Keyboard::Key::Num2) {
-                presentationScaleMode_ = PresentationScaleMode::IntegerFit;
+                presentationIntegerScale_ = 2;
+                updatePresentationSprite();
+            } else if (keyPressed->code == sf::Keyboard::Key::Num3) {
+                presentationIntegerScale_ = 3;
+                updatePresentationSprite();
+            } else if (keyPressed->code == sf::Keyboard::Key::Num4) {
+                presentationIntegerScale_ = 4;
                 updatePresentationSprite();
             } else if (keyPressed->code == sf::Keyboard::Key::Space ||
                        keyPressed->code == sf::Keyboard::Key::Z) {
@@ -257,8 +263,10 @@ void Game::renderDebugHud() {
          << "P pausa\n"
          << "Espacio disparo\n"
          << "Z disparo\n"
-         << "1 nativo\n"
-         << "2 entero\n"
+         << "1 escala 1x\n"
+         << "2 escala 2x\n"
+         << "3 escala 3x\n"
+         << "4 escala 4x\n"
          << "Q vsync\n"
          << "W sin limite\n"
          << "E limite 120\n"
@@ -274,13 +282,7 @@ void Game::renderDebugHud() {
 
 void Game::updatePresentationSprite() {
     const auto windowSize = window_.getSize();
-    const auto scaleX = static_cast<float>(windowSize.x) / static_cast<float>(LogicalWidth);
-    const auto scaleY = static_cast<float>(windowSize.y) / static_cast<float>(LogicalHeight);
-    auto integerScale = 1.f;
-
-    if (presentationScaleMode_ == PresentationScaleMode::IntegerFit) {
-        integerScale = std::max(1.f, std::floor(std::min(scaleX, scaleY)));
-    }
+    const auto integerScale = static_cast<float>(presentationIntegerScale_);
 
     presentationSprite_.setTexture(logicalTarget_.getTexture(), true);
     presentationSprite_.setScale({integerScale, integerScale});

@@ -17,11 +17,6 @@ public:
     void run();
 
 private:
-    enum class PresentationScaleMode {
-        Native,
-        IntegerFit
-    };
-
     enum class FramePacingMode {
         VSync,
         Uncapped,
@@ -48,7 +43,7 @@ private:
     sf::Clock clock_;
     sf::Font debugFont_;
     sf::Text debugText_;
-    PresentationScaleMode presentationScaleMode_{PresentationScaleMode::IntegerFit};
+    unsigned int presentationIntegerScale_{1};
     FramePacingMode framePacingMode_{FramePacingMode::VSync};
     bool paused_{false};
     float smoothedFps_{0.f};
