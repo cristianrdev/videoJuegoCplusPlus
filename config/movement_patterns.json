@@ -31,8 +31,15 @@
       "id": "drop_then_diagonal_right",
       "type": "waypoints",
       "point_times": [0.0, 2.8, 4.6],
-      "point_x": [120.0, 120.0, 260.0],
-      "point_y": [-24.0, 170.0, 336.0]
+      "point_x": [80.0, 80.0, 260.0],
+      "point_y": [-24.0, 170.0, 340.0]
+    },
+    {
+      "id": "drop_then_diagonal_left",
+      "type": "waypoints",
+      "point_times": [0.0, 2.8, 4.6],
+      "point_x": [150.0, 150.0, 80.0],
+      "point_y": [-24.0, 170.0, 340.0]
     },
     {
       "id": "robot_fish_slow_drop",
