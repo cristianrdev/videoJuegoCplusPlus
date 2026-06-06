@@ -14,7 +14,8 @@
       "fire_interval": 0.9,
       "bullet_speed": 120.0,
       "aimed": true,
-      "angle_offsets": [0.0]
+      "angle_offsets": [0.0],
+      "bullet": "enemy_small_red_bullet"
     },
     {
       "id": "enemy_interceptor_wave_5",

@@ -23,6 +23,7 @@ add_executable(videoJuegoCplusPlus
     src/BulletPatternSystem.cpp
     src/StageDirector.cpp
     src/MovementPatternSystem.cpp
+    src/PlayerConfigSystem.cpp
     src/ProjectileConfigSystem.cpp
     src/Explosion.cpp
     src/Starfield.cpp

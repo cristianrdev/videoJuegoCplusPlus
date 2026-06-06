@@ -53,9 +53,13 @@ sf::Vector2f joystickDirection() {
 }
 }
 
-Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
+Player::Player(AssetManager& assets, sf::Vector2f logicalSize, const PlayerConfig& config)
     : logicalSize_(logicalSize)
     , position_({logicalSize.x * 0.5f, logicalSize.y - 40.f})
+    , config_(config)
+    , hitboxSize_({config_.hitboxWidth, config_.hitboxHeight})
+    , thrusterFrameSize_({config_.thrusterFrameWidth, config_.thrusterFrameHeight})
+    , health_(config_.health)
     , spriteSheetTexture_(&assets.getTexture("player_ship_sheet"))
     , thrusterTexture_(&assets.getTexture("player_thruster_flame"))
     , sprite_(*spriteSheetTexture_) {
@@ -70,8 +74,8 @@ Player::Player(AssetManager& assets, sf::Vector2f logicalSize)
         static_cast<float>(frameSize_.y) * 0.5f
     });
     sprite_.setScale({
-        32.f / static_cast<float>(frameSize_.x),
-        32.f / static_cast<float>(frameSize_.y)
+        config_.spriteRenderWidth / static_cast<float>(frameSize_.x),
+        config_.spriteRenderHeight / static_cast<float>(frameSize_.y)
     });
     sprite_.setPosition(position_);
 }
@@ -117,7 +121,7 @@ void Player::update(sf::Time deltaTime) {
     verticalThrust_ = direction.y;
     thrusterAnimationElapsed_ += deltaTime;
 
-    position_ += direction * speed_ * deltaTime.asSeconds();
+    position_ += direction * config_.speed * deltaTime.asSeconds();
     clampToLogicalArea();
     sprite_.setPosition(position_);
 }
@@ -145,7 +149,7 @@ sf::Vector2f Player::position() const {
 }
 
 sf::Vector2f Player::laserSpawnPosition() const {
-    return {position_.x, position_.y - 18.f};
+    return {position_.x, position_.y + config_.laserSpawnOffsetY};
 }
 
 int Player::health() const {
@@ -166,9 +170,8 @@ void Player::setVisualState(VisualState state) {
 }
 
 void Player::clampToLogicalArea() {
-    constexpr auto halfSprite = 16.f;
-    position_.x = std::clamp(position_.x, halfSprite, logicalSize_.x - halfSprite);
-    position_.y = std::clamp(position_.y, halfSprite, logicalSize_.y - halfSprite);
+    position_.x = std::clamp(position_.x, config_.clampHalfSize, logicalSize_.x - config_.clampHalfSize);
+    position_.y = std::clamp(position_.y, config_.clampHalfSize, logicalSize_.y - config_.clampHalfSize);
 }
 
 void Player::updateSpriteFrame() {
@@ -196,13 +199,13 @@ void Player::renderThrusters(sf::RenderTarget& target) const {
         return;
     }
 
-    const auto frameIndex = static_cast<int>(thrusterAnimationElapsed_.asSeconds() / 0.06f) % 3;
-    auto flameHeight = 9;
+    const auto frameIndex = static_cast<int>(thrusterAnimationElapsed_.asSeconds() / config_.thrusterAnimationSeconds) % 3;
+    auto flameHeight = config_.thrusterIdleHeight;
 
     if (verticalThrust_ < -0.1f) {
-        flameHeight = 12;
+        flameHeight = config_.thrusterForwardHeight;
     } else if (verticalThrust_ > 0.1f) {
-        flameHeight = 6;
+        flameHeight = config_.thrusterBackwardHeight;
     }
 
     auto flame = sf::Sprite(*thrusterTexture_);
@@ -220,10 +223,10 @@ void Player::renderThrusters(sf::RenderTarget& target) const {
         std::round(position_.y)
     };
 
-    for (const auto offsetX : {-3.f, 3.f}) {
+    for (const auto offsetX : {config_.thrusterLeftOffsetX, config_.thrusterRightOffsetX}) {
         flame.setPosition({
             basePosition.x + offsetX,
-            basePosition.y + 13.f
+            basePosition.y + config_.thrusterOffsetY
         });
         target.draw(flame);
     }

@@ -1,0 +1,29 @@
+{
+  "player": {
+    "ship_texture": "textures/player/player_ship_red_triangle_test.png",
+    "thruster_texture": "textures/player/player_thruster_flame.png",
+    "laser_texture": "textures/player/player_laser_normal.png",
+    "muzzle_flash_texture": "textures/player/player_laser_muzzle_flash.png",
+    "health": 3,
+    "speed": 120.0,
+    "hitbox_width": 6.0,
+    "hitbox_height": 6.0,
+    "sprite_render_width": 32.0,
+    "sprite_render_height": 32.0,
+    "clamp_half_size": 16.0,
+    "laser_spawn_offset_y": -18.0,
+    "fire_cooldown_seconds": 0.08,
+    "muzzle_flash_seconds": 0.06,
+    "laser_speed": 260.0,
+    "laser_damage": 1,
+    "thruster_animation_seconds": 0.06,
+    "thruster_frame_width": 8,
+    "thruster_frame_height": 12,
+    "thruster_idle_height": 9,
+    "thruster_forward_height": 12,
+    "thruster_backward_height": 6,
+    "thruster_left_offset_x": -3.0,
+    "thruster_right_offset_x": 3.0,
+    "thruster_offset_y": 13.0
+  }
+}

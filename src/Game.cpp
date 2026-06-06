@@ -87,10 +87,12 @@ Game::Game()
     debugText_.setCharacterSize(16);
     debugText_.setFillColor(sf::Color(190, 220, 230));
 
-    assets_.loadTexture("player_ship_sheet", "textures/player/player_ship_red_triangle_test.png");
-    assets_.loadTexture("player_thruster_flame", "textures/player/player_thruster_flame.png");
-    laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", "textures/player/player_laser_normal.png");
-    muzzleFlashTexture_ = &assets_.loadTexture("player_laser_muzzle_flash", "textures/player/player_laser_muzzle_flash.png");
+    playerConfigSystem_.loadFromFile("config/player.json");
+    const auto& playerConfig = playerConfigSystem_.config();
+    assets_.loadTexture("player_ship_sheet", playerConfig.shipTexture);
+    assets_.loadTexture("player_thruster_flame", playerConfig.thrusterTexture);
+    laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", playerConfig.laserTexture);
+    muzzleFlashTexture_ = &assets_.loadTexture("player_laser_muzzle_flash", playerConfig.muzzleFlashTexture);
     enemyConfigSystem_.loadFromFile("config/enemies.json");
     for (const auto& enemyId : enemyConfigSystem_.enemyIds()) {
         assets_.loadTexture(enemyId, enemyConfigSystem_.texturePathFor(enemyId));
@@ -110,7 +112,8 @@ Game::Game()
 
     player_ = std::make_unique<Player>(
         assets_,
-        sf::Vector2f{static_cast<float>(LogicalWidth), static_cast<float>(LogicalHeight)}
+        sf::Vector2f{static_cast<float>(LogicalWidth), static_cast<float>(LogicalHeight)},
+        playerConfigSystem_.config()
     );
 
     updatePresentationSprite();
@@ -168,9 +171,15 @@ void Game::fireLaserNormal() {
         return;
     }
 
-    playerLasers_.emplace_back(player_->laserSpawnPosition(), *laserNormalTexture_);
-    fireCooldown_ = sf::seconds(0.12f);
-    muzzleFlashTime_ = sf::seconds(0.06f);
+    const auto& config = playerConfigSystem_.config();
+    playerLasers_.emplace_back(
+        player_->laserSpawnPosition(),
+        *laserNormalTexture_,
+        config.laserSpeed,
+        config.laserDamage
+    );
+    fireCooldown_ = sf::seconds(config.fireCooldownSeconds);
+    muzzleFlashTime_ = sf::seconds(config.muzzleFlashSeconds);
 }
 
 void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
@@ -407,7 +416,7 @@ void Game::updateCollisions() {
             }
 
             if (intersects(laserIt->hitbox(), enemy.hitbox())) {
-                enemy.takeDamage(LaserNormal::Damage);
+                enemy.takeDamage(laserIt->damage());
                 if (!enemy.isAlive()) {
                     spawnExplosion(enemy);
                 }

@@ -13,6 +13,7 @@
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
 #include "ProjectileConfigSystem.hpp"
+#include "PlayerConfigSystem.hpp"
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
 
@@ -87,6 +88,7 @@ private:
     BulletPatternSystem bulletPatternSystem_;
     EnemyConfigSystem enemyConfigSystem_;
     ProjectileConfigSystem projectileConfigSystem_;
+    PlayerConfigSystem playerConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;

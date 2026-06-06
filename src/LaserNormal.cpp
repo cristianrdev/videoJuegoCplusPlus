@@ -2,8 +2,10 @@
 
 #include <cmath>
 
-LaserNormal::LaserNormal(sf::Vector2f position, const sf::Texture& texture)
+LaserNormal::LaserNormal(sf::Vector2f position, const sf::Texture& texture, float speed, int damage)
     : position_(position)
+    , speed_(speed)
+    , damage_(damage)
     , sprite_(texture) {
     const auto textureSize = texture.getSize();
     size_ = {
@@ -35,4 +37,8 @@ sf::FloatRect LaserNormal::hitbox() const {
         {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
         size_
     };
+}
+
+int LaserNormal::damage() const {
+    return damage_;
 }

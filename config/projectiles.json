@@ -7,6 +7,10 @@
     {
       "id": "enemy_robot_fish_laser",
       "texture": "textures/projectiles/enemy_robot_fish_laser.png"
+    },
+    {
+      "id": "enemy_small_red_bullet",
+      "texture": "textures/projectiles/enemy_small_red_bullet.png"
     }
   ]
 }
