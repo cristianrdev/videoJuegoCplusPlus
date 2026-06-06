@@ -7,6 +7,30 @@
 #include <cmath>
 #include <stdexcept>
 
+namespace {
+std::vector<sf::Vector2f> playerProjectileOffsets(int projectileCount) {
+    switch (projectileCount) {
+    case 2:
+        return {{-8.f, 8.f}, {8.f, 8.f}};
+    case 4:
+        return {{-12.f, 9.f}, {-5.f, 2.f}, {5.f, 2.f}, {12.f, 9.f}};
+    case 8:
+        return {
+            {-15.f, 10.f},
+            {-11.f, 4.f},
+            {-7.f, -2.f},
+            {-3.f, -8.f},
+            {3.f, -8.f},
+            {7.f, -2.f},
+            {11.f, 4.f},
+            {15.f, 10.f}
+        };
+    default:
+        return {{0.f, 0.f}};
+    }
+}
+}
+
 PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     : assets_(assets)
     , logicalSize_(logicalSize)
@@ -253,12 +277,9 @@ void PlayState::fireLaserNormal() {
 
     const auto& config = playerConfigSystem_.config();
     const auto spawn = player_->laserSpawnPosition();
-    const auto projectileCount = player_->projectileCount();
-    const auto spacing = 4.f;
-    const auto firstOffset = -spacing * static_cast<float>(projectileCount - 1) * 0.5f;
-    for (auto index = 0; index < projectileCount; ++index) {
+    for (const auto offset : playerProjectileOffsets(player_->projectileCount())) {
         playerLasers_.emplace_back(
-            sf::Vector2f{spawn.x + firstOffset + spacing * static_cast<float>(index), spawn.y},
+            sf::Vector2f{spawn.x + offset.x, spawn.y + offset.y},
             *laserNormalTexture_,
             config.laserSpeed,
             config.laserDamage
