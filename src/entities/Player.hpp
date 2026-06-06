@@ -22,6 +22,8 @@ public:
     sf::Vector2f laserSpawnPosition() const;
     int health() const;
     void takeDamage(int damage);
+    void collectPowerUpP();
+    int projectileCount() const;
 
 private:
     enum class VisualState {
@@ -42,6 +44,7 @@ private:
     sf::Vector2i frameSize_{32, 32};
     sf::Vector2i thrusterFrameSize_{8, 12};
     int health_{0};
+    int projectileCount_{1};
     float verticalThrust_{0.f};
     sf::Time thrusterAnimationElapsed_{sf::Time::Zero};
 

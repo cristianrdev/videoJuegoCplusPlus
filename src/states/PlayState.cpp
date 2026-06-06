@@ -33,6 +33,11 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
         assets_.loadTexture(projectileId, projectileConfigSystem_.texturePathFor(projectileId));
     }
 
+    itemConfigSystem_.loadFromFile("config/items.json");
+    for (const auto& itemId : itemConfigSystem_.textureIds()) {
+        assets_.loadTexture(itemId, itemConfigSystem_.texturePathFor(itemId));
+    }
+
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
@@ -67,6 +72,12 @@ void PlayState::update(sf::Time deltaTime) {
         spawnBackgroundElement(spawn);
     }
 
+    const auto& itemSpawns = itemConfigSystem_.spawns();
+    while (nextItemSpawnIndex_ < itemSpawns.size() && itemSpawns[nextItemSpawnIndex_].time <= stageClock_) {
+        spawnItemCarrier(itemSpawns[nextItemSpawnIndex_]);
+        ++nextItemSpawnIndex_;
+    }
+
     starfield_.update(deltaTime);
     for (auto& element : backgroundElements_) {
         element.update(deltaTime);
@@ -90,6 +101,14 @@ void PlayState::update(sf::Time deltaTime) {
     }
 
     updateEnemyShooting();
+
+    for (auto& carrier : itemCarriers_) {
+        carrier.update(deltaTime);
+    }
+
+    for (auto& powerUp : powerUps_) {
+        powerUp.update(deltaTime);
+    }
 
     for (auto& bullet : enemyBullets_) {
         bullet.update(deltaTime);
@@ -161,6 +180,28 @@ void PlayState::update(sf::Time deltaTime) {
         enemies_.end()
     );
 
+    itemCarriers_.erase(
+        std::remove_if(
+            itemCarriers_.begin(),
+            itemCarriers_.end(),
+            [this](const ItemCarrier& carrier) {
+                return !carrier.isAlive(logicalSize_);
+            }
+        ),
+        itemCarriers_.end()
+    );
+
+    powerUps_.erase(
+        std::remove_if(
+            powerUps_.begin(),
+            powerUps_.end(),
+            [](const PowerUpItem& powerUp) {
+                return !powerUp.isAlive();
+            }
+        ),
+        powerUps_.end()
+    );
+
     explosions_.erase(
         std::remove_if(
             explosions_.begin(),
@@ -182,6 +223,9 @@ void PlayState::render(sf::RenderTarget& target) {
     for (const auto& enemy : enemies_) {
         enemy.render(target);
     }
+    for (const auto& carrier : itemCarriers_) {
+        carrier.render(target);
+    }
     for (const auto& explosion : explosions_) {
         explosion.render(target);
     }
@@ -194,6 +238,9 @@ void PlayState::render(sf::RenderTarget& target) {
     for (const auto& laser : enemyLasers_) {
         laser.render(target);
     }
+    for (const auto& powerUp : powerUps_) {
+        powerUp.render(target);
+    }
     renderMuzzleFlash(target);
     player_->render(target);
 }
@@ -204,12 +251,18 @@ void PlayState::fireLaserNormal() {
     }
 
     const auto& config = playerConfigSystem_.config();
-    playerLasers_.emplace_back(
-        player_->laserSpawnPosition(),
-        *laserNormalTexture_,
-        config.laserSpeed,
-        config.laserDamage
-    );
+    const auto spawn = player_->laserSpawnPosition();
+    const auto projectileCount = player_->projectileCount();
+    const auto spacing = 4.f;
+    const auto firstOffset = -spacing * static_cast<float>(projectileCount - 1) * 0.5f;
+    for (auto index = 0; index < projectileCount; ++index) {
+        playerLasers_.emplace_back(
+            sf::Vector2f{spawn.x + firstOffset + spacing * static_cast<float>(index), spawn.y},
+            *laserNormalTexture_,
+            config.laserSpeed,
+            config.laserDamage
+        );
+    }
     fireCooldown_ = sf::seconds(config.fireCooldownSeconds);
     muzzleFlashTime_ = sf::seconds(config.muzzleFlashSeconds);
 }
@@ -238,6 +291,20 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
         spawn.tileIndex,
         sf::Vector2i{100, 100}
     );
+}
+
+void PlayState::spawnItemCarrier(const ItemSpawnConfig& spawn) {
+    const auto& config = itemConfigSystem_.carrierConfigFor(spawn.itemId);
+    itemCarriers_.emplace_back(
+        sf::Vector2f{spawn.x, spawn.y},
+        assets_.getTexture(spawn.itemId),
+        config
+    );
+}
+
+void PlayState::spawnPowerUp(const std::string& powerUpId, sf::Vector2f position) {
+    const auto& config = itemConfigSystem_.powerUpConfigFor(powerUpId);
+    powerUps_.emplace_back(position, assets_.getTexture(powerUpId), config);
 }
 
 void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position) {
@@ -299,12 +366,27 @@ void PlayState::updateCollisions() {
         *player_,
         eventQueue_
     );
+
+    collisionSystem_.resolveItems(
+        playerLasers_,
+        itemCarriers_,
+        powerUps_,
+        *player_,
+        logicalSize_,
+        eventQueue_
+    );
 }
 
 void PlayState::processEvents() {
     for (const auto& event : eventQueue_.drain()) {
         if (const auto* enemyDestroyed = std::get_if<EnemyDestroyedEvent>(&event)) {
             spawnExplosion(enemyDestroyed->enemyId, enemyDestroyed->position);
+        } else if (const auto* itemDestroyed = std::get_if<ItemCarrierDestroyedEvent>(&event)) {
+            spawnPowerUp(itemDestroyed->dropId, itemDestroyed->position);
+        } else if (const auto* powerUpCollected = std::get_if<PowerUpCollectedEvent>(&event)) {
+            if (powerUpCollected->powerUpId == "power_p") {
+                player_->collectPowerUpP();
+            }
         }
     }
 }

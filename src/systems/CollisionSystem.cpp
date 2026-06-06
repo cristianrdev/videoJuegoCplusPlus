@@ -62,3 +62,46 @@ void CollisionSystem::resolve(
         }
     }
 }
+
+void CollisionSystem::resolveItems(
+    std::vector<LaserNormal>& playerLasers,
+    std::vector<ItemCarrier>& itemCarriers,
+    std::vector<PowerUpItem>& powerUps,
+    Player& player,
+    sf::Vector2f logicalSize,
+    EventQueue& eventQueue
+) const {
+    for (auto laserIt = playerLasers.begin(); laserIt != playerLasers.end();) {
+        auto hitCarrier = false;
+
+        for (auto& carrier : itemCarriers) {
+            if (!carrier.isAlive(logicalSize)) {
+                continue;
+            }
+
+            if (intersects(laserIt->hitbox(), carrier.hitbox())) {
+                carrier.takeDamage(laserIt->damage());
+                if (carrier.isDestroyed()) {
+                    eventQueue.publish(ItemCarrierDestroyedEvent{carrier.dropId(), carrier.position()});
+                }
+                hitCarrier = true;
+                break;
+            }
+        }
+
+        if (hitCarrier) {
+            laserIt = playerLasers.erase(laserIt);
+        } else {
+            ++laserIt;
+        }
+    }
+
+    for (auto powerUpIt = powerUps.begin(); powerUpIt != powerUps.end();) {
+        if (intersects(powerUpIt->hitbox(), player.hitbox())) {
+            eventQueue.publish(PowerUpCollectedEvent{powerUpIt->powerUpId()});
+            powerUpIt = powerUps.erase(powerUpIt);
+        } else {
+            ++powerUpIt;
+        }
+    }
+}

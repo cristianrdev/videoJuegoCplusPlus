@@ -16,7 +16,21 @@ struct PlayerHitEvent {
     int remainingHealth;
 };
 
-using GameEvent = std::variant<EnemyDestroyedEvent, PlayerHitEvent>;
+struct ItemCarrierDestroyedEvent {
+    std::string dropId;
+    sf::Vector2f position;
+};
+
+struct PowerUpCollectedEvent {
+    std::string powerUpId;
+};
+
+using GameEvent = std::variant<
+    EnemyDestroyedEvent,
+    PlayerHitEvent,
+    ItemCarrierDestroyedEvent,
+    PowerUpCollectedEvent
+>;
 
 class EventQueue {
 public:

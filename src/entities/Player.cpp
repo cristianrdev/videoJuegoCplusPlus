@@ -160,6 +160,14 @@ void Player::takeDamage(int damage) {
     health_ = std::max(0, health_ - damage);
 }
 
+void Player::collectPowerUpP() {
+    projectileCount_ = std::min(8, projectileCount_ * 2);
+}
+
+int Player::projectileCount() const {
+    return projectileCount_;
+}
+
 void Player::setVisualState(VisualState state) {
     if (visualState_ == state) {
         return;

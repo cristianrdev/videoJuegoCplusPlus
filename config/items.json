@@ -1,0 +1,34 @@
+{
+  "carriers": [
+    {
+      "id": "power_capsule",
+      "texture": "textures/items/item_power_capsule.png",
+      "health": 5,
+      "drop": "power_p",
+      "speed_y": 24.0,
+      "hitbox_width": 15.0,
+      "hitbox_height": 15.0
+    }
+  ],
+  "power_ups": [
+    {
+      "id": "power_p",
+      "texture": "textures/items/item_power_p.png",
+      "lifetime_seconds": 30.0,
+      "flicker_seconds": 10.0,
+      "amplitude": 30.0,
+      "frequency": 0.4,
+      "speed_y": 8.0,
+      "hitbox_width": 13.0,
+      "hitbox_height": 13.0
+    }
+  ],
+  "spawns": [
+    {
+      "time": 12.0,
+      "item": "power_capsule",
+      "x": 120.0,
+      "y": -15.0
+    }
+  ]
+}

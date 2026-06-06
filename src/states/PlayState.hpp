@@ -10,11 +10,14 @@
 #include "EnemyLaser.hpp"
 #include "EnemySpawner.hpp"
 #include "Explosion.hpp"
+#include "ItemCarrier.hpp"
+#include "ItemConfigSystem.hpp"
 #include "LaserNormal.hpp"
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
 #include "PlayerConfigSystem.hpp"
 #include "ProjectileConfigSystem.hpp"
+#include "PowerUpItem.hpp"
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
 #include "CollisionSystem.hpp"
@@ -43,6 +46,8 @@ public:
 private:
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);
     void spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn);
+    void spawnItemCarrier(const ItemSpawnConfig& spawn);
+    void spawnPowerUp(const std::string& powerUpId, sf::Vector2f position);
     void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
     void updateEnemyShooting();
     void updateCollisions();
@@ -59,7 +64,10 @@ private:
     std::vector<Enemy> enemies_;
     std::vector<EnemyBullet> enemyBullets_;
     std::vector<EnemyLaser> enemyLasers_;
+    std::vector<ItemCarrier> itemCarriers_;
+    std::vector<PowerUpItem> powerUps_;
     std::vector<Explosion> explosions_;
+    std::size_t nextItemSpawnIndex_{0};
     sf::Time fireCooldown_{sf::Time::Zero};
     sf::Time muzzleFlashTime_{sf::Time::Zero};
     const sf::Texture* laserNormalTexture_{nullptr};
@@ -72,6 +80,7 @@ private:
     EnemyConfigSystem enemyConfigSystem_;
     EnemySpawner enemySpawner_;
     ProjectileConfigSystem projectileConfigSystem_;
+    ItemConfigSystem itemConfigSystem_;
     PlayerConfigSystem playerConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     CollisionSystem collisionSystem_;

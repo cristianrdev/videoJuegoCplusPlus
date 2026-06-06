@@ -12,7 +12,7 @@
     "sprite_render_height": 32.0,
     "clamp_half_size": 16.0,
     "laser_spawn_offset_y": -18.0,
-    "fire_cooldown_seconds": 0.08,
+    "fire_cooldown_seconds": 0.06,
     "muzzle_flash_seconds": 0.06,
     "laser_speed": 260.0,
     "laser_damage": 1,
