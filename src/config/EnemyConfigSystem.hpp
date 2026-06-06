@@ -8,6 +8,7 @@ class EnemyConfigSystem {
 public:
     void loadFromFile(const std::string& path);
     int healthFor(const std::string& enemyId) const;
+    int contactDamageFor(const std::string& enemyId) const;
     bool blinkEnabledFor(const std::string& enemyId) const;
     int blinkHealthThresholdFor(const std::string& enemyId) const;
     const std::string& texturePathFor(const std::string& enemyId) const;
@@ -18,6 +19,7 @@ private:
         std::string id;
         std::string texturePath;
         int health{3};
+        int contactDamage{0};
         bool blinkEnabled{false};
         int blinkHealthThreshold{0};
     };

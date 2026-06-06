@@ -17,6 +17,7 @@ public:
         std::string patternId,
         std::string movementId,
         int health,
+        int contactDamage,
         bool blinkEnabled,
         int blinkHealthThreshold
     );
@@ -28,6 +29,7 @@ public:
 
     bool isAlive() const;
     bool shouldFire() const;
+    int contactDamage() const;
     void resetFireTimer(float intervalSeconds);
     void startFiringVisual(sf::Time duration);
     bool shouldRenderNegative() const;
@@ -46,6 +48,7 @@ private:
     sf::Vector2f size_{24.f, 24.f};
     sf::Vector2f visualSize_{24.f, 24.f};
     int health_{3};
+    int contactDamage_{0};
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
     sf::Time firingVisualTime_{sf::Time::Zero};

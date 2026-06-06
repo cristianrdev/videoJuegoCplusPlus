@@ -61,6 +61,7 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
         config.id = matchString(object, "id");
         config.texturePath = matchString(object, "texture");
         config.health = matchInt(object, "health", 3);
+        config.contactDamage = matchInt(object, "contact_damage", 0);
         config.blinkEnabled = matchBool(object, "blink_enabled", false);
         config.blinkHealthThreshold = matchInt(object, "blink_health_threshold", 0);
         configs_[config.id] = std::move(config);
@@ -78,6 +79,15 @@ int EnemyConfigSystem::healthFor(const std::string& enemyId) const {
     }
 
     return it->second.health;
+}
+
+int EnemyConfigSystem::contactDamageFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return 0;
+    }
+
+    return it->second.contactDamage;
 }
 
 bool EnemyConfigSystem::blinkEnabledFor(const std::string& enemyId) const {

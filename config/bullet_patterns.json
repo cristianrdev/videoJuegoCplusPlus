@@ -1,6 +1,11 @@
 {
   "patterns": [
     {
+      "id": "none",
+      "type": "none",
+      "fire_interval": 9999.0
+    },
+    {
       "id": "enemy_drone_aimed_single",
       "type": "spread",
       "fire_interval": 1.10,

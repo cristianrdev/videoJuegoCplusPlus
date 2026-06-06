@@ -117,6 +117,14 @@
       "y": -62,
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "floating_rock_turret_drop"
+    },
+    {
+      "time": 34.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "none",
+      "movement": "mech_spider_random_zigzag"
     }
   ]
 }

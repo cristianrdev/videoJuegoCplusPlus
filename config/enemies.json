@@ -33,6 +33,14 @@
       "health": 15,
       "blink_enabled": true,
       "blink_health_threshold": 4
+    },
+    {
+      "id": "enemy_mech_spider",
+      "texture": "textures/enemies/enemy_mech_spider.png",
+      "health": 5,
+      "contact_damage": 3,
+      "blink_enabled": true,
+      "blink_health_threshold": 3
     }
   ]
 }

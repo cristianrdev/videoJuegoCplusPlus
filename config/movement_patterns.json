@@ -60,6 +60,34 @@
       "type": "linear",
       "velocity_x": 0.0,
       "velocity_y": 18.0
+    },
+    {
+      "id": "mech_spider_zigzag_left_left",
+      "type": "waypoints",
+      "point_times": [0.0, 2.0, 4.0, 6.0, 8.0],
+      "point_x": [120.0, 120.0, 20.0, 20.0, -20.0],
+      "point_y": [-20.0, 100.0, 100.0, 200.0, 360.0]
+    },
+    {
+      "id": "mech_spider_zigzag_left_right",
+      "type": "waypoints",
+      "point_times": [0.0, 2.0, 4.0, 6.0, 8.0],
+      "point_x": [120.0, 120.0, 20.0, 20.0, 120.0],
+      "point_y": [-20.0, 100.0, 100.0, 200.0, 360.0]
+    },
+    {
+      "id": "mech_spider_zigzag_right_left",
+      "type": "waypoints",
+      "point_times": [0.0, 2.0, 4.0, 6.0, 8.0],
+      "point_x": [120.0, 120.0, 220.0, 220.0, 120.0],
+      "point_y": [-20.0, 100.0, 100.0, 200.0, 360.0]
+    },
+    {
+      "id": "mech_spider_zigzag_right_right",
+      "type": "waypoints",
+      "point_times": [0.0, 2.0, 4.0, 6.0, 8.0],
+      "point_x": [120.0, 120.0, 220.0, 220.0, 260.0],
+      "point_y": [-20.0, 100.0, 100.0, 200.0, 360.0]
     }
   ]
 }

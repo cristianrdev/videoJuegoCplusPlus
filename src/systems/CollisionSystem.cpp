@@ -61,6 +61,19 @@ void CollisionSystem::resolve(
             laser.markPlayerHit();
         }
     }
+
+    for (auto& enemy : enemies) {
+        if (!enemy.isAlive() || enemy.contactDamage() <= 0) {
+            continue;
+        }
+
+        if (intersects(enemy.hitbox(), player.hitbox())) {
+            player.takeDamage(enemy.contactDamage());
+            eventQueue.publish(PlayerHitEvent{enemy.contactDamage(), player.health()});
+            enemy.takeDamage(9999);
+            eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});
+        }
+    }
 }
 
 void CollisionSystem::resolveItems(

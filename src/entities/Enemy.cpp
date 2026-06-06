@@ -43,12 +43,14 @@ Enemy::Enemy(
     std::string patternId,
     std::string movementId,
     int health,
+    int contactDamage,
     bool blinkEnabled,
     int blinkHealthThreshold
 )
     : startPosition_(position)
     , position_(position)
     , health_(health)
+    , contactDamage_(contactDamage)
     , blinkEnabled_(blinkEnabled)
     , blinkHealthThreshold_(blinkHealthThreshold)
     , enemyId_(std::move(enemyId))
@@ -58,6 +60,13 @@ Enemy::Enemy(
     if (enemyId_ == "enemy_robot_fish") {
         size_ = {82.f, 252.f};
         visualSize_ = {120.f, 300.f};
+        sprite_.setTextureRect({
+            {0, 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
+    } else if (enemyId_ == "enemy_mech_spider") {
+        size_ = {32.f, 32.f};
+        visualSize_ = {32.f, 32.f};
         sprite_.setTextureRect({
             {0, 0},
             {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
@@ -93,6 +102,12 @@ void Enemy::render(sf::RenderTarget& target) const {
             {frameIndex * static_cast<int>(visualSize_.x), 0},
             {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
         });
+    } else if (enemyId_ == "enemy_mech_spider") {
+        const auto frameIndex = static_cast<int>(elapsed_.asSeconds() / 0.12f) % 2;
+        pixelSnappedSprite.setTextureRect({
+            {frameIndex * static_cast<int>(visualSize_.x), 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
     }
     pixelSnappedSprite.setPosition({std::round(position_.x), std::round(position_.y)});
 
@@ -121,7 +136,11 @@ bool Enemy::isAlive() const {
 }
 
 bool Enemy::shouldFire() const {
-    return fireTimer_ <= sf::Time::Zero;
+    return !patternId_.empty() && patternId_ != "none" && fireTimer_ <= sf::Time::Zero;
+}
+
+int Enemy::contactDamage() const {
+    return contactDamage_;
 }
 
 void Enemy::resetFireTimer(float intervalSeconds) {
