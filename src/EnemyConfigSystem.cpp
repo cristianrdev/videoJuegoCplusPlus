@@ -49,6 +49,7 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
         const auto object = (*it)[0].str();
         auto config = EnemyConfig{};
         config.id = matchString(object, "id");
+        config.texturePath = matchString(object, "texture");
         config.health = matchInt(object, "health", 3);
         configs_[config.id] = std::move(config);
     }
@@ -65,4 +66,23 @@ int EnemyConfigSystem::healthFor(const std::string& enemyId) const {
     }
 
     return it->second.health;
+}
+
+const std::string& EnemyConfigSystem::texturePathFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de enemigo no encontrada: " + enemyId);
+    }
+
+    return it->second.texturePath;
+}
+
+std::vector<std::string> EnemyConfigSystem::enemyIds() const {
+    auto ids = std::vector<std::string>{};
+    ids.reserve(configs_.size());
+    for (const auto& [id, config] : configs_) {
+        ids.push_back(id);
+    }
+
+    return ids;
 }

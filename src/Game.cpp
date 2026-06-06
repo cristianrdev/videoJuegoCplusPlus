@@ -91,21 +91,19 @@ Game::Game()
     assets_.loadTexture("player_thruster_flame", "textures/player/player_thruster_flame.png");
     laserNormalTexture_ = &assets_.loadTexture("player_laser_normal", "textures/player/player_laser_normal.png");
     muzzleFlashTexture_ = &assets_.loadTexture("player_laser_muzzle_flash", "textures/player/player_laser_muzzle_flash.png");
-    enemyDroneTexture_ = &assets_.loadTexture("enemy_drone", "textures/enemies/enemy_drone.png");
-    enemyTurretPodTexture_ = &assets_.loadTexture("enemy_turret_pod", "textures/enemies/enemy_turret_pod.png");
-    enemyInterceptorTexture_ = &assets_.loadTexture("enemy_interceptor", "textures/enemies/enemy_interceptor.png");
-    enemyRobotFishTexture_ = &assets_.loadTexture("enemy_robot_fish", "textures/enemies/enemy_robot_fish_sheet.png");
-    enemyMetalSquidTexture_ = &assets_.loadTexture("enemy_metal_squid", "textures/enemies/enemy_metal_squid.png");
+    enemyConfigSystem_.loadFromFile("config/enemies.json");
+    for (const auto& enemyId : enemyConfigSystem_.enemyIds()) {
+        assets_.loadTexture(enemyId, enemyConfigSystem_.texturePathFor(enemyId));
+    }
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
     enemyRobotFishLaserTexture_ = &assets_.loadTexture("enemy_robot_fish_laser", "textures/projectiles/enemy_robot_fish_laser.png");
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
-    enemyConfigSystem_.loadFromFile("config/enemies.json");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
-    stageDirector_.loadFromFile("config/stage_01.json");
+    stageDirector_.loadFromFile("config/stage_01_enemies.json");
     backgroundElementDirector_.loadFromFile("config/stage_01_background_elements.json");
 
     player_ = std::make_unique<Player>(
@@ -174,23 +172,11 @@ void Game::fireLaserNormal() {
 }
 
 void Game::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
-    const auto* texture = enemyDroneTexture_;
-
-    if (spawn.enemyId == "enemy_turret_pod") {
-        texture = enemyTurretPodTexture_;
-    } else if (spawn.enemyId == "enemy_interceptor") {
-        texture = enemyInterceptorTexture_;
-    } else if (spawn.enemyId == "enemy_robot_fish") {
-        texture = enemyRobotFishTexture_;
-    } else if (spawn.enemyId == "enemy_metal_squid") {
-        texture = enemyMetalSquidTexture_;
-    } else if (spawn.enemyId != "enemy_drone") {
-        throw std::runtime_error("Enemigo no configurado: " + spawn.enemyId);
-    }
+    const auto& texture = assets_.getTexture(spawn.enemyId);
 
     enemies_.emplace_back(
         sf::Vector2f{spawn.x, spawn.y},
-        *texture,
+        texture,
         spawn.enemyId,
         spawn.patternId,
         spawn.movementId,

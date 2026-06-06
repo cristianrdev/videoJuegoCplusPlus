@@ -2,22 +2,27 @@
   "enemies": [
     {
       "id": "enemy_drone",
+      "texture": "textures/enemies/enemy_drone.png",
       "health": 3
     },
     {
       "id": "enemy_turret_pod",
+      "texture": "textures/enemies/enemy_turret_pod.png",
       "health": 3
     },
     {
       "id": "enemy_interceptor",
+      "texture": "textures/enemies/enemy_interceptor.png",
       "health": 3
     },
     {
       "id": "enemy_robot_fish",
+      "texture": "textures/enemies/enemy_robot_fish_sheet.png",
       "health": 80
     },
     {
       "id": "enemy_metal_squid",
+      "texture": "textures/enemies/enemy_metal_squid.png",
       "health": 6
     }
   ]

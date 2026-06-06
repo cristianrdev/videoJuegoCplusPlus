@@ -79,11 +79,6 @@ private:
     sf::Time muzzleFlashTime_{sf::Time::Zero};
     const sf::Texture* laserNormalTexture_{nullptr};
     const sf::Texture* muzzleFlashTexture_{nullptr};
-    const sf::Texture* enemyDroneTexture_{nullptr};
-    const sf::Texture* enemyTurretPodTexture_{nullptr};
-    const sf::Texture* enemyInterceptorTexture_{nullptr};
-    const sf::Texture* enemyRobotFishTexture_{nullptr};
-    const sf::Texture* enemyMetalSquidTexture_{nullptr};
     const sf::Texture* explosionDroneTexture_{nullptr};
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
