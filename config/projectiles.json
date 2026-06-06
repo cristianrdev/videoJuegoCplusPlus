@@ -1,0 +1,12 @@
+{
+  "projectiles": [
+    {
+      "id": "enemy_orb_purple",
+      "texture": "textures/projectiles/enemy_orb_purple.png"
+    },
+    {
+      "id": "enemy_robot_fish_laser",
+      "texture": "textures/projectiles/enemy_robot_fish_laser.png"
+    }
+  ]
+}

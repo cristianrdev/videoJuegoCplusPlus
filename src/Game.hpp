@@ -12,6 +12,7 @@
 #include "LaserNormal.hpp"
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
+#include "ProjectileConfigSystem.hpp"
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
 
@@ -82,11 +83,10 @@ private:
     const sf::Texture* explosionDroneTexture_{nullptr};
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
-    const sf::Texture* enemyOrbPurpleTexture_{nullptr};
-    const sf::Texture* enemyRobotFishLaserTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     EnemyConfigSystem enemyConfigSystem_;
+    ProjectileConfigSystem projectileConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;

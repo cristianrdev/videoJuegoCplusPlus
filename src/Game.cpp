@@ -98,8 +98,10 @@ Game::Game()
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
-    enemyOrbPurpleTexture_ = &assets_.loadTexture("enemy_orb_purple", "textures/projectiles/enemy_orb_purple.png");
-    enemyRobotFishLaserTexture_ = &assets_.loadTexture("enemy_robot_fish_laser", "textures/projectiles/enemy_robot_fish_laser.png");
+    projectileConfigSystem_.loadFromFile("config/projectiles.json");
+    for (const auto& projectileId : projectileConfigSystem_.projectileIds()) {
+        assets_.loadTexture(projectileId, projectileConfigSystem_.texturePathFor(projectileId));
+    }
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
@@ -537,16 +539,18 @@ void Game::renderMuzzleFlash(sf::RenderTarget& target) const {
 }
 
 const sf::Texture* Game::bulletTextureForPattern(const std::string& patternId) const {
-    if (bulletPatternSystem_.bulletId(patternId) == "enemy_orb_purple") {
-        return enemyOrbPurpleTexture_;
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return &assets_.getTexture(bulletId);
     }
 
     return nullptr;
 }
 
 const sf::Texture* Game::laserTextureForPattern(const std::string& patternId) const {
-    if (bulletPatternSystem_.laserId(patternId) == "enemy_robot_fish_laser") {
-        return enemyRobotFishLaserTexture_;
+    const auto& laserId = bulletPatternSystem_.laserId(patternId);
+    if (laserId != "default" && projectileConfigSystem_.hasProjectile(laserId)) {
+        return &assets_.getTexture(laserId);
     }
 
     return nullptr;
