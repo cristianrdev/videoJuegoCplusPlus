@@ -7,18 +7,10 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace {
-bool intersects(sf::FloatRect left, sf::FloatRect right) {
-    return left.position.x < right.position.x + right.size.x &&
-        left.position.x + left.size.x > right.position.x &&
-        left.position.y < right.position.y + right.size.y &&
-        left.position.y + left.size.y > right.position.y;
-}
-}
-
 PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     : assets_(assets)
     , logicalSize_(logicalSize)
+    , enemySpawner_(assets_, enemyConfigSystem_)
     , starfield_(logicalSize) {
     playerConfigSystem_.loadFromFile("config/player.json");
     const auto& playerConfig = playerConfigSystem_.config();
@@ -230,16 +222,7 @@ sf::Time PlayState::stageTime() const {
 }
 
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
-    const auto& texture = assets_.getTexture(spawn.enemyId);
-
-    enemies_.emplace_back(
-        sf::Vector2f{spawn.x, spawn.y},
-        texture,
-        spawn.enemyId,
-        spawn.patternId,
-        spawn.movementId,
-        enemyConfigSystem_.healthFor(spawn.enemyId)
-    );
+    enemies_.push_back(enemySpawner_.spawn(spawn));
 }
 
 void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn) {
@@ -256,16 +239,16 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
     );
 }
 
-void PlayState::spawnExplosion(const Enemy& enemy) {
+void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position) {
     auto texture = explosionDroneTexture_;
 
-    if (enemy.enemyId() == "enemy_turret_pod") {
+    if (enemyId == "enemy_turret_pod") {
         texture = explosionTurretPodTexture_;
-    } else if (enemy.enemyId() == "enemy_interceptor") {
+    } else if (enemyId == "enemy_interceptor") {
         texture = explosionInterceptorTexture_;
     }
 
-    explosions_.emplace_back(enemy.position(), *texture);
+    explosions_.emplace_back(position, *texture);
 }
 
 void PlayState::updateEnemyShooting() {
@@ -303,49 +286,20 @@ void PlayState::updateEnemyShooting() {
 }
 
 void PlayState::updateCollisions() {
-    for (auto laserIt = playerLasers_.begin(); laserIt != playerLasers_.end();) {
-        auto hitEnemy = false;
-
-        for (auto& enemy : enemies_) {
-            if (!enemy.isAlive()) {
-                continue;
-            }
-
-            if (intersects(laserIt->hitbox(), enemy.hitbox())) {
-                enemy.takeDamage(laserIt->damage());
-                if (!enemy.isAlive()) {
-                    spawnExplosion(enemy);
-                }
-                hitEnemy = true;
-                break;
-            }
-        }
-
-        if (hitEnemy) {
-            laserIt = playerLasers_.erase(laserIt);
-        } else {
-            ++laserIt;
-        }
-    }
-
     if (!player_) {
         return;
     }
 
-    for (auto bulletIt = enemyBullets_.begin(); bulletIt != enemyBullets_.end();) {
-        if (intersects(bulletIt->hitbox(), player_->hitbox())) {
-            player_->takeDamage(1);
-            bulletIt = enemyBullets_.erase(bulletIt);
-        } else {
-            ++bulletIt;
-        }
-    }
+    const auto result = collisionSystem_.resolve(
+        playerLasers_,
+        enemies_,
+        enemyBullets_,
+        enemyLasers_,
+        *player_
+    );
 
-    for (auto& laser : enemyLasers_) {
-        if (laser.canHitPlayer() && intersects(laser.hitbox(), player_->hitbox())) {
-            player_->takeDamage(1);
-            laser.markPlayerHit();
-        }
+    for (const auto& destroyedEnemy : result.destroyedEnemies) {
+        spawnExplosion(destroyedEnemy.enemyId, destroyedEnemy.position);
     }
 }
 

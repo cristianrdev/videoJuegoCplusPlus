@@ -22,6 +22,8 @@ add_executable(videoJuegoCplusPlus
     src/entities/Explosion.cpp
     src/systems/BackgroundElementDirector.cpp
     src/systems/BulletPatternSystem.cpp
+    src/systems/CollisionSystem.cpp
+    src/systems/EnemySpawner.cpp
     src/systems/StageDirector.cpp
     src/systems/MovementPatternSystem.cpp
     src/config/EnemyConfigSystem.cpp

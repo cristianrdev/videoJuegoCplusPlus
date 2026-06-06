@@ -8,6 +8,7 @@
 #include "EnemyBullet.hpp"
 #include "EnemyConfigSystem.hpp"
 #include "EnemyLaser.hpp"
+#include "EnemySpawner.hpp"
 #include "Explosion.hpp"
 #include "LaserNormal.hpp"
 #include "MovementPatternSystem.hpp"
@@ -16,6 +17,7 @@
 #include "ProjectileConfigSystem.hpp"
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
+#include "CollisionSystem.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -40,7 +42,7 @@ public:
 private:
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);
     void spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn);
-    void spawnExplosion(const Enemy& enemy);
+    void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
     void updateEnemyShooting();
     void updateCollisions();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
@@ -66,9 +68,11 @@ private:
     const sf::Texture* floatingRedRocksTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     EnemyConfigSystem enemyConfigSystem_;
+    EnemySpawner enemySpawner_;
     ProjectileConfigSystem projectileConfigSystem_;
     PlayerConfigSystem playerConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
+    CollisionSystem collisionSystem_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;
     Starfield starfield_;
