@@ -148,6 +148,7 @@ void PlayState::update(sf::Time deltaTime) {
     );
 
     updateCollisions();
+    processEvents();
 
     enemies_.erase(
         std::remove_if(
@@ -290,16 +291,21 @@ void PlayState::updateCollisions() {
         return;
     }
 
-    const auto result = collisionSystem_.resolve(
+    collisionSystem_.resolve(
         playerLasers_,
         enemies_,
         enemyBullets_,
         enemyLasers_,
-        *player_
+        *player_,
+        eventQueue_
     );
+}
 
-    for (const auto& destroyedEnemy : result.destroyedEnemies) {
-        spawnExplosion(destroyedEnemy.enemyId, destroyedEnemy.position);
+void PlayState::processEvents() {
+    for (const auto& event : eventQueue_.drain()) {
+        if (const auto* enemyDestroyed = std::get_if<EnemyDestroyedEvent>(&event)) {
+            spawnExplosion(enemyDestroyed->enemyId, enemyDestroyed->position);
+        }
     }
 }
 

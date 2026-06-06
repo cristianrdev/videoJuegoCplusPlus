@@ -18,6 +18,7 @@
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
 #include "CollisionSystem.hpp"
+#include "EventQueue.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -45,6 +46,7 @@ private:
     void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
     void updateEnemyShooting();
     void updateCollisions();
+    void processEvents();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
     const sf::Texture* bulletTextureForPattern(const std::string& patternId) const;
     const sf::Texture* laserTextureForPattern(const std::string& patternId) const;
@@ -73,6 +75,7 @@ private:
     PlayerConfigSystem playerConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     CollisionSystem collisionSystem_;
+    EventQueue eventQueue_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;
     Starfield starfield_;

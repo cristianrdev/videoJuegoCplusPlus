@@ -11,15 +11,14 @@ bool intersects(sf::FloatRect left, sf::FloatRect right) {
 }
 }
 
-CollisionSystem::Result CollisionSystem::resolve(
+void CollisionSystem::resolve(
     std::vector<LaserNormal>& playerLasers,
     std::vector<Enemy>& enemies,
     std::vector<EnemyBullet>& enemyBullets,
     std::vector<EnemyLaser>& enemyLasers,
-    Player& player
+    Player& player,
+    EventQueue& eventQueue
 ) const {
-    Result result;
-
     for (auto laserIt = playerLasers.begin(); laserIt != playerLasers.end();) {
         auto hitEnemy = false;
 
@@ -31,7 +30,7 @@ CollisionSystem::Result CollisionSystem::resolve(
             if (intersects(laserIt->hitbox(), enemy.hitbox())) {
                 enemy.takeDamage(laserIt->damage());
                 if (!enemy.isAlive()) {
-                    result.destroyedEnemies.push_back({enemy.enemyId(), enemy.position()});
+                    eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});
                 }
                 hitEnemy = true;
                 break;
@@ -48,6 +47,7 @@ CollisionSystem::Result CollisionSystem::resolve(
     for (auto bulletIt = enemyBullets.begin(); bulletIt != enemyBullets.end();) {
         if (intersects(bulletIt->hitbox(), player.hitbox())) {
             player.takeDamage(1);
+            eventQueue.publish(PlayerHitEvent{1, player.health()});
             bulletIt = enemyBullets.erase(bulletIt);
         } else {
             ++bulletIt;
@@ -57,9 +57,8 @@ CollisionSystem::Result CollisionSystem::resolve(
     for (auto& laser : enemyLasers) {
         if (laser.canHitPlayer() && intersects(laser.hitbox(), player.hitbox())) {
             player.takeDamage(1);
+            eventQueue.publish(PlayerHitEvent{1, player.health()});
             laser.markPlayerHit();
         }
     }
-
-    return result;
 }
