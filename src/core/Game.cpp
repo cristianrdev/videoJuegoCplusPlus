@@ -66,7 +66,7 @@ Game::Game()
     , presentationSprite_(logicalTarget_.getTexture())
     , debugText_(debugFont_)
     , playState_(assets_, {static_cast<float>(LogicalWidth), static_cast<float>(LogicalHeight)}) {
-    window_.setVerticalSyncEnabled(true);
+    applyFramePacingMode(framePacingMode_);
     logicalTarget_.setSmooth(false);
 
     if (!debugFont_.openFromFile("C:/Windows/Fonts/consola.ttf")) {
@@ -99,6 +99,12 @@ void Game::processEvents() {
                 window_.close();
             } else if (keyPressed->code == sf::Keyboard::Key::P) {
                 togglePause();
+            } else if (keyPressed->code == sf::Keyboard::Key::Q) {
+                applyFramePacingMode(FramePacingMode::VSync);
+            } else if (keyPressed->code == sf::Keyboard::Key::W) {
+                applyFramePacingMode(FramePacingMode::Uncapped);
+            } else if (keyPressed->code == sf::Keyboard::Key::E) {
+                applyFramePacingMode(FramePacingMode::Cap120);
             } else if (keyPressed->code == sf::Keyboard::Key::Num1) {
                 presentationScaleMode_ = PresentationScaleMode::Native;
                 updatePresentationSprite();
@@ -117,6 +123,38 @@ void Game::processEvents() {
             }
         }
     }
+}
+
+void Game::applyFramePacingMode(FramePacingMode mode) {
+    framePacingMode_ = mode;
+
+    switch (framePacingMode_) {
+    case FramePacingMode::VSync:
+        window_.setFramerateLimit(0);
+        window_.setVerticalSyncEnabled(true);
+        break;
+    case FramePacingMode::Uncapped:
+        window_.setVerticalSyncEnabled(false);
+        window_.setFramerateLimit(0);
+        break;
+    case FramePacingMode::Cap120:
+        window_.setVerticalSyncEnabled(false);
+        window_.setFramerateLimit(120);
+        break;
+    }
+}
+
+const char* Game::framePacingLabel() const {
+    switch (framePacingMode_) {
+    case FramePacingMode::VSync:
+        return "Q VSYNC";
+    case FramePacingMode::Uncapped:
+        return "W UNCAPPED";
+    case FramePacingMode::Cap120:
+        return "E CAP 120";
+    }
+
+    return "UNKNOWN";
 }
 
 void Game::togglePause() {
@@ -190,13 +228,44 @@ void Game::renderDebugHud() {
     }
 
     auto text = std::ostringstream{};
+    const auto scale = presentationSprite_.getScale();
+    const auto scaledWidth = static_cast<unsigned int>(
+        std::round(static_cast<float>(LogicalWidth) * scale.x)
+    );
+    const auto scaledHeight = static_cast<unsigned int>(
+        std::round(static_cast<float>(LogicalHeight) * scale.y)
+    );
+
     text << std::fixed << std::setprecision(2)
          << "TIME\n"
          << playState_.stageTime().asSeconds()
          << " s\n\n"
          << std::setprecision(1)
          << "FPS\n"
-         << smoothedFps_;
+         << smoothedFps_
+         << "\n\nMODE\n"
+         << framePacingLabel()
+         << "\n\nNATIVE\n"
+         << LogicalWidth << "x" << LogicalHeight
+         << "\n\nSCALED\n"
+         << scaledWidth << "x" << scaledHeight
+         << "\n\nSCALE\n"
+         << std::setprecision(0)
+         << scale.x << "x"
+         << "\n\nTECLAS\n"
+         << "Esc salir\n"
+         << "P pausa\n"
+         << "Espacio disparo\n"
+         << "Z disparo\n"
+         << "1 nativo\n"
+         << "2 entero\n"
+         << "Q vsync\n"
+         << "W sin limite\n"
+         << "E limite 120\n"
+         << "\nMODOS\n"
+         << "Q estable\n"
+         << "W menor lag\n"
+         << "E balance";
 
     debugText_.setString(text.str());
     debugText_.setPosition({24.f, 24.f});

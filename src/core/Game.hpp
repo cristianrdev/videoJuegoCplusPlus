@@ -22,8 +22,16 @@ private:
         IntegerFit
     };
 
+    enum class FramePacingMode {
+        VSync,
+        Uncapped,
+        Cap120
+    };
+
     void processEvents();
     void togglePause();
+    void applyFramePacingMode(FramePacingMode mode);
+    const char* framePacingLabel() const;
     void update(sf::Time deltaTime);
     void render();
     void renderPauseOverlay();
@@ -41,6 +49,7 @@ private:
     sf::Font debugFont_;
     sf::Text debugText_;
     PresentationScaleMode presentationScaleMode_{PresentationScaleMode::IntegerFit};
+    FramePacingMode framePacingMode_{FramePacingMode::VSync};
     bool paused_{false};
     float smoothedFps_{0.f};
     PlayState playState_;
