@@ -5,7 +5,7 @@
     {
       "time": 5.0,
       "enemy": "enemy_turret_pod",
-      "x": 90,
+      "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
@@ -13,7 +13,7 @@
     {
       "time": 5.50,
       "enemy": "enemy_turret_pod",
-      "x": 90,
+      "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
@@ -21,7 +21,7 @@
     {
       "time": 6.0,
       "enemy": "enemy_turret_pod",
-      "x": 90,
+      "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
@@ -29,7 +29,7 @@
     {
       "time": 6.50,
       "enemy": "enemy_turret_pod",
-      "x": 90,
+      "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
@@ -37,54 +37,36 @@
     {
       "time": 7.0,
       "enemy": "enemy_turret_pod",
-      "x": 90,
+      "x": 120,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_right"
     },
-
     
     {
       "time": 9.0,
-      "enemy": "enemy_turret_pod",
-      "x": 200,
+      "enemy": "enemy_drone",
+      "x": 80,
       "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "drop_then_diagonal_right"
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
     },
     {
-      "time": 9.50,
-      "enemy": "enemy_turret_pod",
-      "x": 200,
+      "time": 8.0,
+      "enemy": "enemy_drone",
+      "x": 120,
       "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "drop_then_diagonal_right"
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
     },
-    {
-      "time": 10.0,
-      "enemy": "enemy_turret_pod",
-      "x": 200,
+     {
+      "time": 9.0,
+      "enemy": "enemy_drone",
+      "x": 190,
       "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "drop_then_diagonal_right"
+      "pattern": "enemy_drone_aimed_single",
+      "movement": "fast_drop"
     },
-    {
-      "time": 10.50,
-      "enemy": "enemy_turret_pod",
-      "x": 200,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "drop_then_diagonal_right"
-    },
-    {
-      "time": 11.0,
-      "enemy": "enemy_turret_pod",
-      "x": 200,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "drop_then_diagonal_right"
-    },
-  
     {
       "time": 13.0,
       "enemy": "enemy_interceptor",
