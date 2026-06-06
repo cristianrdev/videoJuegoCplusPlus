@@ -12,6 +12,7 @@ add_executable(videoJuegoCplusPlus
     src/main.cpp
     src/core/Game.cpp
     src/core/AssetManager.cpp
+    src/states/PlayState.cpp
     src/entities/Player.cpp
     src/entities/LaserNormal.cpp
     src/entities/Enemy.cpp
@@ -36,6 +37,7 @@ target_include_directories(videoJuegoCplusPlus PRIVATE
     src/systems
     src/config
     src/background
+    src/states
     src/ui
 )
 target_link_libraries(videoJuegoCplusPlus PRIVATE SFML::Graphics SFML::Window SFML::System)
