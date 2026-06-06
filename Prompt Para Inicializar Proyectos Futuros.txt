@@ -1,0 +1,70 @@
+## Prompt Para Inicializar Proyectos Futuros
+
+Usar este prompt cuando se quiera crear un nuevo proyecto C++17 + SFML con esta arquitectura:
+
+```txt
+Usa la skill sfml-architecture.
+
+Objetivo:
+Crear la base de un proyecto C++17 + SFML 3 con arquitectura limpia y escalable para un juego 2D.
+
+Requisitos de arquitectura:
+1. Crear estructura src/ con:
+   - main.cpp
+   - core/
+   - states/
+   - entities/
+   - systems/
+   - config/
+   - background/
+   - ui/
+2. Implementar Game en core/:
+   - ventana SFML
+   - game loop
+   - deltaTime
+   - update/render separados
+   - cerrar con Esc
+   - AssetManager compartido
+3. Implementar PlayState en states/:
+   - coordina gameplay
+   - no carga recursos dentro del loop
+   - delega spawns, colisiones, eventos y patrones a systems/
+4. Implementar AssetManager:
+   - cargar texturas por ID
+   - obtener texturas por ID
+   - evitar cargas duplicadas
+5. Implementar EventQueue en systems/:
+   - eventos con std::variant
+   - publish()
+   - drain()
+6. Implementar sistemas base:
+   - StageDirector
+   - EnemySpawner
+   - CollisionSystem
+   - BulletPatternSystem
+   - MovementPatternSystem
+7. Implementar entidades simples:
+   - Player
+   - Enemy
+   - Projectile/Bullet
+8. Agregar carpeta config/ en la raiz del proyecto para JSON:
+   - player.json
+   - enemies.json
+   - projectiles.json
+   - bullet_patterns.json
+   - movement_patterns.json
+   - stage_01_enemies.json
+9. Usar CMake con C++17 y SFML 3.
+10. Documentar la arquitectura en src/ARCHITECTURE.md.
+
+Reglas:
+- Usar deltaTime para movimiento y timers.
+- Separar update() y render().
+- No cargar texturas en update() ni render().
+- Preferir JSON antes que valores hardcodeados.
+- Mantener entidades livianas.
+- Mantener PlayState como coordinador, no como clase gigante.
+- Publicar eventos para enemy destroyed, player hit y player dead.
+
+Antes de modificar codigo, explicar brevemente que archivos se van a crear o modificar.
+```
