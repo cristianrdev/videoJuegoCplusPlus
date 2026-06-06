@@ -22,13 +22,5 @@
       "hitbox_width": 13.0,
       "hitbox_height": 13.0
     }
-  ],
-  "spawns": [
-    {
-      "time": 12.0,
-      "item": "power_capsule",
-      "x": 120.0,
-      "y": -15.0
-    }
   ]
 }

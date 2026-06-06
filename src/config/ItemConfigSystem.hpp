@@ -38,6 +38,7 @@ struct ItemSpawnConfig {
 class ItemConfigSystem {
 public:
     void loadFromFile(const std::string& path);
+    void loadStageSpawnsFromFile(const std::string& path);
 
     const ItemCarrierConfig& carrierConfigFor(const std::string& itemId) const;
     const PowerUpConfig& powerUpConfigFor(const std::string& powerUpId) const;

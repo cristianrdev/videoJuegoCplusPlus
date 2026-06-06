@@ -37,6 +37,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     for (const auto& itemId : itemConfigSystem_.textureIds()) {
         assets_.loadTexture(itemId, itemConfigSystem_.texturePathFor(itemId));
     }
+    itemConfigSystem_.loadStageSpawnsFromFile("config/stage_01_items.json");
 
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");

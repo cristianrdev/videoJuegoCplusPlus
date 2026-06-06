@@ -117,7 +117,16 @@ void ItemConfigSystem::loadFromFile(const std::string& path) {
         powerUps_[config.id] = std::move(config);
     }
 
-    for (const auto& object : objectsInArray(text, "spawns")) {
+    if (carriers_.empty() || powerUps_.empty()) {
+        throw std::runtime_error("Configuracion de items incompleta: " + path);
+    }
+}
+
+void ItemConfigSystem::loadStageSpawnsFromFile(const std::string& path) {
+    const auto text = readTextFile(path);
+    spawns_.clear();
+
+    for (const auto& object : objectsInArray(text, "items")) {
         auto spawn = ItemSpawnConfig{};
         spawn.time = sf::seconds(matchFloat(object, "time", 0.f));
         spawn.itemId = matchString(object, "item");
@@ -133,10 +142,6 @@ void ItemConfigSystem::loadFromFile(const std::string& path) {
             return left.time < right.time;
         }
     );
-
-    if (carriers_.empty() || powerUps_.empty()) {
-        throw std::runtime_error("Configuracion de items incompleta: " + path);
-    }
 }
 
 const ItemCarrierConfig& ItemConfigSystem::carrierConfigFor(const std::string& itemId) const {
