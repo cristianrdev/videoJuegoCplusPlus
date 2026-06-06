@@ -1,6 +1,6 @@
 {
   "player": {
-    "ship_texture": "textures/player/player_ship_red_triangle_test.png",
+    "ship_texture": "textures/player/navejugadoredit.png",
     "thruster_texture": "textures/player/player_thruster_flame.png",
     "laser_texture": "textures/player/player_laser_normal.png",
     "muzzle_flash_texture": "textures/player/player_laser_muzzle_flash.png",
@@ -12,7 +12,7 @@
     "sprite_render_height": 32.0,
     "clamp_half_size": 16.0,
     "laser_spawn_offset_y": -18.0,
-    "fire_cooldown_seconds": 0.06,
+    "fire_cooldown_seconds": 0.07,
     "muzzle_flash_seconds": 0.06,
     "laser_speed": 260.0,
     "laser_damage": 1,

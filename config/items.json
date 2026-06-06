@@ -2,7 +2,7 @@
   "carriers": [
     {
       "id": "power_capsule",
-      "texture": "textures/items/item_power_capsule.png",
+      "texture": "textures/items/capsulaitem2.png",
       "health": 5,
       "drop": "power_p",
       "speed_y": 24.0,
