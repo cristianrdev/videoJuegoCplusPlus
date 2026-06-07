@@ -126,6 +126,14 @@
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "floating_rock_turret_drop"
     },
+    {
+      "time": 42.1,
+      "enemy": "enemy_rock_turret",
+      "x": 110,
+      "y": -62,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "floating_rock_turret_drop"
+    },
 
 
 

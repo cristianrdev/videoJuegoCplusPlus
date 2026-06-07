@@ -18,15 +18,15 @@
       "speed_y": 18.0
     },
     {
-      "time": 45.0,
+      "time": 43.0,
       "tileset": "floating_red_rocks",
-      "tile": 2,
-      "x": 58,
+      "tile": 3,
+      "x": 60,
       "y": -100,
-      "speed_y": 16.0
+      "speed_y": 18.0
     },
     {
-      "time": 47.0,
+      "time": 100.0,
       "tileset": "floating_red_rocks",
       "tile": 3,
       "x": -18,
@@ -34,7 +34,7 @@
       "speed_y": 24.0
     },
     {
-      "time": 54.0,
+      "time": 100.0,
       "tileset": "floating_red_rocks",
       "tile": 4,
       "x": 140,
