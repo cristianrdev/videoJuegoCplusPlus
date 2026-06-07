@@ -69,8 +69,8 @@
     {
       "id": "enemy_mech_spider_mother_web_line",
       "type": "spread",
-      "fire_interval": 0.62,
-      "bullet_speed": 148.0,
+      "fire_interval": 1.50,
+      "bullet_speed": 100.0,
       "aimed": true,
       "angle_offsets": [0.0],
       "bullet": "enemy_web_line"

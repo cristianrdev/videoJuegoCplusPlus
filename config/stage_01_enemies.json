@@ -221,7 +221,7 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 70.0,
+      "time": 0.5,
       "enemy": "enemy_mech_spider_mother",
       "x": 120,
       "y": -60,

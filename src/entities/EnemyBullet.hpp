@@ -29,6 +29,8 @@ public:
 
     bool isAlive(sf::Vector2f logicalSize) const;
     sf::FloatRect hitbox() const;
+    bool isPixelLine() const;
+    void setPosition(sf::Vector2f position);
     int damage() const;
 
 private:

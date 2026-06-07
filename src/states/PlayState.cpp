@@ -154,6 +154,20 @@ void PlayState::update(sf::Time deltaTime) {
 
     updateEnemyShooting();
 
+    for (const auto& enemy : enemies_) {
+        if (enemy.enemyId() != "enemy_mech_spider_mother" || !enemy.isAlive()) {
+            continue;
+        }
+
+        const auto mouthPosition = enemy.bulletSpawnPosition();
+        for (auto& bullet : enemyBullets_) {
+            if (bullet.isPixelLine()) {
+                bullet.setPosition(mouthPosition);
+            }
+        }
+        break;
+    }
+
     for (auto& carrier : itemCarriers_) {
         carrier.update(deltaTime);
     }

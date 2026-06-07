@@ -69,6 +69,10 @@ EnemyBullet::EnemyBullet(
 
 void EnemyBullet::update(sf::Time deltaTime) {
     age_ += deltaTime;
+    if (visualType_ == "pixel_line") {
+        return;
+    }
+
     position_ += velocity_ * deltaTime.asSeconds();
 }
 
@@ -115,6 +119,10 @@ void EnemyBullet::render(sf::RenderTarget& target) const {
 }
 
 bool EnemyBullet::isAlive(sf::Vector2f logicalSize) const {
+    if (visualType_ == "pixel_line") {
+        return age_ <= growDuration_ + sf::seconds(0.28f);
+    }
+
     return position_.x >= -8.f &&
         position_.x <= logicalSize.x + 8.f &&
         position_.y >= -8.f &&
@@ -153,6 +161,14 @@ sf::FloatRect EnemyBullet::hitbox() const {
         {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
         size_
     };
+}
+
+bool EnemyBullet::isPixelLine() const {
+    return visualType_ == "pixel_line";
+}
+
+void EnemyBullet::setPosition(sf::Vector2f position) {
+    position_ = position;
 }
 
 int EnemyBullet::damage() const {
