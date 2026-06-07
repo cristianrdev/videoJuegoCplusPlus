@@ -1,5 +1,6 @@
 #include "Enemy.hpp"
 
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
@@ -44,6 +45,8 @@ Enemy::Enemy(
     std::string movementId,
     int health,
     int contactDamage,
+    sf::Vector2f configuredHitboxSize,
+    sf::Vector2f configuredHitboxOffset,
     bool blinkEnabled,
     int blinkHealthThreshold
 )
@@ -79,6 +82,11 @@ Enemy::Enemy(
         };
     }
 
+    if (configuredHitboxSize.x > 0.f && configuredHitboxSize.y > 0.f) {
+        size_ = configuredHitboxSize;
+    }
+    hitboxOffset_ = configuredHitboxOffset;
+
     sprite_.setOrigin({
         visualSize_.x * 0.5f,
         visualSize_.y * 0.5f
@@ -94,7 +102,7 @@ void Enemy::update(sf::Time deltaTime) {
     }
 }
 
-void Enemy::render(sf::RenderTarget& target) const {
+void Enemy::render(sf::RenderTarget& target, bool showHitbox) const {
     auto pixelSnappedSprite = sprite_;
     if (enemyId_ == "enemy_robot_fish") {
         const auto frameIndex = firingVisualTime_ > sf::Time::Zero ? 1 : 0;
@@ -116,11 +124,17 @@ void Enemy::render(sf::RenderTarget& target) const {
             auto states = sf::RenderStates{};
             states.shader = shader;
             target.draw(pixelSnappedSprite, states);
+            if (showHitbox) {
+                renderHitbox(target);
+            }
             return;
         }
     }
 
     target.draw(pixelSnappedSprite);
+    if (showHitbox) {
+        renderHitbox(target);
+    }
 }
 
 void Enemy::takeDamage(int damage) {
@@ -182,9 +196,25 @@ sf::Time Enemy::elapsed() const {
 
 sf::FloatRect Enemy::hitbox() const {
     return {
-        {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
+        {
+            position_.x + hitboxOffset_.x - size_.x * 0.5f,
+            position_.y + hitboxOffset_.y - size_.y * 0.5f
+        },
         size_
     };
+}
+
+void Enemy::renderHitbox(sf::RenderTarget& target) const {
+    const auto bounds = hitbox();
+    auto box = sf::RectangleShape(bounds.size);
+    box.setPosition({
+        std::round(bounds.position.x),
+        std::round(bounds.position.y)
+    });
+    box.setFillColor(sf::Color::Transparent);
+    box.setOutlineColor(sf::Color(60, 255, 80));
+    box.setOutlineThickness(1.f);
+    target.draw(box);
 }
 
 const std::string& Enemy::enemyId() const {

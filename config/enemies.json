@@ -4,30 +4,50 @@
       "id": "enemy_drone",
       "texture": "textures/enemies/enemy_drone.png",
       "health": 3,
-      "contact_damage": 3
+      "contact_damage": 3,
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0
     },
     {
       "id": "enemy_turret_pod",
       "texture": "textures/enemies/enemy_turret_pod.png",
       "health": 3,
-      "contact_damage": 3
+      "contact_damage": 3,
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0
     },
     {
       "id": "enemy_interceptor",
       "texture": "textures/enemies/enemy_interceptor.png",
       "health": 3,
-      "contact_damage": 3
+      "contact_damage": 3,
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0
     },
     {
       "id": "enemy_robot_fish",
       "texture": "textures/enemies/enemy_robot_fish_sheet.png",
-      "health": 80
+      "health": 80,
+      "hitbox_width": 82.0,
+      "hitbox_height": 252.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0
     },
     {
       "id": "enemy_metal_squid",
       "texture": "textures/enemies/enemy_metal_squid.png",
       "health": 10,
       "contact_damage": 3,
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
       "blink_enabled": true,
       "blink_health_threshold": 3
     },
@@ -36,6 +56,10 @@
       "texture": "textures/enemies/enemy_rock_turret.png",
       "health": 15,
       "contact_damage": 3,
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
       "blink_enabled": true,
       "blink_health_threshold": 4
     },
@@ -44,6 +68,10 @@
       "texture": "textures/enemies/enemy_mech_spider.png",
       "health": 5,
       "contact_damage": 3,
+      "hitbox_width": 32.0,
+      "hitbox_height": 32.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
       "blink_enabled": true,
       "blink_health_threshold": 3
     }

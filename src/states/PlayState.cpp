@@ -271,7 +271,7 @@ void PlayState::render(sf::RenderTarget& target) {
         element.render(target, showDebugHitboxes);
     }
     for (const auto& enemy : enemies_) {
-        enemy.render(target);
+        enemy.render(target, showDebugHitboxes);
     }
     for (const auto& carrier : itemCarriers_) {
         carrier.render(target);

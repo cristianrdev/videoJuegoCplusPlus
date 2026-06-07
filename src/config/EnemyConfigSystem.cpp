@@ -37,6 +37,16 @@ int matchInt(const std::string& text, const std::string& field, int fallback) {
     return std::stoi(match[1].str());
 }
 
+float matchFloat(const std::string& text, const std::string& field, float fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stof(match[1].str());
+}
+
 bool matchBool(const std::string& text, const std::string& field, bool fallback) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
     auto match = std::smatch{};
@@ -62,6 +72,14 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
         config.texturePath = matchString(object, "texture");
         config.health = matchInt(object, "health", 3);
         config.contactDamage = matchInt(object, "contact_damage", 0);
+        config.hitboxSize = {
+            matchFloat(object, "hitbox_width", 0.f),
+            matchFloat(object, "hitbox_height", 0.f)
+        };
+        config.hitboxOffset = {
+            matchFloat(object, "hitbox_offset_x", 0.f),
+            matchFloat(object, "hitbox_offset_y", 0.f)
+        };
         config.blinkEnabled = matchBool(object, "blink_enabled", false);
         config.blinkHealthThreshold = matchInt(object, "blink_health_threshold", 0);
         configs_[config.id] = std::move(config);
@@ -88,6 +106,24 @@ int EnemyConfigSystem::contactDamageFor(const std::string& enemyId) const {
     }
 
     return it->second.contactDamage;
+}
+
+sf::Vector2f EnemyConfigSystem::hitboxSizeFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return {0.f, 0.f};
+    }
+
+    return it->second.hitboxSize;
+}
+
+sf::Vector2f EnemyConfigSystem::hitboxOffsetFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return {0.f, 0.f};
+    }
+
+    return it->second.hitboxOffset;
 }
 
 bool EnemyConfigSystem::blinkEnabledFor(const std::string& enemyId) const {

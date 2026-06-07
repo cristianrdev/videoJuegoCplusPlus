@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Time.hpp>
@@ -18,12 +19,14 @@ public:
         std::string movementId,
         int health,
         int contactDamage,
+        sf::Vector2f configuredHitboxSize,
+        sf::Vector2f configuredHitboxOffset,
         bool blinkEnabled,
         int blinkHealthThreshold
     );
 
     void update(sf::Time deltaTime);
-    void render(sf::RenderTarget& target) const;
+    void render(sf::RenderTarget& target, bool showHitbox = false) const;
     void takeDamage(int damage);
     void setPosition(sf::Vector2f position);
 
@@ -43,9 +46,12 @@ public:
     const std::string& movementId() const;
 
 private:
+    void renderHitbox(sf::RenderTarget& target) const;
+
     sf::Vector2f startPosition_;
     sf::Vector2f position_;
     sf::Vector2f size_{24.f, 24.f};
+    sf::Vector2f hitboxOffset_{0.f, 0.f};
     sf::Vector2f visualSize_{24.f, 24.f};
     int health_{3};
     int contactDamage_{0};
