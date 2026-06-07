@@ -33,6 +33,7 @@ private:
     void renderPauseOverlay();
     void renderGameOverOverlay();
     void renderDebugHud();
+    void renderPixelGrid();
     void updatePresentationSprite();
 
     static constexpr unsigned int LogicalWidth = 240;

@@ -1,6 +1,7 @@
 #include "Game.hpp"
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -210,6 +211,7 @@ void Game::render() {
 
     window_.clear(sf::Color::Black);
     window_.draw(presentationSprite_);
+    renderPixelGrid();
     renderGameOverOverlay();
     renderPauseOverlay();
     renderDebugHud();
@@ -262,6 +264,42 @@ void Game::renderGameOverOverlay() {
         static_cast<float>(window_.getSize().y) * 0.5f
     });
     window_.draw(gameOverText);
+}
+
+void Game::renderPixelGrid() {
+    if (!playState_.isPlayerHitboxVisible()) {
+        return;
+    }
+
+    const auto scale = presentationSprite_.getScale().x;
+    if (scale < 3.f) {
+        return;
+    }
+
+    const auto origin = presentationSprite_.getPosition();
+    const auto width = static_cast<float>(LogicalWidth) * scale;
+    const auto height = static_cast<float>(LogicalHeight) * scale;
+    const auto color = sf::Color(255, 255, 255, 54);
+
+    auto verticalLine = sf::RectangleShape({1.f, height});
+    verticalLine.setFillColor(color);
+    for (auto x = 0u; x <= LogicalWidth; ++x) {
+        verticalLine.setPosition({
+            std::round(origin.x + static_cast<float>(x) * scale),
+            std::round(origin.y)
+        });
+        window_.draw(verticalLine);
+    }
+
+    auto horizontalLine = sf::RectangleShape({width, 1.f});
+    horizontalLine.setFillColor(color);
+    for (auto y = 0u; y <= LogicalHeight; ++y) {
+        horizontalLine.setPosition({
+            std::round(origin.x),
+            std::round(origin.y + static_cast<float>(y) * scale)
+        });
+        window_.draw(horizontalLine);
+    }
 }
 
 void Game::renderDebugHud() {
