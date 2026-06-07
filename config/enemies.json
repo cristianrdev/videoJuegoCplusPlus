@@ -74,6 +74,18 @@
       "hitbox_offset_y": -2.0,
       "blink_enabled": true,
       "blink_health_threshold": 3
+    },
+    {
+      "id": "enemy_mech_spider_mother",
+      "texture": "textures/enemies/enemy_mech_spider_mother.png",
+      "health": 35,
+      "contact_damage": 3,
+      "hitbox_width": 38.0,
+      "hitbox_height": 40.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 4.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 8
     }
   ]
 }

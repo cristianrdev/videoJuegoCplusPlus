@@ -31,6 +31,7 @@ void EnemyBullet::render(sf::RenderTarget& target) const {
     if (sprite_) {
         auto sprite = *sprite_;
         sprite.setPosition({std::round(position_.x), std::round(position_.y)});
+        sprite.setRotation(sf::degrees(std::atan2(velocity_.x, velocity_.y) * 180.f / 3.14159265358979323846f));
         target.draw(sprite);
         return;
     }

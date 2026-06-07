@@ -144,7 +144,8 @@ void PlayState::update(sf::Time deltaTime) {
             movementPatternSystem_.positionFor(
                 enemy.movementId(),
                 enemy.startPosition(),
-                enemy.elapsed()
+                enemy.elapsed(),
+                player_->position()
             )
         );
     }

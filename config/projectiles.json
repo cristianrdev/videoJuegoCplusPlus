@@ -14,6 +14,11 @@
       "id": "enemy_small_red_bullet",
       "texture": "textures/projectiles/enemy_small_red_bullet.png",
       "damage": 1
+    },
+    {
+      "id": "enemy_web_line",
+      "texture": "textures/projectiles/enemy_web_line.png",
+      "damage": 1
     }
   ]
 }
