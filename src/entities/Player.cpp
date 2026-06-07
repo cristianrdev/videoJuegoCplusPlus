@@ -1,5 +1,6 @@
 #include "Player.hpp"
 
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
@@ -136,21 +137,45 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::render(sf::RenderTarget& target) const {
-    if (invincibilityRemaining_ > sf::Time::Zero) {
-        const auto flickerFrame = static_cast<int>(invincibilityElapsed_.asSeconds() / FlickerFrameSeconds);
-        if (flickerFrame % 2 != 0) {
-            return;
+    const auto shouldRenderSprite = [this] {
+        if (invincibilityRemaining_ <= sf::Time::Zero) {
+            return true;
         }
+
+        const auto flickerFrame = static_cast<int>(invincibilityElapsed_.asSeconds() / FlickerFrameSeconds);
+        return flickerFrame % 2 == 0;
+    }();
+
+    if (shouldRenderSprite) {
+        renderThrusters(target);
+
+        auto pixelSnappedSprite = sprite_;
+        pixelSnappedSprite.setPosition({
+            std::round(position_.x),
+            std::round(position_.y)
+        });
+        target.draw(pixelSnappedSprite);
     }
 
-    renderThrusters(target);
+    if (hitboxVisible_) {
+        renderHitbox(target);
+    }
+}
 
-    auto pixelSnappedSprite = sprite_;
-    pixelSnappedSprite.setPosition({
+void Player::renderHitbox(sf::RenderTarget& target) const {
+    auto box = sf::RectangleShape(hitboxSize_);
+    box.setOrigin({
+        hitboxSize_.x * 0.5f,
+        hitboxSize_.y * 0.5f
+    });
+    box.setPosition({
         std::round(position_.x),
         std::round(position_.y)
     });
-    target.draw(pixelSnappedSprite);
+    box.setFillColor(sf::Color::Transparent);
+    box.setOutlineColor(sf::Color(60, 255, 80));
+    box.setOutlineThickness(1.f);
+    target.draw(box);
 }
 
 sf::FloatRect Player::hitbox() const {
@@ -186,6 +211,14 @@ bool Player::isGodModeEnabled() const {
 
 void Player::setGodModeEnabled(bool enabled) {
     godModeEnabled_ = enabled;
+}
+
+bool Player::isHitboxVisible() const {
+    return hitboxVisible_;
+}
+
+void Player::setHitboxVisible(bool visible) {
+    hitboxVisible_ = visible;
 }
 
 bool Player::takeDamage(int damage) {

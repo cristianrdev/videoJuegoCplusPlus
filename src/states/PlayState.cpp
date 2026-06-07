@@ -347,6 +347,18 @@ void PlayState::toggleGodMode() {
     player_->setGodModeEnabled(!player_->isGodModeEnabled());
 }
 
+bool PlayState::isPlayerHitboxVisible() const {
+    return player_ && player_->isHitboxVisible();
+}
+
+void PlayState::togglePlayerHitbox() {
+    if (!player_) {
+        return;
+    }
+
+    player_->setHitboxVisible(!player_->isHitboxVisible());
+}
+
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
     enemies_.push_back(enemySpawner_.spawn(spawn));
 }

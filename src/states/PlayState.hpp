@@ -47,6 +47,8 @@ public:
     int playerHealth() const;
     bool isGodModeEnabled() const;
     void toggleGodMode();
+    bool isPlayerHitboxVisible() const;
+    void togglePlayerHitbox();
 
 private:
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);

@@ -7,7 +7,7 @@
     "health": 3,
     "speed": 120.0,
     "hitbox_width": 6.0,
-    "hitbox_height": 6.0,
+    "hitbox_height": 15.0,
     "sprite_render_width": 32.0,
     "sprite_render_height": 32.0,
     "clamp_half_size": 16.0,

@@ -25,6 +25,8 @@ public:
     bool isInvincible() const;
     bool isGodModeEnabled() const;
     void setGodModeEnabled(bool enabled);
+    bool isHitboxVisible() const;
+    void setHitboxVisible(bool visible);
     bool takeDamage(int damage);
     void collectPowerUpP();
     int projectileCount() const;
@@ -40,6 +42,7 @@ private:
     void clampToLogicalArea();
     void updateSpriteFrame();
     void renderThrusters(sf::RenderTarget& target) const;
+    void renderHitbox(sf::RenderTarget& target) const;
 
     sf::Vector2f logicalSize_;
     sf::Vector2f position_;
@@ -54,6 +57,7 @@ private:
     sf::Time invincibilityRemaining_{sf::Time::Zero};
     sf::Time invincibilityElapsed_{sf::Time::Zero};
     bool godModeEnabled_{false};
+    bool hitboxVisible_{false};
 
     const sf::Texture* spriteSheetTexture_{nullptr};
     const sf::Texture* thrusterTexture_{nullptr};

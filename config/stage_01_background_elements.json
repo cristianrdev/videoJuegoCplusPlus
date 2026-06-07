@@ -10,12 +10,12 @@
       "speed_y": 18.0
     },
     {
-      "time": 37.0,
+      "time": 35.0,
       "tileset": "floating_red_rocks",
-      "tile": 1,
-      "x": 132,
+      "tile": 2,
+      "x": 140,
       "y": -100,
-      "speed_y": 22.0
+      "speed_y": 18.0
     },
     {
       "time": 45.0,

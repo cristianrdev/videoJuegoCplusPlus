@@ -102,6 +102,8 @@ void Game::processEvents() {
                 togglePause();
             } else if (keyPressed->code == sf::Keyboard::Key::G) {
                 playState_.toggleGodMode();
+            } else if (keyPressed->code == sf::Keyboard::Key::H) {
+                playState_.togglePlayerHitbox();
             } else if (keyPressed->code == sf::Keyboard::Key::Q) {
                 applyFramePacingMode(FramePacingMode::VSync);
             } else if (keyPressed->code == sf::Keyboard::Key::W) {
@@ -287,6 +289,8 @@ void Game::renderDebugHud() {
          << playState_.playerHealth()
          << "\n\nGOD\n"
          << (playState_.isGodModeEnabled() ? "ON" : "OFF")
+         << "\n\nHITBOX\n"
+         << (playState_.isPlayerHitboxVisible() ? "ON" : "OFF")
          << "\n\n"
          << std::setprecision(1)
          << "FPS\n"
@@ -306,6 +310,7 @@ void Game::renderDebugHud() {
          << "Espacio disparo\n"
          << "Z disparo\n"
          << "G god mode\n"
+         << "H hitbox\n"
          << "1 escala 1x\n"
          << "2 escala 2x\n"
          << "3 escala 3x\n"
