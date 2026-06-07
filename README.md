@@ -89,12 +89,37 @@ El `CMakeLists.txt` copia automaticamente `assets/` y `config/` al directorio de
 
 ## Controles
 
-- Flechas / movimiento configurado: mover nave
+### Teclado
+
+- `Flechas` o `WASD`: mover nave
 - `Space` o `Z`: disparar
-- `P`: pausar
+- `P`: pausar/reanudar
 - `Esc`: salir
-- `1`: resolucion logica real `240x320`
-- `2`: escala entera pixel-perfect
+
+### Escalado pixel-perfect
+
+- `1`: escala `x1` (`240x320`)
+- `2`: escala `x2` (`480x640`)
+- `3`: escala `x3` (`720x960`)
+- `4`: escala `x4` (`960x1280`)
+
+### Debug y pruebas
+
+- `G`: activar/desactivar god mode
+- `H`: mostrar/ocultar hitboxes
+
+Cuando `H` esta activo:
+
+- Se visualiza la hitbox del jugador.
+- Se visualizan las hitboxes de enemigos.
+- Se visualizan las hitboxes de background elements con colision.
+- En escala `x3` o `x4` se muestra una grilla blanca de `240x320` celdas logicas.
+
+### Modo de presentacion/FPS
+
+- `Q`: VSync activado
+- `W`: sin limite de FPS
+- `E`: limite de `120 FPS`
 
 Tambien hay soporte basico para joystick estilo Xbox/PlayStation:
 
