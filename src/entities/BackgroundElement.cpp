@@ -7,11 +7,13 @@ BackgroundElement::BackgroundElement(
     float speedY,
     const sf::Texture& texture,
     int tileIndex,
-    sf::Vector2i tileSize
+    sf::Vector2i tileSize,
+    int contactDamage
 )
     : position_(position)
     , speedY_(speedY)
     , tileSize_(tileSize)
+    , contactDamage_(contactDamage)
     , sprite_(texture) {
     sprite_.setTextureRect({
         {tileIndex * tileSize_.x, 0},
@@ -34,4 +36,18 @@ void BackgroundElement::render(sf::RenderTarget& target) const {
 
 bool BackgroundElement::isAlive(float logicalHeight) const {
     return position_.y <= logicalHeight + static_cast<float>(tileSize_.y);
+}
+
+sf::FloatRect BackgroundElement::hitbox() const {
+    return {
+        position_,
+        {
+            static_cast<float>(tileSize_.x),
+            static_cast<float>(tileSize_.y)
+        }
+    };
+}
+
+int BackgroundElement::contactDamage() const {
+    return contactDamage_;
 }

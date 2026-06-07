@@ -7,7 +7,8 @@
       "tile": 0,
       "x": 8,
       "y": -100,
-      "speed_y": 18.0
+      "speed_y": 18.0,
+      "contact_damage": 3
     },
     {
       "time": 35.0,
@@ -15,7 +16,8 @@
       "tile": 2,
       "x": 140,
       "y": -100,
-      "speed_y": 18.0
+      "speed_y": 18.0,
+      "contact_damage": 3
     },
     {
       "time": 43.0,
@@ -23,7 +25,8 @@
       "tile": 3,
       "x": 60,
       "y": -100,
-      "speed_y": 18.0
+      "speed_y": 18.0,
+      "contact_damage": 3
     },
     {
       "time": 100.0,

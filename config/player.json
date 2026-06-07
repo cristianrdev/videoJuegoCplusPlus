@@ -1,6 +1,6 @@
 {
   "player": {
-    "ship_texture": "textures/player/navejugadoredit.png",
+    "ship_texture": "textures/player/naveditada2.png",
     "thruster_texture": "textures/player/player_thruster_flame.png",
     "laser_texture": "textures/player/player_laser_normal.png",
     "muzzle_flash_texture": "textures/player/player_laser_muzzle_flash.png",

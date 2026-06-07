@@ -14,6 +14,7 @@ public:
         float x{0.f};
         float y{0.f};
         float speedY{20.f};
+        int contactDamage{0};
     };
 
     void loadFromFile(const std::string& path);

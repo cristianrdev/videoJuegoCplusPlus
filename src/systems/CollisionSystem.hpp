@@ -4,6 +4,7 @@
 #include "EnemyBullet.hpp"
 #include "EnemyLaser.hpp"
 #include "EventQueue.hpp"
+#include "BackgroundElement.hpp"
 #include "ItemCarrier.hpp"
 #include "LaserNormal.hpp"
 #include "Player.hpp"
@@ -28,6 +29,12 @@ public:
         std::vector<PowerUpItem>& powerUps,
         Player& player,
         sf::Vector2f logicalSize,
+        EventQueue& eventQueue
+    ) const;
+
+    void resolveBackgroundElements(
+        const std::vector<BackgroundElement>& backgroundElements,
+        Player& player,
         EventQueue& eventQueue
     ) const;
 };

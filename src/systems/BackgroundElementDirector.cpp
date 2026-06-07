@@ -47,6 +47,16 @@ int matchInt(const std::string& text, const std::string& field) {
 
     return std::stoi(match[1].str());
 }
+
+int matchIntOr(const std::string& text, const std::string& field, int fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stoi(match[1].str());
+}
 }
 
 void BackgroundElementDirector::loadFromFile(const std::string& path) {
@@ -67,6 +77,7 @@ void BackgroundElementDirector::loadFromFile(const std::string& path) {
         spawn.x = matchFloat(object, "x");
         spawn.y = matchFloat(object, "y");
         spawn.speedY = matchFloat(object, "speed_y");
+        spawn.contactDamage = matchIntOr(object, "contact_damage", 0);
         spawns_.push_back(std::move(spawn));
     }
 

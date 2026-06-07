@@ -131,3 +131,19 @@ void CollisionSystem::resolveItems(
         }
     }
 }
+
+void CollisionSystem::resolveBackgroundElements(
+    const std::vector<BackgroundElement>& backgroundElements,
+    Player& player,
+    EventQueue& eventQueue
+) const {
+    for (const auto& element : backgroundElements) {
+        if (element.contactDamage() <= 0) {
+            continue;
+        }
+
+        if (intersects(element.hitbox(), player.hitbox())) {
+            damagePlayer(player, element.contactDamage(), eventQueue);
+        }
+    }
+}

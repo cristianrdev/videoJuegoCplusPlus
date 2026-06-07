@@ -373,7 +373,8 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
         spawn.speedY,
         *floatingRedRocksTexture_,
         spawn.tileIndex,
-        sf::Vector2i{100, 100}
+        sf::Vector2i{100, 100},
+        spawn.contactDamage
     );
 }
 
@@ -458,6 +459,12 @@ void PlayState::updateCollisions() {
         powerUps_,
         *player_,
         logicalSize_,
+        eventQueue_
+    );
+
+    collisionSystem_.resolveBackgroundElements(
+        backgroundElements_,
+        *player_,
         eventQueue_
     );
 }

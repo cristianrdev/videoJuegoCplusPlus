@@ -13,7 +13,7 @@
   "power_ups": [
     {
       "id": "power_p",
-      "texture": "textures/items/item_power_p.png",
+      "texture": "textures/items/powerup.png",
       "lifetime_seconds": 30.0,
       "flicker_seconds": 10.0,
       "amplitude": 30.0,
