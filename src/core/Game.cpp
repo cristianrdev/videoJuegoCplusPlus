@@ -100,6 +100,8 @@ void Game::processEvents() {
                 window_.close();
             } else if (keyPressed->code == sf::Keyboard::Key::P) {
                 togglePause();
+            } else if (keyPressed->code == sf::Keyboard::Key::G) {
+                playState_.toggleGodMode();
             } else if (keyPressed->code == sf::Keyboard::Key::Q) {
                 applyFramePacingMode(FramePacingMode::VSync);
             } else if (keyPressed->code == sf::Keyboard::Key::W) {
@@ -281,6 +283,11 @@ void Game::renderDebugHud() {
          << "TIME\n"
          << playState_.stageTime().asSeconds()
          << " s\n\n"
+         << "VIDA\n"
+         << playState_.playerHealth()
+         << "\n\nGOD\n"
+         << (playState_.isGodModeEnabled() ? "ON" : "OFF")
+         << "\n\n"
          << std::setprecision(1)
          << "FPS\n"
          << smoothedFps_
@@ -298,6 +305,7 @@ void Game::renderDebugHud() {
          << "P pausa\n"
          << "Espacio disparo\n"
          << "Z disparo\n"
+         << "G god mode\n"
          << "1 escala 1x\n"
          << "2 escala 2x\n"
          << "3 escala 3x\n"

@@ -136,7 +136,7 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::render(sf::RenderTarget& target) const {
-    if (isInvincible()) {
+    if (invincibilityRemaining_ > sf::Time::Zero) {
         const auto flickerFrame = static_cast<int>(invincibilityElapsed_.asSeconds() / FlickerFrameSeconds);
         if (flickerFrame % 2 != 0) {
             return;
@@ -177,7 +177,15 @@ bool Player::isAlive() const {
 }
 
 bool Player::isInvincible() const {
-    return invincibilityRemaining_ > sf::Time::Zero;
+    return godModeEnabled_ || invincibilityRemaining_ > sf::Time::Zero;
+}
+
+bool Player::isGodModeEnabled() const {
+    return godModeEnabled_;
+}
+
+void Player::setGodModeEnabled(bool enabled) {
+    godModeEnabled_ = enabled;
 }
 
 bool Player::takeDamage(int damage) {

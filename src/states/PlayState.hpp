@@ -44,6 +44,9 @@ public:
     sf::Time stageTime() const;
     bool isPlayerDestroyed() const;
     bool isGameOverVisible() const;
+    int playerHealth() const;
+    bool isGodModeEnabled() const;
+    void toggleGodMode();
 
 private:
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);

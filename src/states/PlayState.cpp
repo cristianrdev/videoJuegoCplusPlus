@@ -331,6 +331,22 @@ bool PlayState::isGameOverVisible() const {
         playerDeathElapsed_ >= sf::seconds(PlayerDeathExplosionSeconds + GameOverDelaySeconds);
 }
 
+int PlayState::playerHealth() const {
+    return player_ ? player_->health() : 0;
+}
+
+bool PlayState::isGodModeEnabled() const {
+    return player_ && player_->isGodModeEnabled();
+}
+
+void PlayState::toggleGodMode() {
+    if (!player_ || playerDestroyed_) {
+        return;
+    }
+
+    player_->setGodModeEnabled(!player_->isGodModeEnabled());
+}
+
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
     enemies_.push_back(enemySpawner_.spawn(spawn));
 }

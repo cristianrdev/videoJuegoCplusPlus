@@ -23,6 +23,8 @@ public:
     int health() const;
     bool isAlive() const;
     bool isInvincible() const;
+    bool isGodModeEnabled() const;
+    void setGodModeEnabled(bool enabled);
     bool takeDamage(int damage);
     void collectPowerUpP();
     int projectileCount() const;
@@ -51,6 +53,7 @@ private:
     sf::Time thrusterAnimationElapsed_{sf::Time::Zero};
     sf::Time invincibilityRemaining_{sf::Time::Zero};
     sf::Time invincibilityElapsed_{sf::Time::Zero};
+    bool godModeEnabled_{false};
 
     const sf::Texture* spriteSheetTexture_{nullptr};
     const sf::Texture* thrusterTexture_{nullptr};
