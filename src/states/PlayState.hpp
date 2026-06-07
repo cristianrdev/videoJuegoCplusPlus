@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AssetManager.hpp"
+#include "BackgroundElementConfigSystem.hpp"
 #include "BackgroundElement.hpp"
 #include "BackgroundElementDirector.hpp"
 #include "BulletPatternSystem.hpp"
@@ -97,6 +98,7 @@ private:
     EventQueue eventQueue_;
     StageDirector stageDirector_;
     BackgroundElementDirector backgroundElementDirector_;
+    BackgroundElementConfigSystem backgroundElementConfigSystem_;
     Starfield starfield_;
     std::unique_ptr<Player> player_;
     sf::Time playerDeathElapsed_{sf::Time::Zero};

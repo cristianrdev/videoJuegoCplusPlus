@@ -30,6 +30,7 @@ add_executable(videoJuegoCplusPlus
     src/systems/StageDirector.cpp
     src/systems/MovementPatternSystem.cpp
     src/config/EnemyConfigSystem.cpp
+    src/config/BackgroundElementConfigSystem.cpp
     src/config/ItemConfigSystem.cpp
     src/config/PlayerConfigSystem.cpp
     src/config/ProjectileConfigSystem.cpp

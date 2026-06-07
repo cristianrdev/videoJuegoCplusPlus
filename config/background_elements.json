@@ -1,0 +1,44 @@
+{
+  "elements": [
+    {
+      "tileset": "floating_red_rocks",
+      "tile": 0,
+      "hitbox_offset_x": 15.0,
+      "hitbox_offset_y": 25.0,
+      "hitbox_width": 70.0,
+      "hitbox_height": 50.0
+    },
+    {
+      "tileset": "floating_red_rocks",
+      "tile": 1,
+      "hitbox_offset_x": 10.0,
+      "hitbox_offset_y": 18.0,
+      "hitbox_width": 70.0,
+      "hitbox_height": 50.0
+    },
+    {
+      "tileset": "floating_red_rocks",
+      "tile": 2,
+      "hitbox_offset_x": 9.0,
+      "hitbox_offset_y": 15.0,
+      "hitbox_width": 70.0,
+      "hitbox_height": 50.0
+    },
+    {
+      "tileset": "floating_red_rocks",
+      "tile": 3,
+      "hitbox_offset_x": 12.0,
+      "hitbox_offset_y": 18.0,
+      "hitbox_width": 70.0,
+      "hitbox_height": 50.0
+    },
+    {
+      "tileset": "floating_red_rocks",
+      "tile": 4,
+      "hitbox_offset_x": 14.0,
+      "hitbox_offset_y": 20.0,
+      "hitbox_width": 70.0,
+      "hitbox_height": 50.0
+    }
+  ]
+}

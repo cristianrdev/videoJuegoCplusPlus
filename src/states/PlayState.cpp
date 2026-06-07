@@ -68,6 +68,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     itemConfigSystem_.loadStageSpawnsFromFile("config/stage_01_items.json");
 
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
+    backgroundElementConfigSystem_.loadFromFile("config/background_elements.json");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
     stageDirector_.loadFromFile("config/stage_01_enemies.json");
@@ -265,8 +266,9 @@ void PlayState::update(sf::Time deltaTime) {
 void PlayState::render(sf::RenderTarget& target) {
     target.clear(sf::Color(8, 12, 20));
     starfield_.render(target);
+    const auto showDebugHitboxes = isPlayerHitboxVisible();
     for (const auto& element : backgroundElements_) {
-        element.render(target);
+        element.render(target, showDebugHitboxes);
     }
     for (const auto& enemy : enemies_) {
         enemy.render(target);
@@ -368,12 +370,15 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
         throw std::runtime_error("Tileset de fondo no configurado: " + spawn.tilesetId);
     }
 
+    const auto elementConfig = backgroundElementConfigSystem_.configFor(spawn.tilesetId, spawn.tileIndex);
     backgroundElements_.emplace_back(
         sf::Vector2f{spawn.x, spawn.y},
         spawn.speedY,
         *floatingRedRocksTexture_,
         spawn.tileIndex,
         sf::Vector2i{100, 100},
+        elementConfig.hitboxOffset,
+        elementConfig.hitboxSize,
         spawn.contactDamage
     );
 }
