@@ -3,17 +3,20 @@
     {
       "id": "enemy_drone",
       "texture": "textures/enemies/enemy_drone.png",
-      "health": 3
+      "health": 3,
+      "contact_damage": 3
     },
     {
       "id": "enemy_turret_pod",
       "texture": "textures/enemies/enemy_turret_pod.png",
-      "health": 3
+      "health": 3,
+      "contact_damage": 3
     },
     {
       "id": "enemy_interceptor",
       "texture": "textures/enemies/enemy_interceptor.png",
-      "health": 3
+      "health": 3,
+      "contact_damage": 3
     },
     {
       "id": "enemy_robot_fish",
@@ -23,7 +26,8 @@
     {
       "id": "enemy_metal_squid",
       "texture": "textures/enemies/enemy_metal_squid.png",
-      "health": 8,
+      "health": 10,
+      "contact_damage": 3,
       "blink_enabled": true,
       "blink_health_threshold": 3
     },
@@ -31,6 +35,7 @@
       "id": "enemy_rock_turret",
       "texture": "textures/enemies/enemy_rock_turret.png",
       "health": 15,
+      "contact_damage": 3,
       "blink_enabled": true,
       "blink_health_threshold": 4
     },
