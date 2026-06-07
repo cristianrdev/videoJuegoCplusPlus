@@ -8,6 +8,9 @@
 #include <stdexcept>
 
 namespace {
+constexpr auto PlayerDeathExplosionSeconds = 0.21f;
+constexpr auto GameOverDelaySeconds = 3.0f;
+
 std::vector<sf::Vector2f> playerProjectileOffsets(int projectileCount) {
     switch (projectileCount) {
     case 2:
@@ -51,6 +54,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
+    playerExplosionTexture_ = &assets_.loadTexture("explosion_player_ship", "textures/effects/player_ship_destroy_explosion.png");
 
     projectileConfigSystem_.loadFromFile("config/projectiles.json");
     for (const auto& projectileId : projectileConfigSystem_.projectileIds()) {
@@ -73,6 +77,25 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
 }
 
 void PlayState::update(sf::Time deltaTime) {
+    if (playerDestroyed_) {
+        playerDeathElapsed_ += deltaTime;
+        starfield_.update(deltaTime);
+        for (auto& explosion : explosions_) {
+            explosion.update(deltaTime);
+        }
+        explosions_.erase(
+            std::remove_if(
+                explosions_.begin(),
+                explosions_.end(),
+                [](const Explosion& explosion) {
+                    return explosion.isFinished();
+                }
+            ),
+            explosions_.end()
+        );
+        return;
+    }
+
     stageClock_ += deltaTime;
 
     if (fireCooldown_ > sf::Time::Zero) {
@@ -267,11 +290,13 @@ void PlayState::render(sf::RenderTarget& target) {
         powerUp.render(target);
     }
     renderMuzzleFlash(target);
-    player_->render(target);
+    if (!playerDestroyed_) {
+        player_->render(target);
+    }
 }
 
 void PlayState::fireLaserNormal() {
-    if (fireCooldown_ > sf::Time::Zero || !player_) {
+    if (playerDestroyed_ || fireCooldown_ > sf::Time::Zero || !player_) {
         return;
     }
 
@@ -295,6 +320,15 @@ void PlayState::onPaused() {
 
 sf::Time PlayState::stageTime() const {
     return stageClock_;
+}
+
+bool PlayState::isPlayerDestroyed() const {
+    return playerDestroyed_;
+}
+
+bool PlayState::isGameOverVisible() const {
+    return playerDestroyed_ &&
+        playerDeathElapsed_ >= sf::seconds(PlayerDeathExplosionSeconds + GameOverDelaySeconds);
 }
 
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
@@ -357,7 +391,7 @@ void PlayState::updateEnemyShooting() {
             const auto duration = sf::seconds(bulletPatternSystem_.laserDuration(enemy.patternId()));
             const auto* laserTexture = laserTextureForPattern(enemy.patternId());
             if (length > 0.f && laserTexture) {
-                enemyLasers_.emplace_back(origin, length, duration, *laserTexture);
+                enemyLasers_.emplace_back(origin, length, duration, *laserTexture, laserDamageForPattern(enemy.patternId()));
                 enemy.startFiringVisual(duration);
             }
             enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -368,7 +402,8 @@ void PlayState::updateEnemyShooting() {
             enemy.patternId(),
             enemy.bulletSpawnPosition(),
             player_->position(),
-            bulletTextureForPattern(enemy.patternId())
+            bulletTextureForPattern(enemy.patternId()),
+            bulletDamageForPattern(enemy.patternId())
         );
         enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
         enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -409,6 +444,16 @@ void PlayState::processEvents() {
             if (powerUpCollected->powerUpId == "power_p") {
                 player_->collectPowerUpP();
             }
+        } else if (std::holds_alternative<PlayerDestroyedEvent>(event)) {
+            playerDestroyed_ = true;
+            playerDeathElapsed_ = sf::Time::Zero;
+            if (player_ && playerExplosionTexture_) {
+                explosions_.emplace_back(player_->position(), *playerExplosionTexture_);
+            }
+            muzzleFlashTime_ = sf::Time::Zero;
+            playerLasers_.clear();
+            enemyBullets_.clear();
+            enemyLasers_.clear();
         }
     }
 }
@@ -445,4 +490,22 @@ const sf::Texture* PlayState::laserTextureForPattern(const std::string& patternI
     }
 
     return nullptr;
+}
+
+int PlayState::bulletDamageForPattern(const std::string& patternId) const {
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return projectileConfigSystem_.damageFor(bulletId);
+    }
+
+    return 1;
+}
+
+int PlayState::laserDamageForPattern(const std::string& patternId) const {
+    const auto& laserId = bulletPatternSystem_.laserId(patternId);
+    if (laserId != "default" && projectileConfigSystem_.hasProjectile(laserId)) {
+        return projectileConfigSystem_.damageFor(laserId);
+    }
+
+    return 1;
 }

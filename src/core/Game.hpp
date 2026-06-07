@@ -31,6 +31,7 @@ private:
     void update(sf::Time deltaTime);
     void render();
     void renderPauseOverlay();
+    void renderGameOverOverlay();
     void renderDebugHud();
     void updatePresentationSprite();
 

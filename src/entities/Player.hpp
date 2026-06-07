@@ -21,7 +21,9 @@ public:
     sf::Vector2f position() const;
     sf::Vector2f laserSpawnPosition() const;
     int health() const;
-    void takeDamage(int damage);
+    bool isAlive() const;
+    bool isInvincible() const;
+    bool takeDamage(int damage);
     void collectPowerUpP();
     int projectileCount() const;
 
@@ -47,6 +49,8 @@ private:
     int projectileCount_{1};
     float verticalThrust_{0.f};
     sf::Time thrusterAnimationElapsed_{sf::Time::Zero};
+    sf::Time invincibilityRemaining_{sf::Time::Zero};
+    sf::Time invincibilityElapsed_{sf::Time::Zero};
 
     const sf::Texture* spriteSheetTexture_{nullptr};
     const sf::Texture* thrusterTexture_{nullptr};

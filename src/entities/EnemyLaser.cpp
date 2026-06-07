@@ -3,10 +3,11 @@
 #include <algorithm>
 #include <cmath>
 
-EnemyLaser::EnemyLaser(sf::Vector2f origin, float length, sf::Time duration, const sf::Texture& texture)
+EnemyLaser::EnemyLaser(sf::Vector2f origin, float length, sf::Time duration, const sf::Texture& texture, int damage)
     : origin_(origin)
     , size_({static_cast<float>(texture.getSize().x), length})
     , remaining_(duration)
+    , damage_(damage)
     , sprite_(texture) {
     const auto textureHeight = static_cast<int>(texture.getSize().y);
     const auto beamHeight = std::max(0, std::min(static_cast<int>(std::round(length)), textureHeight));
@@ -47,4 +48,8 @@ sf::FloatRect EnemyLaser::hitbox() const {
         {origin_.x - 5.f, origin_.y},
         {10.f, size_.y}
     };
+}
+
+int EnemyLaser::damage() const {
+    return damage_;
 }

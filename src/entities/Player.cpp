@@ -8,6 +8,7 @@
 
 namespace {
 constexpr auto JoystickDeadZone = 18.f;
+constexpr auto FlickerFrameSeconds = 0.08f;
 
 int firstConnectedJoystick() {
     for (auto joystick = 0u; joystick < sf::Joystick::Count; ++joystick) {
@@ -81,6 +82,14 @@ Player::Player(AssetManager& assets, sf::Vector2f logicalSize, const PlayerConfi
 }
 
 void Player::update(sf::Time deltaTime) {
+    if (invincibilityRemaining_ > sf::Time::Zero) {
+        invincibilityRemaining_ -= deltaTime;
+        invincibilityElapsed_ += deltaTime;
+        if (invincibilityRemaining_ < sf::Time::Zero) {
+            invincibilityRemaining_ = sf::Time::Zero;
+        }
+    }
+
     auto direction = sf::Vector2f{0.f, 0.f};
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) ||
@@ -127,6 +136,13 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::render(sf::RenderTarget& target) const {
+    if (isInvincible()) {
+        const auto flickerFrame = static_cast<int>(invincibilityElapsed_.asSeconds() / FlickerFrameSeconds);
+        if (flickerFrame % 2 != 0) {
+            return;
+        }
+    }
+
     renderThrusters(target);
 
     auto pixelSnappedSprite = sprite_;
@@ -156,8 +172,26 @@ int Player::health() const {
     return health_;
 }
 
-void Player::takeDamage(int damage) {
+bool Player::isAlive() const {
+    return health_ > 0;
+}
+
+bool Player::isInvincible() const {
+    return invincibilityRemaining_ > sf::Time::Zero;
+}
+
+bool Player::takeDamage(int damage) {
+    if (!isAlive() || isInvincible()) {
+        return false;
+    }
+
     health_ = std::max(0, health_ - damage);
+    if (health_ > 0 && config_.damageInvincibilitySeconds > 0.f) {
+        invincibilityRemaining_ = sf::seconds(config_.damageInvincibilitySeconds);
+        invincibilityElapsed_ = sf::Time::Zero;
+    }
+
+    return true;
 }
 
 void Player::collectPowerUpP() {

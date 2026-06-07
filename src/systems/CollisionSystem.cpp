@@ -9,6 +9,23 @@ bool intersects(sf::FloatRect left, sf::FloatRect right) {
         left.position.y < right.position.y + right.size.y &&
         left.position.y + left.size.y > right.position.y;
 }
+
+bool damagePlayer(Player& player, int damage, EventQueue& eventQueue) {
+    if (!player.isAlive()) {
+        return false;
+    }
+
+    if (!player.takeDamage(damage)) {
+        return false;
+    }
+
+    eventQueue.publish(PlayerHitEvent{damage, player.health()});
+    if (!player.isAlive()) {
+        eventQueue.publish(PlayerDestroyedEvent{});
+    }
+
+    return true;
+}
 }
 
 void CollisionSystem::resolve(
@@ -46,8 +63,7 @@ void CollisionSystem::resolve(
 
     for (auto bulletIt = enemyBullets.begin(); bulletIt != enemyBullets.end();) {
         if (intersects(bulletIt->hitbox(), player.hitbox())) {
-            player.takeDamage(1);
-            eventQueue.publish(PlayerHitEvent{1, player.health()});
+            damagePlayer(player, bulletIt->damage(), eventQueue);
             bulletIt = enemyBullets.erase(bulletIt);
         } else {
             ++bulletIt;
@@ -56,9 +72,9 @@ void CollisionSystem::resolve(
 
     for (auto& laser : enemyLasers) {
         if (laser.canHitPlayer() && intersects(laser.hitbox(), player.hitbox())) {
-            player.takeDamage(1);
-            eventQueue.publish(PlayerHitEvent{1, player.health()});
-            laser.markPlayerHit();
+            if (damagePlayer(player, laser.damage(), eventQueue)) {
+                laser.markPlayerHit();
+            }
         }
     }
 
@@ -68,10 +84,7 @@ void CollisionSystem::resolve(
         }
 
         if (intersects(enemy.hitbox(), player.hitbox())) {
-            player.takeDamage(enemy.contactDamage());
-            eventQueue.publish(PlayerHitEvent{enemy.contactDamage(), player.health()});
-            enemy.takeDamage(9999);
-            eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});
+            damagePlayer(player, enemy.contactDamage(), eventQueue);
         }
     }
 }

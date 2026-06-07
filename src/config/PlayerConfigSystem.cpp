@@ -65,6 +65,7 @@ void PlayerConfigSystem::loadFromFile(const std::string& path) {
     config_.laserSpawnOffsetY = matchFloatOr(text, "laser_spawn_offset_y", config_.laserSpawnOffsetY);
     config_.fireCooldownSeconds = matchFloatOr(text, "fire_cooldown_seconds", config_.fireCooldownSeconds);
     config_.muzzleFlashSeconds = matchFloatOr(text, "muzzle_flash_seconds", config_.muzzleFlashSeconds);
+    config_.damageInvincibilitySeconds = matchFloatOr(text, "damage_invincibility_seconds", config_.damageInvincibilitySeconds);
     config_.laserSpeed = matchFloatOr(text, "laser_speed", config_.laserSpeed);
     config_.laserDamage = matchIntOr(text, "laser_damage", config_.laserDamage);
     config_.thrusterAnimationSeconds = matchFloatOr(text, "thruster_animation_seconds", config_.thrusterAnimationSeconds);

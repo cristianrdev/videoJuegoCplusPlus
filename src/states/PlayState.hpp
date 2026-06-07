@@ -42,6 +42,8 @@ public:
     void onPaused();
 
     sf::Time stageTime() const;
+    bool isPlayerDestroyed() const;
+    bool isGameOverVisible() const;
 
 private:
     void spawnEnemy(const StageDirector::SpawnEvent& spawn);
@@ -55,6 +57,8 @@ private:
     void renderMuzzleFlash(sf::RenderTarget& target) const;
     const sf::Texture* bulletTextureForPattern(const std::string& patternId) const;
     const sf::Texture* laserTextureForPattern(const std::string& patternId) const;
+    int bulletDamageForPattern(const std::string& patternId) const;
+    int laserDamageForPattern(const std::string& patternId) const;
 
     AssetManager& assets_;
     sf::Vector2f logicalSize_;
@@ -75,6 +79,7 @@ private:
     const sf::Texture* explosionDroneTexture_{nullptr};
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
+    const sf::Texture* playerExplosionTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     EnemyConfigSystem enemyConfigSystem_;
@@ -89,4 +94,6 @@ private:
     BackgroundElementDirector backgroundElementDirector_;
     Starfield starfield_;
     std::unique_ptr<Player> player_;
+    sf::Time playerDeathElapsed_{sf::Time::Zero};
+    bool playerDestroyed_{false};
 };

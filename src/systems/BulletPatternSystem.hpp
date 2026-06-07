@@ -16,7 +16,8 @@ public:
         const std::string& patternId,
         sf::Vector2f origin,
         sf::Vector2f target,
-        const sf::Texture* bulletTexture = nullptr
+        const sf::Texture* bulletTexture = nullptr,
+        int bulletDamage = 1
     );
 
 private:

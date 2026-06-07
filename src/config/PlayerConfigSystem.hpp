@@ -17,6 +17,7 @@ struct PlayerConfig {
     float laserSpawnOffsetY{-18.f};
     float fireCooldownSeconds{0.12f};
     float muzzleFlashSeconds{0.06f};
+    float damageInvincibilitySeconds{1.f};
     float laserSpeed{260.f};
     int laserDamage{1};
     float thrusterAnimationSeconds{0.06f};

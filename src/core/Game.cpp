@@ -206,6 +206,7 @@ void Game::render() {
 
     window_.clear(sf::Color::Black);
     window_.draw(presentationSprite_);
+    renderGameOverOverlay();
     renderPauseOverlay();
     renderDebugHud();
     window_.display();
@@ -233,6 +234,30 @@ void Game::renderPauseOverlay() {
         static_cast<float>(window_.getSize().y) * 0.5f
     });
     window_.draw(pauseText);
+}
+
+void Game::renderGameOverOverlay() {
+    if (!playState_.isGameOverVisible()) {
+        return;
+    }
+
+    auto gameOverText = sf::Text(debugFont_);
+    gameOverText.setString("GAME OVER");
+    gameOverText.setCharacterSize(36);
+    gameOverText.setFillColor(sf::Color(255, 90, 90));
+    gameOverText.setOutlineColor(sf::Color(8, 12, 20));
+    gameOverText.setOutlineThickness(2.f);
+
+    const auto bounds = gameOverText.getLocalBounds();
+    gameOverText.setOrigin({
+        bounds.position.x + bounds.size.x * 0.5f,
+        bounds.position.y + bounds.size.y * 0.5f
+    });
+    gameOverText.setPosition({
+        static_cast<float>(window_.getSize().x) * 0.5f,
+        static_cast<float>(window_.getSize().y) * 0.5f
+    });
+    window_.draw(gameOverText);
 }
 
 void Game::renderDebugHud() {

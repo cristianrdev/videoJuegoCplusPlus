@@ -160,7 +160,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
     const std::string& patternId,
     sf::Vector2f origin,
     sf::Vector2f target,
-    const sf::Texture* bulletTexture
+    const sf::Texture* bulletTexture,
+    int bulletDamage
 ) {
     auto patternIt = patterns_.find(patternId);
     if (patternIt == patterns_.end()) {
@@ -184,7 +185,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 bullets.emplace_back(
                     origin,
                     sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed},
-                    bulletTexture
+                    bulletTexture,
+                    bulletDamage
                 );
             }
         }
@@ -197,7 +199,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             bullets.emplace_back(
                 origin,
                 sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
-                bulletTexture
+                bulletTexture,
+                bulletDamage
             );
         }
     } else {
@@ -212,7 +215,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             bullets.emplace_back(
                 origin,
                 sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
-                bulletTexture
+                bulletTexture,
+                bulletDamage
             );
         }
     }

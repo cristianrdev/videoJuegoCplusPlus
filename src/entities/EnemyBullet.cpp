@@ -4,13 +4,14 @@
 
 #include <cmath>
 
-EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity)
-    : EnemyBullet(position, velocity, nullptr) {
+EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity, int damage)
+    : EnemyBullet(position, velocity, nullptr, damage) {
 }
 
-EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity, const sf::Texture* texture)
+EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity, const sf::Texture* texture, int damage)
     : position_(position)
-    , velocity_(velocity) {
+    , velocity_(velocity)
+    , damage_(damage) {
     if (texture) {
         sprite_.emplace(*texture);
         const auto textureSize = texture->getSize();
@@ -59,4 +60,8 @@ sf::FloatRect EnemyBullet::hitbox() const {
         {position_.x - size_.x * 0.5f, position_.y - size_.y * 0.5f},
         size_
     };
+}
+
+int EnemyBullet::damage() const {
+    return damage_;
 }

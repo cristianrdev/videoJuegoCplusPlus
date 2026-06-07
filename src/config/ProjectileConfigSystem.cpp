@@ -26,6 +26,16 @@ std::string matchString(const std::string& text, const std::string& field) {
 
     return match[1].str();
 }
+
+int matchIntOr(const std::string& text, const std::string& field, int fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stoi(match[1].str());
+}
 }
 
 void ProjectileConfigSystem::loadFromFile(const std::string& path) {
@@ -40,6 +50,7 @@ void ProjectileConfigSystem::loadFromFile(const std::string& path) {
         auto config = ProjectileConfig{};
         config.id = matchString(object, "id");
         config.texturePath = matchString(object, "texture");
+        config.damage = matchIntOr(object, "damage", 1);
         configs_[config.id] = std::move(config);
     }
 
@@ -55,6 +66,15 @@ const std::string& ProjectileConfigSystem::texturePathFor(const std::string& pro
     }
 
     return it->second.texturePath;
+}
+
+int ProjectileConfigSystem::damageFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.damage;
 }
 
 std::vector<std::string> ProjectileConfigSystem::projectileIds() const {

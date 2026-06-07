@@ -2,15 +2,18 @@
   "projectiles": [
     {
       "id": "enemy_orb_purple",
-      "texture": "textures/projectiles/enemy_orb_purple.png"
+      "texture": "textures/projectiles/enemy_orb_purple.png",
+      "damage": 1
     },
     {
       "id": "enemy_robot_fish_laser",
-      "texture": "textures/projectiles/enemy_robot_fish_laser.png"
+      "texture": "textures/projectiles/enemy_robot_fish_laser.png",
+      "damage": 1
     },
     {
       "id": "enemy_small_red_bullet",
-      "texture": "textures/projectiles/enemy_small_red_bullet.png"
+      "texture": "textures/projectiles/enemy_small_red_bullet.png",
+      "damage": 1
     }
   ]
 }
