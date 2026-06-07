@@ -11,6 +11,8 @@ struct PlayerConfig {
     float speed{120.f};
     float hitboxWidth{6.f};
     float hitboxHeight{6.f};
+    float hitboxOffsetX{0.f};
+    float hitboxOffsetY{0.f};
     float spriteRenderWidth{32.f};
     float spriteRenderHeight{32.f};
     float clampHalfSize{16.f};

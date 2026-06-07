@@ -48,6 +48,7 @@ private:
     sf::Vector2f position_;
     PlayerConfig config_;
     sf::Vector2f hitboxSize_{6.f, 6.f};
+    sf::Vector2f hitboxOffset_{0.f, 0.f};
     sf::Vector2i frameSize_{32, 32};
     sf::Vector2i thrusterFrameSize_{8, 12};
     int health_{0};

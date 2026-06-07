@@ -60,6 +60,7 @@ Player::Player(AssetManager& assets, sf::Vector2f logicalSize, const PlayerConfi
     , position_({logicalSize.x * 0.5f, logicalSize.y - 40.f})
     , config_(config)
     , hitboxSize_({config_.hitboxWidth, config_.hitboxHeight})
+    , hitboxOffset_({config_.hitboxOffsetX, config_.hitboxOffsetY})
     , thrusterFrameSize_({config_.thrusterFrameWidth, config_.thrusterFrameHeight})
     , health_(config_.health)
     , spriteSheetTexture_(&assets.getTexture("player_ship_sheet"))
@@ -169,8 +170,8 @@ void Player::renderHitbox(sf::RenderTarget& target) const {
         hitboxSize_.y * 0.5f
     });
     box.setPosition({
-        std::round(position_.x),
-        std::round(position_.y)
+        std::round(position_.x + hitboxOffset_.x),
+        std::round(position_.y + hitboxOffset_.y)
     });
     box.setFillColor(sf::Color::Transparent);
     box.setOutlineColor(sf::Color(60, 255, 80));
@@ -180,7 +181,10 @@ void Player::renderHitbox(sf::RenderTarget& target) const {
 
 sf::FloatRect Player::hitbox() const {
     return {
-        {position_.x - hitboxSize_.x * 0.5f, position_.y - hitboxSize_.y * 0.5f},
+        {
+            position_.x + hitboxOffset_.x - hitboxSize_.x * 0.5f,
+            position_.y + hitboxOffset_.y - hitboxSize_.y * 0.5f
+        },
         hitboxSize_
     };
 }

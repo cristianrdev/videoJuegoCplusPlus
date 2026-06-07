@@ -59,6 +59,8 @@ void PlayerConfigSystem::loadFromFile(const std::string& path) {
     config_.speed = matchFloatOr(text, "speed", config_.speed);
     config_.hitboxWidth = matchFloatOr(text, "hitbox_width", config_.hitboxWidth);
     config_.hitboxHeight = matchFloatOr(text, "hitbox_height", config_.hitboxHeight);
+    config_.hitboxOffsetX = matchFloatOr(text, "hitbox_offset_x", config_.hitboxOffsetX);
+    config_.hitboxOffsetY = matchFloatOr(text, "hitbox_offset_y", config_.hitboxOffsetY);
     config_.spriteRenderWidth = matchFloatOr(text, "sprite_render_width", config_.spriteRenderWidth);
     config_.spriteRenderHeight = matchFloatOr(text, "sprite_render_height", config_.spriteRenderHeight);
     config_.clampHalfSize = matchFloatOr(text, "clamp_half_size", config_.clampHalfSize);
