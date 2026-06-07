@@ -27,6 +27,26 @@ std::string matchString(const std::string& text, const std::string& field) {
     return match[1].str();
 }
 
+std::string matchStringOr(const std::string& text, const std::string& field, const std::string& fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\"([^\"]+)\"");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str();
+}
+
+float matchFloatOr(const std::string& text, const std::string& field, float fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return std::stof(match[1].str());
+}
+
 int matchIntOr(const std::string& text, const std::string& field, int fallback) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
     auto match = std::smatch{};
@@ -49,7 +69,11 @@ void ProjectileConfigSystem::loadFromFile(const std::string& path) {
         const auto object = (*it)[0].str();
         auto config = ProjectileConfig{};
         config.id = matchString(object, "id");
-        config.texturePath = matchString(object, "texture");
+        config.texturePath = matchStringOr(object, "texture", "");
+        config.visualType = matchStringOr(object, "visual_type", config.texturePath.empty() ? "rect" : "sprite");
+        config.visualLength = matchFloatOr(object, "visual_length", 4.f);
+        config.visualWidth = matchFloatOr(object, "visual_width", 4.f);
+        config.visualGrowSeconds = matchFloatOr(object, "visual_grow_seconds", 0.f);
         config.damage = matchIntOr(object, "damage", 1);
         configs_[config.id] = std::move(config);
     }
@@ -66,6 +90,47 @@ const std::string& ProjectileConfigSystem::texturePathFor(const std::string& pro
     }
 
     return it->second.texturePath;
+}
+
+bool ProjectileConfigSystem::hasTexture(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    return it != configs_.end() && !it->second.texturePath.empty();
+}
+
+const std::string& ProjectileConfigSystem::visualTypeFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.visualType;
+}
+
+float ProjectileConfigSystem::visualLengthFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.visualLength;
+}
+
+float ProjectileConfigSystem::visualWidthFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.visualWidth;
+}
+
+float ProjectileConfigSystem::visualGrowSecondsFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.visualGrowSeconds;
 }
 
 int ProjectileConfigSystem::damageFor(const std::string& projectileId) const {

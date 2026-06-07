@@ -17,7 +17,10 @@
     },
     {
       "id": "enemy_web_line",
-      "texture": "textures/projectiles/enemy_web_line.png",
+      "visual_type": "pixel_line",
+      "visual_length": 100.0,
+      "visual_width": 1.0,
+      "visual_grow_seconds": 0.16,
       "damage": 1
     }
   ]

@@ -58,7 +58,9 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
 
     projectileConfigSystem_.loadFromFile("config/projectiles.json");
     for (const auto& projectileId : projectileConfigSystem_.projectileIds()) {
-        assets_.loadTexture(projectileId, projectileConfigSystem_.texturePathFor(projectileId));
+        if (projectileConfigSystem_.hasTexture(projectileId)) {
+            assets_.loadTexture(projectileId, projectileConfigSystem_.texturePathFor(projectileId));
+        }
     }
 
     itemConfigSystem_.loadFromFile("config/items.json");
@@ -439,7 +441,10 @@ void PlayState::updateEnemyShooting() {
             enemy.bulletSpawnPosition(),
             player_->position(),
             bulletTextureForPattern(enemy.patternId()),
-            bulletDamageForPattern(enemy.patternId())
+            bulletDamageForPattern(enemy.patternId()),
+            bulletVisualTypeForPattern(enemy.patternId()),
+            bulletVisualSizeForPattern(enemy.patternId()),
+            bulletVisualGrowSecondsForPattern(enemy.patternId())
         );
         enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
         enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -519,7 +524,9 @@ void PlayState::renderMuzzleFlash(sf::RenderTarget& target) const {
 const sf::Texture* PlayState::bulletTextureForPattern(const std::string& patternId) const {
     const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
     if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
-        return &assets_.getTexture(bulletId);
+        if (projectileConfigSystem_.hasTexture(bulletId)) {
+            return &assets_.getTexture(bulletId);
+        }
     }
 
     return nullptr;
@@ -528,7 +535,9 @@ const sf::Texture* PlayState::bulletTextureForPattern(const std::string& pattern
 const sf::Texture* PlayState::laserTextureForPattern(const std::string& patternId) const {
     const auto& laserId = bulletPatternSystem_.laserId(patternId);
     if (laserId != "default" && projectileConfigSystem_.hasProjectile(laserId)) {
-        return &assets_.getTexture(laserId);
+        if (projectileConfigSystem_.hasTexture(laserId)) {
+            return &assets_.getTexture(laserId);
+        }
     }
 
     return nullptr;
@@ -550,4 +559,34 @@ int PlayState::laserDamageForPattern(const std::string& patternId) const {
     }
 
     return 1;
+}
+
+std::string PlayState::bulletVisualTypeForPattern(const std::string& patternId) const {
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return projectileConfigSystem_.visualTypeFor(bulletId);
+    }
+
+    return "rect";
+}
+
+sf::Vector2f PlayState::bulletVisualSizeForPattern(const std::string& patternId) const {
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return {
+            projectileConfigSystem_.visualWidthFor(bulletId),
+            projectileConfigSystem_.visualLengthFor(bulletId)
+        };
+    }
+
+    return {4.f, 4.f};
+}
+
+float PlayState::bulletVisualGrowSecondsForPattern(const std::string& patternId) const {
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return projectileConfigSystem_.visualGrowSecondsFor(bulletId);
+    }
+
+    return 0.f;
 }

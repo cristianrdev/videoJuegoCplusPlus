@@ -120,6 +120,7 @@ float aimedBaseAngleDegrees(sf::Vector2f origin, sf::Vector2f target) {
     const auto delta = target - origin;
     return std::atan2(delta.x, delta.y) * 180.f / Pi;
 }
+
 }
 
 void BulletPatternSystem::loadFromFile(const std::string& path) {
@@ -161,7 +162,10 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
     sf::Vector2f origin,
     sf::Vector2f target,
     const sf::Texture* bulletTexture,
-    int bulletDamage
+    int bulletDamage,
+    const std::string& visualType,
+    sf::Vector2f visualSize,
+    float visualGrowSeconds
 ) {
     auto patternIt = patterns_.find(patternId);
     if (patternIt == patterns_.end()) {
@@ -182,11 +186,15 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             for (auto bullet = 0; bullet < pattern.bulletsPerRing; ++bullet) {
                 const auto offset = rotation + static_cast<float>(bullet) * 360.f / static_cast<float>(pattern.bulletsPerRing);
                 const auto angle = degreesToRadians(offset);
+                const auto velocity = sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed};
                 bullets.emplace_back(
                     origin,
-                    sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed},
+                    velocity,
                     bulletTexture,
-                    bulletDamage
+                    bulletDamage,
+                    visualType,
+                    visualSize,
+                    visualGrowSeconds
                 );
             }
         }
@@ -196,11 +204,15 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
         for (auto stream = 0; stream < pattern.streams; ++stream) {
             const auto offset = rotation + static_cast<float>(stream) * 360.f / static_cast<float>(pattern.streams);
             const auto angle = degreesToRadians(offset);
+            const auto velocity = sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed};
             bullets.emplace_back(
                 origin,
-                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
+                velocity,
                 bulletTexture,
-                bulletDamage
+                bulletDamage,
+                visualType,
+                visualSize,
+                visualGrowSeconds
             );
         }
     } else {
@@ -212,11 +224,15 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
         bullets.reserve(offsets.size());
         for (const auto offset : offsets) {
             const auto angle = degreesToRadians(baseAngle + offset);
+            const auto velocity = sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed};
             bullets.emplace_back(
                 origin,
-                sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed},
+                velocity,
                 bulletTexture,
-                bulletDamage
+                bulletDamage,
+                visualType,
+                visualSize,
+                visualGrowSeconds
             );
         }
     }

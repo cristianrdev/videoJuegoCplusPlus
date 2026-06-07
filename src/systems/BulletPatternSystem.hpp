@@ -17,7 +17,10 @@ public:
         sf::Vector2f origin,
         sf::Vector2f target,
         const sf::Texture* bulletTexture = nullptr,
-        int bulletDamage = 1
+        int bulletDamage = 1,
+        const std::string& visualType = "rect",
+        sf::Vector2f visualSize = {4.f, 4.f},
+        float visualGrowSeconds = 0.f
     );
 
 private:

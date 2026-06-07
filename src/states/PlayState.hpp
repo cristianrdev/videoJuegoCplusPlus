@@ -65,6 +65,9 @@ private:
     const sf::Texture* laserTextureForPattern(const std::string& patternId) const;
     int bulletDamageForPattern(const std::string& patternId) const;
     int laserDamageForPattern(const std::string& patternId) const;
+    std::string bulletVisualTypeForPattern(const std::string& patternId) const;
+    sf::Vector2f bulletVisualSizeForPattern(const std::string& patternId) const;
+    float bulletVisualGrowSecondsForPattern(const std::string& patternId) const;
 
     AssetManager& assets_;
     sf::Vector2f logicalSize_;
