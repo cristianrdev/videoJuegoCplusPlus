@@ -27,6 +27,16 @@ std::string matchString(const std::string& text, const std::string& field) {
     return match[1].str();
 }
 
+std::string matchStringOr(const std::string& text, const std::string& field, const std::string& fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\"([^\"]+)\"");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str();
+}
+
 float matchFloat(const std::string& text, const std::string& field) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)");
     auto match = std::smatch{};
@@ -61,6 +71,7 @@ void BackgroundElementConfigSystem::loadFromFile(const std::string& path) {
         const auto tileIndex = matchInt(object, "tile");
 
         auto config = BackgroundElementConfig{};
+        config.hitboxShape = matchStringOr(object, "hitbox_shape", "square");
         config.hitboxOffset = {
             matchFloat(object, "hitbox_offset_x"),
             matchFloat(object, "hitbox_offset_y")

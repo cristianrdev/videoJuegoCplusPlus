@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 struct BackgroundElementConfig {
+    std::string hitboxShape{"square"};
     sf::Vector2f hitboxOffset{0.f, 0.f};
     sf::Vector2f hitboxSize{100.f, 100.f};
 };

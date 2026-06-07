@@ -377,6 +377,7 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
         *floatingRedRocksTexture_,
         spawn.tileIndex,
         sf::Vector2i{100, 100},
+        elementConfig.hitboxShape,
         elementConfig.hitboxOffset,
         elementConfig.hitboxSize,
         spawn.contactDamage

@@ -142,7 +142,7 @@ void CollisionSystem::resolveBackgroundElements(
             continue;
         }
 
-        if (intersects(element.hitbox(), player.hitbox())) {
+        if (element.intersects(player.hitbox())) {
             damagePlayer(player, element.contactDamage(), eventQueue);
         }
     }

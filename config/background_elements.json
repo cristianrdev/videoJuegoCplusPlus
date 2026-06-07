@@ -3,6 +3,7 @@
     {
       "tileset": "floating_red_rocks",
       "tile": 0,
+      "hitbox_shape": "oval",
       "hitbox_offset_x": 17.0,
       "hitbox_offset_y": 25.0,
       "hitbox_width": 70.0,
@@ -11,6 +12,7 @@
     {
       "tileset": "floating_red_rocks",
       "tile": 1,
+      "hitbox_shape": "oval",
       "hitbox_offset_x": 10.0,
       "hitbox_offset_y": 20.0,
       "hitbox_width": 84.0,
@@ -19,6 +21,7 @@
     {
       "tileset": "floating_red_rocks",
       "tile": 2,
+      "hitbox_shape": "oval",
       "hitbox_offset_x": 9.0,
       "hitbox_offset_y": 38.0,
       "hitbox_width": 83.0,
@@ -27,6 +30,7 @@
     {
       "tileset": "floating_red_rocks",
       "tile": 3,
+      "hitbox_shape": "oval",
       "hitbox_offset_x": 22.0,
       "hitbox_offset_y": 33.0,
       "hitbox_width": 60.0,
@@ -35,6 +39,7 @@
     {
       "tileset": "floating_red_rocks",
       "tile": 4,
+      "hitbox_shape": "oval",
       "hitbox_offset_x": 14.0,
       "hitbox_offset_y": 20.0,
       "hitbox_width": 70.0,
