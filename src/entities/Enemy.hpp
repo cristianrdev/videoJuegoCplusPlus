@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -19,6 +20,7 @@ public:
         std::string movementId,
         int health,
         int contactDamage,
+        std::string hitboxShape,
         sf::Vector2f configuredHitboxSize,
         sf::Vector2f configuredHitboxOffset,
         bool blinkEnabled,
@@ -41,6 +43,7 @@ public:
     sf::Vector2f startPosition() const;
     sf::Time elapsed() const;
     sf::FloatRect hitbox() const;
+    bool intersects(sf::FloatRect rect) const;
     const std::string& enemyId() const;
     const std::string& patternId() const;
     const std::string& movementId() const;
@@ -52,6 +55,7 @@ private:
     sf::Vector2f position_;
     sf::Vector2f size_{24.f, 24.f};
     sf::Vector2f hitboxOffset_{0.f, 0.f};
+    std::string hitboxShape_{"square"};
     sf::Vector2f visualSize_{24.f, 24.f};
     int health_{3};
     int contactDamage_{0};

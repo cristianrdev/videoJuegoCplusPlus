@@ -33,6 +33,7 @@ Enemy EnemySpawner::spawn(const StageDirector::SpawnEvent& spawn) const {
         movementId,
         enemyConfigSystem_.healthFor(spawn.enemyId),
         enemyConfigSystem_.contactDamageFor(spawn.enemyId),
+        enemyConfigSystem_.hitboxShapeFor(spawn.enemyId),
         enemyConfigSystem_.hitboxSizeFor(spawn.enemyId),
         enemyConfigSystem_.hitboxOffsetFor(spawn.enemyId),
         enemyConfigSystem_.blinkEnabledFor(spawn.enemyId),

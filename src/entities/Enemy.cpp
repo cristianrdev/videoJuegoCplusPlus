@@ -45,6 +45,7 @@ Enemy::Enemy(
     std::string movementId,
     int health,
     int contactDamage,
+    std::string hitboxShape,
     sf::Vector2f configuredHitboxSize,
     sf::Vector2f configuredHitboxOffset,
     bool blinkEnabled,
@@ -54,6 +55,7 @@ Enemy::Enemy(
     , position_(position)
     , health_(health)
     , contactDamage_(contactDamage)
+    , hitboxShape_(std::move(hitboxShape))
     , blinkEnabled_(blinkEnabled)
     , blinkHealthThreshold_(blinkHealthThreshold)
     , enemyId_(std::move(enemyId))
@@ -221,8 +223,50 @@ sf::FloatRect Enemy::hitbox() const {
     };
 }
 
+bool Enemy::intersects(sf::FloatRect rect) const {
+    const auto bounds = hitbox();
+    if (hitboxShape_ != "oval") {
+        return bounds.position.x < rect.position.x + rect.size.x &&
+            bounds.position.x + bounds.size.x > rect.position.x &&
+            bounds.position.y < rect.position.y + rect.size.y &&
+            bounds.position.y + bounds.size.y > rect.position.y;
+    }
+
+    const auto radiusX = bounds.size.x * 0.5f;
+    const auto radiusY = bounds.size.y * 0.5f;
+    if (radiusX <= 0.f || radiusY <= 0.f) {
+        return false;
+    }
+
+    const auto center = sf::Vector2f{
+        bounds.position.x + radiusX,
+        bounds.position.y + radiusY
+    };
+    const auto nearest = sf::Vector2f{
+        std::clamp(center.x, rect.position.x, rect.position.x + rect.size.x),
+        std::clamp(center.y, rect.position.y, rect.position.y + rect.size.y)
+    };
+    const auto normalizedX = (nearest.x - center.x) / radiusX;
+    const auto normalizedY = (nearest.y - center.y) / radiusY;
+    return normalizedX * normalizedX + normalizedY * normalizedY <= 1.f;
+}
+
 void Enemy::renderHitbox(sf::RenderTarget& target) const {
     const auto bounds = hitbox();
+    if (hitboxShape_ == "oval") {
+        auto oval = sf::CircleShape(bounds.size.x * 0.5f, 48);
+        oval.setScale({1.f, bounds.size.y / std::max(1.f, bounds.size.x)});
+        oval.setPosition({
+            std::round(bounds.position.x),
+            std::round(bounds.position.y)
+        });
+        oval.setFillColor(sf::Color::Transparent);
+        oval.setOutlineColor(sf::Color(60, 255, 80));
+        oval.setOutlineThickness(1.f);
+        target.draw(oval);
+        return;
+    }
+
     auto box = sf::RectangleShape(bounds.size);
     box.setPosition({
         std::round(bounds.position.x),

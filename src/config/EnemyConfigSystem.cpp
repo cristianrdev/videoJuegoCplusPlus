@@ -27,6 +27,16 @@ std::string matchString(const std::string& text, const std::string& field) {
     return match[1].str();
 }
 
+std::string matchString(const std::string& text, const std::string& field, const std::string& fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\"([^\"]+)\"");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str();
+}
+
 int matchInt(const std::string& text, const std::string& field, int fallback) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(-?\\d+)");
     auto match = std::smatch{};
@@ -72,6 +82,7 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
         config.texturePath = matchString(object, "texture");
         config.health = matchInt(object, "health", 3);
         config.contactDamage = matchInt(object, "contact_damage", 0);
+        config.hitboxShape = matchString(object, "hitbox_shape", "square");
         config.hitboxSize = {
             matchFloat(object, "hitbox_width", 0.f),
             matchFloat(object, "hitbox_height", 0.f)
@@ -124,6 +135,16 @@ sf::Vector2f EnemyConfigSystem::hitboxOffsetFor(const std::string& enemyId) cons
     }
 
     return it->second.hitboxOffset;
+}
+
+const std::string& EnemyConfigSystem::hitboxShapeFor(const std::string& enemyId) const {
+    static const auto fallback = std::string{"square"};
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return fallback;
+    }
+
+    return it->second.hitboxShape;
 }
 
 bool EnemyConfigSystem::blinkEnabledFor(const std::string& enemyId) const {

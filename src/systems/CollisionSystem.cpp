@@ -44,7 +44,7 @@ void CollisionSystem::resolve(
                 continue;
             }
 
-            if (intersects(laserIt->hitbox(), enemy.hitbox())) {
+            if (enemy.intersects(laserIt->hitbox())) {
                 enemy.takeDamage(laserIt->damage());
                 if (!enemy.isAlive()) {
                     eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});
@@ -83,7 +83,7 @@ void CollisionSystem::resolve(
             continue;
         }
 
-        if (intersects(enemy.hitbox(), player.hitbox())) {
+        if (enemy.intersects(player.hitbox())) {
             damagePlayer(player, enemy.contactDamage(), eventQueue);
         }
     }

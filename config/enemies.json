@@ -80,6 +80,7 @@
       "texture": "textures/enemies/enemy_mech_spider_mother.png",
       "health": 35,
       "contact_damage": 3,
+      "hitbox_shape": "oval",
       "hitbox_width": 38.0,
       "hitbox_height": 40.0,
       "hitbox_offset_x": 0.0,
