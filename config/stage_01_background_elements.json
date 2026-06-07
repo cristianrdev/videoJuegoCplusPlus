@@ -8,7 +8,7 @@
       "x": 8,
       "y": -100,
       "speed_y": 18.0,
-      "contact_damage": 3
+      "contact_damage": 0
     },
     {
       "time": 35.0,
@@ -17,7 +17,7 @@
       "x": 140,
       "y": -100,
       "speed_y": 18.0,
-      "contact_damage": 3
+      "contact_damage": 0
     },
     {
       "time": 43.0,
@@ -26,7 +26,7 @@
       "x": 60,
       "y": -100,
       "speed_y": 18.0,
-      "contact_damage": 3
+      "contact_damage": 0
     },
     {
       "time": 100.0,
@@ -34,7 +34,8 @@
       "tile": 3,
       "x": -18,
       "y": -100,
-      "speed_y": 24.0
+      "speed_y": 24.0,
+      "contact_damage": 0
     },
     {
       "time": 100.0,
@@ -42,7 +43,8 @@
       "tile": 4,
       "x": 140,
       "y": -100,
-      "speed_y": 19.0
+      "speed_y": 19.0,
+      "contact_damage": 0
     }
   ]
 }

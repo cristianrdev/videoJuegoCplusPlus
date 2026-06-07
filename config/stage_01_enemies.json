@@ -141,55 +141,15 @@
 
 
     {
-      "time": 54.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 55.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 55.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 56.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 57.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 58.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
       "time": 59.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 60.0,
       "enemy": "enemy_mech_spider",
       "x": 120,
       "y": -20,
@@ -213,7 +173,47 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 61.5,
+      "time": 62.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 63.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 64.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 65.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 66.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 66.5,
       "enemy": "enemy_mech_spider",
       "x": 120,
       "y": -20,
