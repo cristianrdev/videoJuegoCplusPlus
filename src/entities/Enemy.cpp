@@ -82,6 +82,13 @@ Enemy::Enemy(
             {0, 0},
             {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
         });
+    } else if (enemyId_ == "enemy_mecha_butterfly") {
+        size_ = {44.f, 34.f};
+        visualSize_ = {60.f, 60.f};
+        sprite_.setTextureRect({
+            {0, 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
     } else if (enemyId_ == "enemy_mech_spider") {
         size_ = {32.f, 32.f};
         visualSize_ = {32.f, 32.f};
@@ -133,6 +140,12 @@ void Enemy::render(sf::RenderTarget& target, bool showHitbox) const {
         });
     } else if (enemyId_ == "enemy_mech_spider_mother") {
         const auto frameIndex = static_cast<int>(elapsed_.asSeconds() / 0.14f) % 3;
+        pixelSnappedSprite.setTextureRect({
+            {frameIndex * static_cast<int>(visualSize_.x), 0},
+            {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
+        });
+    } else if (enemyId_ == "enemy_mecha_butterfly") {
+        const auto frameIndex = static_cast<int>(elapsed_.asSeconds() / 0.11f) % 3;
         pixelSnappedSprite.setTextureRect({
             {frameIndex * static_cast<int>(visualSize_.x), 0},
             {static_cast<int>(visualSize_.x), static_cast<int>(visualSize_.y)}
@@ -202,6 +215,10 @@ sf::Vector2f Enemy::bulletSpawnPosition() const {
 
     if (enemyId_ == "enemy_mech_spider_mother") {
         return {position_.x, position_.y + 24.f};
+    }
+
+    if (enemyId_ == "enemy_mecha_butterfly") {
+        return position_;
     }
 
     if (enemyId_ == "enemy_hex_rock_turret" || enemyId_ == "enemy_hex_rock_turret_big") {

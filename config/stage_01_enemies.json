@@ -157,14 +157,6 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 60.0,
-      "enemy": "enemy_mech_spider",
-      "x": 120,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
       "time": 61.0,
       "enemy": "enemy_mech_spider",
       "x": 120,
@@ -198,6 +190,14 @@
     },
     {
       "time": 65.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+    {
+      "time": 66.0,
       "enemy": "enemy_mech_spider",
       "x": 120,
       "y": -20,

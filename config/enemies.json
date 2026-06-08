@@ -52,6 +52,19 @@
       "blink_health_threshold": 3
     },
     {
+      "id": "enemy_mecha_butterfly",
+      "texture": "textures/enemies/enemy_mecha_butterfly.png",
+      "health": 14,
+      "contact_damage": 3,
+      "hitbox_shape": "oval",
+      "hitbox_width": 44.0,
+      "hitbox_height": 34.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 2.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 4
+    },
+    {
       "id": "enemy_rock_turret",
       "texture": "textures/enemies/enemy_rock_turret.png",
       "health": 15,
