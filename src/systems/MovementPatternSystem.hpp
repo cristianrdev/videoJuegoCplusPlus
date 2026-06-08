@@ -27,6 +27,7 @@ public:
         float marginX{25.f};
         float marginTop{50.f};
         float marginBottom{50.f};
+        float loopDirection{1.f};
         std::vector<float> pointTimes;
         std::vector<float> pointX;
         std::vector<float> pointY;

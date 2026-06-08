@@ -99,7 +99,21 @@
       "screen_height": 320.0,
       "margin_x": 25.0,
       "margin_top": 50.0,
-      "margin_bottom": 50.0
+      "margin_bottom": 50.0,
+      "loop_direction": 1.0
+    },
+    {
+      "id": "mech_spider_mother_drop_square_ccw",
+      "type": "screen_square_loop",
+      "velocity_x": 46.0,
+      "velocity_y": 36.0,
+      "drop_y": 100.0,
+      "screen_width": 240.0,
+      "screen_height": 320.0,
+      "margin_x": 25.0,
+      "margin_top": 50.0,
+      "margin_bottom": 50.0,
+      "loop_direction": -1.0
     }
   ]
 }

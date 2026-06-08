@@ -21,7 +21,8 @@ public:
         int damage,
         std::string visualType,
         sf::Vector2f visualSize,
-        float visualGrowSeconds = 0.f
+        float visualGrowSeconds = 0.f,
+        int ownerInstanceId = 0
     );
 
     void update(sf::Time deltaTime);
@@ -31,6 +32,7 @@ public:
     sf::FloatRect hitbox() const;
     bool isPixelLine() const;
     void setPosition(sf::Vector2f position);
+    int ownerInstanceId() const;
     int damage() const;
 
 private:
@@ -40,6 +42,7 @@ private:
     std::string visualType_{"rect"};
     sf::Time age_{sf::Time::Zero};
     sf::Time growDuration_{sf::Time::Zero};
+    int ownerInstanceId_{0};
     int damage_{1};
     std::optional<sf::Sprite> sprite_;
 };

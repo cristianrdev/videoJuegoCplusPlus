@@ -45,6 +45,13 @@ void CollisionSystem::resolve(
             }
 
             if (enemy.intersects(laserIt->hitbox())) {
+                const auto laserBounds = laserIt->hitbox();
+                eventQueue.publish(EnemyHitEvent{
+                    {
+                        laserBounds.position.x + laserBounds.size.x * 0.5f,
+                        laserBounds.position.y
+                    }
+                });
                 enemy.takeDamage(laserIt->damage());
                 if (!enemy.isAlive()) {
                     eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});

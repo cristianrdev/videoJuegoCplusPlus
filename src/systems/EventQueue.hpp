@@ -11,6 +11,10 @@ struct EnemyDestroyedEvent {
     sf::Vector2f position;
 };
 
+struct EnemyHitEvent {
+    sf::Vector2f position;
+};
+
 struct PlayerHitEvent {
     int damage;
     int remainingHealth;
@@ -30,6 +34,7 @@ struct PowerUpCollectedEvent {
 
 using GameEvent = std::variant<
     EnemyDestroyedEvent,
+    EnemyHitEvent,
     PlayerHitEvent,
     PlayerDestroyedEvent,
     ItemCarrierDestroyedEvent,

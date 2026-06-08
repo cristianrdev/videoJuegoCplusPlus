@@ -55,6 +55,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     playerExplosionTexture_ = &assets_.loadTexture("explosion_player_ship", "textures/effects/player_ship_destroy_explosion.png");
+    enemyHitSparkTexture_ = &assets_.loadTexture("enemy_hit_spark", "textures/effects/enemy_hit_spark.png");
 
     projectileConfigSystem_.loadFromFile("config/projectiles.json");
     for (const auto& projectileId : projectileConfigSystem_.projectileIds()) {
@@ -154,18 +155,17 @@ void PlayState::update(sf::Time deltaTime) {
 
     updateEnemyShooting();
 
-    for (const auto& enemy : enemies_) {
-        if (enemy.enemyId() != "enemy_mech_spider_mother" || !enemy.isAlive()) {
+    for (auto& bullet : enemyBullets_) {
+        if (!bullet.isPixelLine()) {
             continue;
         }
 
-        const auto mouthPosition = enemy.bulletSpawnPosition();
-        for (auto& bullet : enemyBullets_) {
-            if (bullet.isPixelLine()) {
-                bullet.setPosition(mouthPosition);
+        for (const auto& enemy : enemies_) {
+            if (enemy.instanceId() == bullet.ownerInstanceId() && enemy.isAlive()) {
+                bullet.setPosition(enemy.bulletSpawnPosition());
+                break;
             }
         }
-        break;
     }
 
     for (auto& carrier : itemCarriers_) {
@@ -458,7 +458,8 @@ void PlayState::updateEnemyShooting() {
             bulletDamageForPattern(enemy.patternId()),
             bulletVisualTypeForPattern(enemy.patternId()),
             bulletVisualSizeForPattern(enemy.patternId()),
-            bulletVisualGrowSecondsForPattern(enemy.patternId())
+            bulletVisualGrowSecondsForPattern(enemy.patternId()),
+            enemy.instanceId()
         );
         enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
         enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -499,6 +500,16 @@ void PlayState::processEvents() {
     for (const auto& event : eventQueue_.drain()) {
         if (const auto* enemyDestroyed = std::get_if<EnemyDestroyedEvent>(&event)) {
             spawnExplosion(enemyDestroyed->enemyId, enemyDestroyed->position);
+        } else if (const auto* enemyHit = std::get_if<EnemyHitEvent>(&event)) {
+            if (enemyHitSparkTexture_) {
+                explosions_.emplace_back(
+                    enemyHit->position,
+                    *enemyHitSparkTexture_,
+                    sf::Vector2i{16, 16},
+                    2,
+                    sf::seconds(0.045f)
+                );
+            }
         } else if (const auto* itemDestroyed = std::get_if<ItemCarrierDestroyedEvent>(&event)) {
             spawnPowerUp(itemDestroyed->dropId, itemDestroyed->position);
         } else if (const auto* powerUpCollected = std::get_if<PowerUpCollectedEvent>(&event)) {

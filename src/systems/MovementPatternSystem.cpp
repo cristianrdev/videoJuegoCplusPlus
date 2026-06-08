@@ -125,6 +125,7 @@ void MovementPatternSystem::loadFromFile(const std::string& path) {
         pattern.marginX = matchFloat(object, "margin_x", 25.f);
         pattern.marginTop = matchFloat(object, "margin_top", 50.f);
         pattern.marginBottom = matchFloat(object, "margin_bottom", 50.f);
+        pattern.loopDirection = matchFloat(object, "loop_direction", 1.f);
         pattern.pointTimes = matchFloatArray(object, "point_times");
         pattern.pointX = matchFloatArray(object, "point_x");
         pattern.pointY = matchFloatArray(object, "point_y");
@@ -226,13 +227,21 @@ sf::Vector2f MovementPatternSystem::positionFor(
         }
 
         postDropTime -= entryTime;
-        const auto points = std::array<sf::Vector2f, 5>{
-            sf::Vector2f{left, pattern.dropY},
-            sf::Vector2f{left, top},
-            sf::Vector2f{right, top},
-            sf::Vector2f{right, bottom},
-            sf::Vector2f{left, bottom}
-        };
+        const auto points = pattern.loopDirection < 0.f
+            ? std::array<sf::Vector2f, 5>{
+                sf::Vector2f{left, pattern.dropY},
+                sf::Vector2f{left, bottom},
+                sf::Vector2f{right, bottom},
+                sf::Vector2f{right, top},
+                sf::Vector2f{left, top}
+            }
+            : std::array<sf::Vector2f, 5>{
+                sf::Vector2f{left, pattern.dropY},
+                sf::Vector2f{left, top},
+                sf::Vector2f{right, top},
+                sf::Vector2f{right, bottom},
+                sf::Vector2f{left, bottom}
+            };
         const auto lengths = std::array<float, 5>{
             std::abs(points[1].y - points[0].y),
             std::abs(points[2].x - points[1].x),

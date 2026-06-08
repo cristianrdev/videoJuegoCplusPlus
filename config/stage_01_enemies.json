@@ -221,12 +221,20 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 0.5,
+      "time": 70.5,
       "enemy": "enemy_mech_spider_mother",
       "x": 120,
       "y": -60,
       "pattern": "enemy_mech_spider_mother_web_line",
       "movement": "mech_spider_mother_drop_square"
+    },
+    {
+      "time": 75.5,
+      "enemy": "enemy_mech_spider_mother",
+      "x": 120,
+      "y": -60,
+      "pattern": "enemy_mech_spider_mother_web_line",
+      "movement": "mech_spider_mother_drop_square_ccw"
     }
   ]
 }

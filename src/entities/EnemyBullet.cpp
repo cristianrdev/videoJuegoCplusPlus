@@ -48,13 +48,15 @@ EnemyBullet::EnemyBullet(
     int damage,
     std::string visualType,
     sf::Vector2f visualSize,
-    float visualGrowSeconds
+    float visualGrowSeconds,
+    int ownerInstanceId
 )
     : position_(position)
     , velocity_(velocity)
     , size_(visualSize)
     , visualType_(std::move(visualType))
     , growDuration_(sf::seconds(visualGrowSeconds))
+    , ownerInstanceId_(ownerInstanceId)
     , damage_(damage) {
     if (texture) {
         sprite_.emplace(*texture);
@@ -169,6 +171,10 @@ bool EnemyBullet::isPixelLine() const {
 
 void EnemyBullet::setPosition(sf::Vector2f position) {
     position_ = position;
+}
+
+int EnemyBullet::ownerInstanceId() const {
+    return ownerInstanceId_;
 }
 
 int EnemyBullet::damage() const {

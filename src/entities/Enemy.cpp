@@ -9,6 +9,11 @@
 #include <utility>
 
 namespace {
+int nextEnemyInstanceId() {
+    static auto nextId = 1;
+    return nextId++;
+}
+
 sf::Shader* negativeShader() {
     static auto shader = sf::Shader{};
     static auto initialized = false;
@@ -56,6 +61,7 @@ Enemy::Enemy(
     , health_(health)
     , contactDamage_(contactDamage)
     , hitboxShape_(std::move(hitboxShape))
+    , instanceId_(nextEnemyInstanceId())
     , blinkEnabled_(blinkEnabled)
     , blinkHealthThreshold_(blinkHealthThreshold)
     , enemyId_(std::move(enemyId))
@@ -249,6 +255,10 @@ bool Enemy::intersects(sf::FloatRect rect) const {
     const auto normalizedX = (nearest.x - center.x) / radiusX;
     const auto normalizedY = (nearest.y - center.y) / radiusY;
     return normalizedX * normalizedX + normalizedY * normalizedY <= 1.f;
+}
+
+int Enemy::instanceId() const {
+    return instanceId_;
 }
 
 void Enemy::renderHitbox(sf::RenderTarget& target) const {

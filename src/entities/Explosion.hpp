@@ -9,6 +9,13 @@
 class Explosion {
 public:
     Explosion(sf::Vector2f position, const sf::Texture& texture);
+    Explosion(
+        sf::Vector2f position,
+        const sf::Texture& texture,
+        sf::Vector2i frameSize,
+        int frameCount,
+        sf::Time frameDuration
+    );
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
@@ -20,5 +27,7 @@ private:
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time frameDuration_{sf::seconds(0.07f)};
     int currentFrame_{0};
+    int frameCount_{3};
+    sf::Vector2i frameSize_{32, 32};
     sf::Sprite sprite_;
 };

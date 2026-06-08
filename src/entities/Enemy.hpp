@@ -44,6 +44,7 @@ public:
     sf::Time elapsed() const;
     sf::FloatRect hitbox() const;
     bool intersects(sf::FloatRect rect) const;
+    int instanceId() const;
     const std::string& enemyId() const;
     const std::string& patternId() const;
     const std::string& movementId() const;
@@ -57,6 +58,7 @@ private:
     sf::Vector2f hitboxOffset_{0.f, 0.f};
     std::string hitboxShape_{"square"};
     sf::Vector2f visualSize_{24.f, 24.f};
+    int instanceId_{0};
     int health_{3};
     int contactDamage_{0};
     sf::Time elapsed_{sf::Time::Zero};
