@@ -13,7 +13,7 @@
     {
       "id": "enemy_turret_pod",
       "texture": "textures/enemies/enemy_turret_pod.png",
-      "health": 3,
+      "health": 5,
       "contact_damage": 3,
       "hitbox_width": 24.0,
       "hitbox_height": 24.0,
@@ -42,7 +42,7 @@
     {
       "id": "enemy_metal_squid",
       "texture": "textures/enemies/enemy_metal_squid.png",
-      "health": 10,
+      "health": 15,
       "contact_damage": 3,
       "hitbox_width": 17.0,
       "hitbox_height": 22.0,

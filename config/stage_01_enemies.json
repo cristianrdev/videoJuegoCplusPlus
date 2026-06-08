@@ -184,6 +184,21 @@
       "pattern": "enemy_turret_spread_3",
       "movement": "fast_drop"
     },
+    {
+      "time": 52.0,
+      "enemy": "enemy_mech_spider",
+      "x": 120,
+      "y": -20,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "mech_spider_random_zigzag"
+    },
+
+
+
+
+
+
+
 
 
 
