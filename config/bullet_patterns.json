@@ -64,7 +64,7 @@
       "bullet": "enemy_orb_purple",
       "rings": 6,
       "bullets_per_ring": 30,
-      "speed_start": 34.0,
+      "speed_start": 20.0,
       "speed_step": 10.0,
       "rotation_per_shot": 18.0,
       "angular_velocity": 20.0

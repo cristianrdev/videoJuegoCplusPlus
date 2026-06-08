@@ -126,6 +126,40 @@
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "floating_rock_turret_drop"
     },
+
+   {
+      "time": 35.0,
+      "enemy": "enemy_turret_pod",
+      "x": 40,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
+    },
+   {
+      "time": 37.0,
+      "enemy": "enemy_turret_pod",
+      "x": 150,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
+    },
+   {
+      "time": 38.0,
+      "enemy": "enemy_turret_pod",
+      "x": 120,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
+    },
+   {
+      "time": 38.5,
+      "enemy": "enemy_turret_pod",
+      "x": 80,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
+    },
+
     {
       "time": 42.1,
       "enemy": "enemy_rock_turret",
@@ -133,6 +167,22 @@
       "y": -62,
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "floating_rock_turret_drop"
+    },
+    {
+      "time": 43.5,
+      "enemy": "enemy_turret_pod",
+      "x": 20,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
+    },
+    {
+      "time": 44.5,
+      "enemy": "enemy_turret_pod",
+      "x": 220,
+      "y": -24,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "fast_drop"
     },
 
 

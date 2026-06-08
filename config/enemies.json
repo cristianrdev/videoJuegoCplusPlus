@@ -54,7 +54,7 @@
     {
       "id": "enemy_mecha_butterfly",
       "texture": "textures/enemies/enemy_mecha_butterfly.png",
-      "health": 14,
+      "health": 40,
       "contact_damage": 3,
       "hitbox_shape": "oval",
       "hitbox_width": 44.0,
@@ -67,7 +67,7 @@
     {
       "id": "enemy_rock_turret",
       "texture": "textures/enemies/enemy_rock_turret.png",
-      "health": 15,
+      "health": 20,
       "contact_damage": 3,
       "hitbox_width": 24.0,
       "hitbox_height": 24.0,
@@ -79,7 +79,7 @@
     {
       "id": "enemy_hex_rock_turret",
       "texture": "textures/enemies/enemy_hex_rock_turret.png",
-      "health": 15,
+      "health": 20,
       "contact_damage": 3,
       "hitbox_width": 18.0,
       "hitbox_height": 18.0,
