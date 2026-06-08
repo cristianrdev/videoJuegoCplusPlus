@@ -54,7 +54,7 @@
     {
       "id": "enemy_mecha_butterfly",
       "texture": "textures/enemies/enemy_mecha_butterfly.png",
-      "health": 40,
+      "health": 50,
       "contact_damage": 3,
       "hitbox_shape": "oval",
       "hitbox_width": 44.0,
@@ -103,7 +103,7 @@
     {
       "id": "enemy_mech_spider",
       "texture": "textures/enemies/enemy_mech_spider.png",
-      "health": 5,
+      "health": 8,
       "contact_damage": 3,
       "hitbox_width": 22.0,
       "hitbox_height": 20.0,

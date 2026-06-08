@@ -17,7 +17,7 @@
     "fire_cooldown_seconds": 0.07,
     "muzzle_flash_seconds": 0.06,
     "damage_invincibility_seconds": 1.0,
-    "laser_speed": 260.0,
+    "laser_speed": 450.0,
     "laser_damage": 1,
     "thruster_animation_seconds": 0.06,
     "thruster_frame_width": 8,
