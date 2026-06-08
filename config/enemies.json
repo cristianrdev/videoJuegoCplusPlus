@@ -64,6 +64,30 @@
       "blink_health_threshold": 4
     },
     {
+      "id": "enemy_hex_rock_turret",
+      "texture": "textures/enemies/enemy_hex_rock_turret.png",
+      "health": 15,
+      "contact_damage": 3,
+      "hitbox_width": 18.0,
+      "hitbox_height": 18.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 4
+    },
+    {
+      "id": "enemy_hex_rock_turret_big",
+      "texture": "textures/enemies/enemy_hex_rock_turret_big.png",
+      "health": 15,
+      "contact_damage": 3,
+      "hitbox_width": 28.0,
+      "hitbox_height": 28.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 4
+    },
+    {
       "id": "enemy_mech_spider",
       "texture": "textures/enemies/enemy_mech_spider.png",
       "health": 5,

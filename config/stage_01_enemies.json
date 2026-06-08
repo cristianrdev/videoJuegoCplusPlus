@@ -111,8 +111,8 @@
       "movement": "metal_squid_cosine_medium"
     },
     {
-      "time": 29.0,
-      "enemy": "enemy_rock_turret",
+      "time": 28.8,
+      "enemy": "enemy_hex_rock_turret_big",
       "x": 58,
       "y": -62,
       "pattern": "enemy_rock_turret_fast_small",

@@ -204,6 +204,10 @@ sf::Vector2f Enemy::bulletSpawnPosition() const {
         return {position_.x, position_.y + 24.f};
     }
 
+    if (enemyId_ == "enemy_hex_rock_turret" || enemyId_ == "enemy_hex_rock_turret_big") {
+        return position_;
+    }
+
     return {position_.x, position_.y + size_.y * 0.5f};
 }
 
