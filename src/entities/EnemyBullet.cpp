@@ -49,7 +49,8 @@ EnemyBullet::EnemyBullet(
     std::string visualType,
     sf::Vector2f visualSize,
     float visualGrowSeconds,
-    int ownerInstanceId
+    int ownerInstanceId,
+    bool rotateToVelocity
 )
     : position_(position)
     , velocity_(velocity)
@@ -57,6 +58,7 @@ EnemyBullet::EnemyBullet(
     , visualType_(std::move(visualType))
     , growDuration_(sf::seconds(visualGrowSeconds))
     , ownerInstanceId_(ownerInstanceId)
+    , rotateToVelocity_(rotateToVelocity)
     , damage_(damage) {
     if (texture) {
         sprite_.emplace(*texture);
@@ -82,7 +84,9 @@ void EnemyBullet::render(sf::RenderTarget& target) const {
     if (sprite_) {
         auto sprite = *sprite_;
         sprite.setPosition({std::round(position_.x), std::round(position_.y)});
-        sprite.setRotation(sf::degrees(angleDegrees(velocity_)));
+        if (rotateToVelocity_) {
+            sprite.setRotation(sf::degrees(angleDegrees(velocity_)));
+        }
         target.draw(sprite);
         return;
     }

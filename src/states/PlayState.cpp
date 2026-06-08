@@ -459,7 +459,8 @@ void PlayState::updateEnemyShooting() {
             bulletVisualTypeForPattern(enemy.patternId()),
             bulletVisualSizeForPattern(enemy.patternId()),
             bulletVisualGrowSecondsForPattern(enemy.patternId()),
-            enemy.instanceId()
+            enemy.instanceId(),
+            bulletRotateToVelocityForPattern(enemy.patternId())
         );
         enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
         enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
@@ -614,4 +615,13 @@ float PlayState::bulletVisualGrowSecondsForPattern(const std::string& patternId)
     }
 
     return 0.f;
+}
+
+bool PlayState::bulletRotateToVelocityForPattern(const std::string& patternId) const {
+    const auto& bulletId = bulletPatternSystem_.bulletId(patternId);
+    if (bulletId != "default" && projectileConfigSystem_.hasProjectile(bulletId)) {
+        return projectileConfigSystem_.rotateToVelocityFor(bulletId);
+    }
+
+    return false;
 }

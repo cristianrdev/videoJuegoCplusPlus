@@ -68,6 +68,7 @@ private:
     std::string bulletVisualTypeForPattern(const std::string& patternId) const;
     sf::Vector2f bulletVisualSizeForPattern(const std::string& patternId) const;
     float bulletVisualGrowSecondsForPattern(const std::string& patternId) const;
+    bool bulletRotateToVelocityForPattern(const std::string& patternId) const;
 
     AssetManager& assets_;
     sf::Vector2f logicalSize_;

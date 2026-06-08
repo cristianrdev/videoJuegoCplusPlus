@@ -22,7 +22,8 @@ public:
         std::string visualType,
         sf::Vector2f visualSize,
         float visualGrowSeconds = 0.f,
-        int ownerInstanceId = 0
+        int ownerInstanceId = 0,
+        bool rotateToVelocity = false
     );
 
     void update(sf::Time deltaTime);
@@ -43,6 +44,7 @@ private:
     sf::Time age_{sf::Time::Zero};
     sf::Time growDuration_{sf::Time::Zero};
     int ownerInstanceId_{0};
+    bool rotateToVelocity_{false};
     int damage_{1};
     std::optional<sf::Sprite> sprite_;
 };

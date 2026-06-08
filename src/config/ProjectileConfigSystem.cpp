@@ -56,6 +56,16 @@ int matchIntOr(const std::string& text, const std::string& field, int fallback) 
 
     return std::stoi(match[1].str());
 }
+
+bool matchBoolOr(const std::string& text, const std::string& field, bool fallback) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str() == "true";
+}
 }
 
 void ProjectileConfigSystem::loadFromFile(const std::string& path) {
@@ -74,6 +84,7 @@ void ProjectileConfigSystem::loadFromFile(const std::string& path) {
         config.visualLength = matchFloatOr(object, "visual_length", 4.f);
         config.visualWidth = matchFloatOr(object, "visual_width", 4.f);
         config.visualGrowSeconds = matchFloatOr(object, "visual_grow_seconds", 0.f);
+        config.rotateToVelocity = matchBoolOr(object, "rotate_to_velocity", false);
         config.damage = matchIntOr(object, "damage", 1);
         configs_[config.id] = std::move(config);
     }
@@ -131,6 +142,15 @@ float ProjectileConfigSystem::visualGrowSecondsFor(const std::string& projectile
     }
 
     return it->second.visualGrowSeconds;
+}
+
+bool ProjectileConfigSystem::rotateToVelocityFor(const std::string& projectileId) const {
+    const auto it = configs_.find(projectileId);
+    if (it == configs_.end()) {
+        throw std::runtime_error("Configuracion de proyectil no encontrada: " + projectileId);
+    }
+
+    return it->second.rotateToVelocity;
 }
 
 int ProjectileConfigSystem::damageFor(const std::string& projectileId) const {

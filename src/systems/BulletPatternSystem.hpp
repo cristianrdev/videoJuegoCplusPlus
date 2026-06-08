@@ -21,7 +21,8 @@ public:
         const std::string& visualType = "rect",
         sf::Vector2f visualSize = {4.f, 4.f},
         float visualGrowSeconds = 0.f,
-        int ownerInstanceId = 0
+        int ownerInstanceId = 0,
+        bool rotateToVelocity = false
     );
 
 private:

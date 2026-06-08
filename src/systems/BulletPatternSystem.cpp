@@ -166,7 +166,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
     const std::string& visualType,
     sf::Vector2f visualSize,
     float visualGrowSeconds,
-    int ownerInstanceId
+    int ownerInstanceId,
+    bool rotateToVelocity
 ) {
     auto patternIt = patterns_.find(patternId);
     if (patternIt == patterns_.end()) {
@@ -196,7 +197,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                     visualType,
                     visualSize,
                     visualGrowSeconds,
-                    ownerInstanceId
+                    ownerInstanceId,
+                    rotateToVelocity
                 );
             }
         }
@@ -215,7 +217,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 visualType,
                 visualSize,
                 visualGrowSeconds,
-                ownerInstanceId
+                ownerInstanceId,
+                rotateToVelocity
             );
         }
     } else {
@@ -236,7 +239,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 visualType,
                 visualSize,
                 visualGrowSeconds,
-                ownerInstanceId
+                ownerInstanceId,
+                rotateToVelocity
             );
         }
     }
