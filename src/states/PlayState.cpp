@@ -505,7 +505,7 @@ void PlayState::processEvents() {
                 explosions_.emplace_back(
                     enemyHit->position,
                     *enemyHitSparkTexture_,
-                    sf::Vector2i{16, 16},
+                    sf::Vector2i{8, 8},
                     2,
                     sf::seconds(0.045f)
                 );
