@@ -25,6 +25,21 @@ public:
         int ownerInstanceId = 0,
         bool rotateToVelocity = false
     );
+    EnemyBullet(
+        sf::Vector2f position,
+        sf::Vector2f velocity,
+        const sf::Texture* texture,
+        int damage,
+        std::string visualType,
+        sf::Vector2f visualSize,
+        float visualGrowSeconds,
+        int ownerInstanceId,
+        bool rotateToVelocity,
+        sf::Vector2f polarOrigin,
+        float polarAngleRadians,
+        float radialSpeed,
+        float angularVelocityRadians
+    );
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
@@ -45,6 +60,12 @@ private:
     sf::Time growDuration_{sf::Time::Zero};
     int ownerInstanceId_{0};
     bool rotateToVelocity_{false};
+    bool usesPolarMotion_{false};
+    sf::Vector2f polarOrigin_{};
+    float polarRadius_{0.f};
+    float polarAngleRadians_{0.f};
+    float radialSpeed_{0.f};
+    float angularVelocityRadians_{0.f};
     int damage_{1};
     std::optional<sf::Sprite> sprite_;
 };

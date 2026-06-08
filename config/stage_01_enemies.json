@@ -221,20 +221,12 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 70.5,
-      "enemy": "enemy_mech_spider_mother",
+      "time": 70.0,
+      "enemy": "enemy_mecha_butterfly",
       "x": 120,
-      "y": -60,
-      "pattern": "enemy_mech_spider_mother_web_line",
-      "movement": "mech_spider_mother_drop_square"
-    },
-    {
-      "time": 75.5,
-      "enemy": "enemy_mech_spider_mother",
-      "x": 120,
-      "y": -60,
-      "pattern": "enemy_mech_spider_mother_web_line",
-      "movement": "mech_spider_mother_drop_square_ccw"
+      "y": -40,
+      "pattern": "enemy_mecha_butterfly_concentric_flower",
+      "movement": "mecha__butterfly_cosine_medium"
     }
   ]
 }

@@ -60,13 +60,14 @@
     {
       "id": "enemy_mecha_butterfly_concentric_flower",
       "type": "radial_burst",
-      "fire_interval": 1.15,
+      "fire_interval": 2.50,
       "bullet": "enemy_orb_purple",
-      "rings": 3,
-      "bullets_per_ring": 10,
+      "rings": 6,
+      "bullets_per_ring": 30,
       "speed_start": 34.0,
-      "speed_step": 16.0,
-      "rotation_per_shot": 9.0
+      "speed_step": 10.0,
+      "rotation_per_shot": 18.0,
+      "angular_velocity": 20.0
     },
     {
       "id": "enemy_rock_turret_fast_small",

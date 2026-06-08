@@ -148,6 +148,7 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.speedStep = matchFloatOr(object, "speed_step", 0.f);
         pattern.angleStep = matchFloatOr(object, "angle_step", 0.f);
         pattern.rotationPerShot = matchFloatOr(object, "rotation_per_shot", 0.f);
+        pattern.angularVelocity = matchFloatOr(object, "angular_velocity", 0.f);
 
         patterns_[pattern.id] = std::move(pattern);
     }
@@ -185,21 +186,40 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
 
         for (auto ring = 0; ring < pattern.rings; ++ring) {
             const auto speed = pattern.speedStart + static_cast<float>(ring) * pattern.speedStep;
+            const auto angularVelocity = degreesToRadians(pattern.angularVelocity);
             for (auto bullet = 0; bullet < pattern.bulletsPerRing; ++bullet) {
                 const auto offset = rotation + static_cast<float>(bullet) * 360.f / static_cast<float>(pattern.bulletsPerRing);
                 const auto angle = degreesToRadians(offset);
                 const auto velocity = sf::Vector2f{std::sin(angle) * speed, std::cos(angle) * speed};
-                bullets.emplace_back(
-                    origin,
-                    velocity,
-                    bulletTexture,
-                    bulletDamage,
-                    visualType,
-                    visualSize,
-                    visualGrowSeconds,
-                    ownerInstanceId,
-                    rotateToVelocity
-                );
+                if (pattern.angularVelocity != 0.f) {
+                    bullets.emplace_back(
+                        origin,
+                        velocity,
+                        bulletTexture,
+                        bulletDamage,
+                        visualType,
+                        visualSize,
+                        visualGrowSeconds,
+                        ownerInstanceId,
+                        rotateToVelocity,
+                        origin,
+                        angle,
+                        speed,
+                        angularVelocity
+                    );
+                } else {
+                    bullets.emplace_back(
+                        origin,
+                        velocity,
+                        bulletTexture,
+                        bulletDamage,
+                        visualType,
+                        visualSize,
+                        visualGrowSeconds,
+                        ownerInstanceId,
+                        rotateToVelocity
+                    );
+                }
             }
         }
     } else if (pattern.type == "rotating_stream") {

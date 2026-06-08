@@ -43,6 +43,7 @@ private:
         float speedStep{0.f};
         float angleStep{0.f};
         float rotationPerShot{0.f};
+        float angularVelocity{0.f};
         int shotCounter{0};
     };
 

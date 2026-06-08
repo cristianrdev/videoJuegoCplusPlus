@@ -71,9 +71,55 @@ EnemyBullet::EnemyBullet(
     }
 }
 
+EnemyBullet::EnemyBullet(
+    sf::Vector2f position,
+    sf::Vector2f velocity,
+    const sf::Texture* texture,
+    int damage,
+    std::string visualType,
+    sf::Vector2f visualSize,
+    float visualGrowSeconds,
+    int ownerInstanceId,
+    bool rotateToVelocity,
+    sf::Vector2f polarOrigin,
+    float polarAngleRadians,
+    float radialSpeed,
+    float angularVelocityRadians
+)
+    : EnemyBullet(
+        position,
+        velocity,
+        texture,
+        damage,
+        std::move(visualType),
+        visualSize,
+        visualGrowSeconds,
+        ownerInstanceId,
+        rotateToVelocity
+    ) {
+    usesPolarMotion_ = true;
+    polarOrigin_ = polarOrigin;
+    polarAngleRadians_ = polarAngleRadians;
+    radialSpeed_ = radialSpeed;
+    angularVelocityRadians_ = angularVelocityRadians;
+    polarRadius_ = 0.f;
+    position_ = polarOrigin_;
+}
+
 void EnemyBullet::update(sf::Time deltaTime) {
     age_ += deltaTime;
     if (visualType_ == "pixel_line") {
+        return;
+    }
+
+    if (usesPolarMotion_) {
+        const auto seconds = deltaTime.asSeconds();
+        polarRadius_ += radialSpeed_ * seconds;
+        polarAngleRadians_ += angularVelocityRadians_ * seconds;
+        position_ = {
+            polarOrigin_.x + std::sin(polarAngleRadians_) * polarRadius_,
+            polarOrigin_.y + std::cos(polarAngleRadians_) * polarRadius_
+        };
         return;
     }
 
