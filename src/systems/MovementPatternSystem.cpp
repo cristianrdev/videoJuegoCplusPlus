@@ -113,6 +113,35 @@ sf::Vector2f interpolateSegment(sf::Vector2f from, sf::Vector2f to, float localT
         from.y + (to.y - from.y) * localT
     };
 }
+
+float smoothEaseOut(float value) {
+    const auto clamped = std::clamp(value, 0.f, 1.f);
+    const auto inverse = 1.f - clamped;
+    return 1.f - inverse * inverse * inverse;
+}
+
+float length(sf::Vector2f value) {
+    return std::sqrt(value.x * value.x + value.y * value.y);
+}
+
+sf::Vector2f normalizedOr(sf::Vector2f value, sf::Vector2f fallback) {
+    const auto valueLength = length(value);
+    if (valueLength <= 0.001f) {
+        const auto fallbackLength = length(fallback);
+        if (fallbackLength <= 0.001f) {
+            return {0.f, -1.f};
+        }
+        return {fallback.x / fallbackLength, fallback.y / fallbackLength};
+    }
+
+    return {value.x / valueLength, value.y / valueLength};
+}
+
+float approachTimeFor(const MovementPatternSystem::Pattern& pattern, sf::Vector2f startPosition, sf::Vector2f targetPosition) {
+    const auto initialDistance = length(startPosition - targetPosition);
+    const auto approachDistance = std::max(0.f, initialDistance - pattern.holdRadius);
+    return approachDistance / std::max(1.f, pattern.approachSpeed);
+}
 }
 
 void MovementPatternSystem::loadFromFile(const std::string& path) {
@@ -137,6 +166,15 @@ void MovementPatternSystem::loadFromFile(const std::string& path) {
         pattern.squareHalfHeight = matchFloat(object, "square_half_height", 30.f);
         pattern.squarePeriod = matchFloat(object, "square_period", 4.f);
         pattern.squareCenterOffsetY = matchFloat(object, "square_center_offset_y", -70.f);
+        pattern.holdRadius = matchFloat(object, "hold_radius", 90.f);
+        pattern.approachSpeed = matchFloat(object, "approach_speed", 30.f);
+        pattern.holdSeconds = matchFloat(object, "hold_seconds", 6.f);
+        pattern.retreatSpeed = matchFloat(object, "retreat_speed", 80.f);
+        pattern.retreatDirectionX = matchFloat(object, "retreat_direction_x", 0.f);
+        pattern.retreatDirectionY = matchFloat(object, "retreat_direction_y", -1.f);
+        pattern.approachCurveAmplitude = matchFloat(object, "approach_curve_amplitude", 0.f);
+        pattern.approachCurveDirection = matchFloat(object, "approach_curve_direction", 1.f);
+        pattern.approachEaseOut = matchBool(object, "approach_ease_out", false);
         pattern.screenWidth = matchFloat(object, "screen_width", 240.f);
         pattern.screenHeight = matchFloat(object, "screen_height", 320.f);
         pattern.marginX = matchFloat(object, "margin_x", 25.f);
@@ -218,6 +256,43 @@ sf::Vector2f MovementPatternSystem::positionFor(
         };
     }
 
+    if (pattern.type == "approach_hold_retreat") {
+        const auto directionFromTarget = normalizedOr(
+            startPosition - targetPosition,
+            {pattern.retreatDirectionX, pattern.retreatDirectionY}
+        );
+        const auto approachTime = approachTimeFor(pattern, startPosition, targetPosition);
+        const auto holdPosition = targetPosition + directionFromTarget * pattern.holdRadius;
+
+        if (t <= approachTime) {
+            const auto linearT = approachTime <= 0.001f ? 1.f : std::clamp(t / approachTime, 0.f, 1.f);
+            const auto progress = pattern.approachEaseOut ? smoothEaseOut(linearT) : linearT;
+            auto position = interpolateSegment(startPosition, holdPosition, progress);
+
+            if (std::abs(pattern.approachCurveAmplitude) > 0.001f) {
+                const auto travelDirection = normalizedOr(holdPosition - startPosition, {0.f, 1.f});
+                const auto perpendicular = sf::Vector2f{-travelDirection.y, travelDirection.x};
+                const auto curve = std::sin(linearT * Pi) *
+                    pattern.approachCurveAmplitude *
+                    (pattern.approachCurveDirection < 0.f ? -1.f : 1.f);
+                position += perpendicular * curve;
+            }
+
+            return position;
+        }
+
+        const auto holdEndTime = approachTime + std::max(0.f, pattern.holdSeconds);
+        if (t <= holdEndTime) {
+            return holdPosition;
+        }
+
+        const auto retreatDirection = normalizedOr(
+            {pattern.retreatDirectionX, pattern.retreatDirectionY},
+            directionFromTarget
+        );
+        return holdPosition + retreatDirection * pattern.retreatSpeed * (t - holdEndTime);
+    }
+
     if (pattern.type == "screen_square_loop") {
         const auto dropSpeed = std::max(1.f, pattern.velocityY);
         const auto pathSpeed = std::max(1.f, std::abs(pattern.velocityX));
@@ -287,6 +362,47 @@ sf::Vector2f MovementPatternSystem::positionFor(
         startPosition.x + pattern.velocityX * t,
         startPosition.y + pattern.velocityY * t
     };
+}
+
+bool MovementPatternSystem::canFire(
+    const std::string& patternId,
+    sf::Vector2f startPosition,
+    sf::Time elapsed,
+    sf::Vector2f targetPosition
+) const {
+    const auto& pattern = patternFor(patternId);
+    if (pattern.type != "approach_hold_retreat") {
+        return true;
+    }
+
+    return elapsed.asSeconds() >= approachTimeFor(pattern, startPosition, targetPosition);
+}
+
+bool MovementPatternSystem::isApproachHoldRetreat(const std::string& patternId) const {
+    return patternFor(patternId).type == "approach_hold_retreat";
+}
+
+bool MovementPatternSystem::isHoldFinished(const std::string& patternId, sf::Time holdElapsed) const {
+    const auto& pattern = patternFor(patternId);
+    if (pattern.type != "approach_hold_retreat") {
+        return false;
+    }
+
+    return holdElapsed.asSeconds() >= std::max(0.f, pattern.holdSeconds);
+}
+
+sf::Vector2f MovementPatternSystem::retreatPositionFor(
+    const std::string& patternId,
+    sf::Vector2f holdPosition,
+    sf::Time holdElapsed
+) const {
+    const auto& pattern = patternFor(patternId);
+    const auto retreatDirection = normalizedOr(
+        {pattern.retreatDirectionX, pattern.retreatDirectionY},
+        {0.f, -1.f}
+    );
+    const auto retreatElapsed = std::max(0.f, holdElapsed.asSeconds() - std::max(0.f, pattern.holdSeconds));
+    return holdPosition + retreatDirection * pattern.retreatSpeed * retreatElapsed;
 }
 
 const MovementPatternSystem::Pattern& MovementPatternSystem::patternFor(const std::string& patternId) const {

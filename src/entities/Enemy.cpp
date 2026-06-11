@@ -152,6 +152,7 @@ void Enemy::render(sf::RenderTarget& target, bool showHitbox) const {
         });
     }
     pixelSnappedSprite.setPosition({std::round(position_.x), std::round(position_.y)});
+    pixelSnappedSprite.setRotation(sf::degrees(rotationDegrees_));
 
     if (shouldRenderNegative()) {
         if (auto* shader = negativeShader()) {
@@ -177,6 +178,27 @@ void Enemy::takeDamage(int damage) {
 
 void Enemy::setPosition(sf::Vector2f position) {
     position_ = position;
+}
+
+void Enemy::setRotationDegrees(float degrees) {
+    rotationDegrees_ = degrees;
+}
+
+void Enemy::lockMovementHoldPosition(sf::Vector2f position) {
+    movementHoldPosition_ = position;
+    movementHoldElapsed_ = elapsed_;
+}
+
+bool Enemy::hasMovementHoldPosition() const {
+    return movementHoldPosition_.has_value();
+}
+
+sf::Vector2f Enemy::movementHoldPosition() const {
+    return movementHoldPosition_.value_or(position_);
+}
+
+sf::Time Enemy::movementHoldElapsed() const {
+    return movementHoldElapsed_;
 }
 
 bool Enemy::isAlive() const {

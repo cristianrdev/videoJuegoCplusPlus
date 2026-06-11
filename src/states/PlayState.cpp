@@ -10,6 +10,7 @@
 namespace {
 constexpr auto PlayerDeathExplosionSeconds = 0.21f;
 constexpr auto GameOverDelaySeconds = 3.0f;
+constexpr auto Pi = 3.14159265358979323846f;
 
 std::vector<sf::Vector2f> playerProjectileOffsets(int projectileCount) {
     switch (projectileCount) {
@@ -31,6 +32,15 @@ std::vector<sf::Vector2f> playerProjectileOffsets(int projectileCount) {
     default:
         return {{0.f, 0.f}};
     }
+}
+
+float rotationDegreesFacingTarget(sf::Vector2f from, sf::Vector2f target) {
+    const auto delta = target - from;
+    if (std::abs(delta.x) <= 0.001f && std::abs(delta.y) <= 0.001f) {
+        return 0.f;
+    }
+
+    return -std::atan2(delta.x, delta.y) * 180.f / Pi;
 }
 }
 
@@ -143,6 +153,41 @@ void PlayState::update(sf::Time deltaTime) {
 
     for (auto& enemy : enemies_) {
         enemy.update(deltaTime);
+        if (movementPatternSystem_.isApproachHoldRetreat(enemy.movementId())) {
+            if (!enemy.hasMovementHoldPosition()) {
+                const auto nextPosition = movementPatternSystem_.positionFor(
+                    enemy.movementId(),
+                    enemy.startPosition(),
+                    enemy.elapsed(),
+                    player_->position()
+                );
+                enemy.setPosition(nextPosition);
+                if (movementPatternSystem_.canFire(
+                        enemy.movementId(),
+                        enemy.startPosition(),
+                        enemy.elapsed(),
+                        player_->position()
+                    )) {
+                    enemy.lockMovementHoldPosition(nextPosition);
+                }
+            } else {
+                const auto holdElapsed = enemy.elapsed() - enemy.movementHoldElapsed();
+                if (movementPatternSystem_.isHoldFinished(enemy.movementId(), holdElapsed)) {
+                    enemy.setPosition(movementPatternSystem_.retreatPositionFor(
+                        enemy.movementId(),
+                        enemy.movementHoldPosition(),
+                        holdElapsed
+                    ));
+                } else {
+                    enemy.setPosition(enemy.movementHoldPosition());
+                }
+            }
+
+            enemy.setRotationDegrees(rotationDegreesFacingTarget(enemy.position(), player_->position()));
+            continue;
+        }
+
+        enemy.setRotationDegrees(0.f);
         enemy.setPosition(
             movementPatternSystem_.positionFor(
                 enemy.movementId(),
@@ -434,6 +479,20 @@ void PlayState::updateEnemyShooting() {
 
     for (auto& enemy : enemies_) {
         if (!enemy.shouldFire()) {
+            continue;
+        }
+
+        if (movementPatternSystem_.isApproachHoldRetreat(enemy.movementId())) {
+            if (!enemy.hasMovementHoldPosition() ||
+                movementPatternSystem_.isHoldFinished(enemy.movementId(), enemy.elapsed() - enemy.movementHoldElapsed())) {
+                continue;
+            }
+        } else if (!movementPatternSystem_.canFire(
+                       enemy.movementId(),
+                       enemy.startPosition(),
+                       enemy.elapsed(),
+                       player_->position()
+                   )) {
             continue;
         }
 

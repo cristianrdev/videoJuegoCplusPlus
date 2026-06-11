@@ -22,6 +22,15 @@ public:
         float squareHalfHeight{30.f};
         float squarePeriod{4.f};
         float squareCenterOffsetY{-70.f};
+        float holdRadius{90.f};
+        float approachSpeed{30.f};
+        float holdSeconds{6.f};
+        float retreatSpeed{80.f};
+        float retreatDirectionX{0.f};
+        float retreatDirectionY{-1.f};
+        float approachCurveAmplitude{0.f};
+        float approachCurveDirection{1.f};
+        bool approachEaseOut{false};
         float screenWidth{240.f};
         float screenHeight{320.f};
         float marginX{25.f};
@@ -41,6 +50,19 @@ public:
         sf::Vector2f startPosition,
         sf::Time elapsed,
         sf::Vector2f targetPosition
+    ) const;
+    bool canFire(
+        const std::string& patternId,
+        sf::Vector2f startPosition,
+        sf::Time elapsed,
+        sf::Vector2f targetPosition
+    ) const;
+    bool isApproachHoldRetreat(const std::string& patternId) const;
+    bool isHoldFinished(const std::string& patternId, sf::Time holdElapsed) const;
+    sf::Vector2f retreatPositionFor(
+        const std::string& patternId,
+        sf::Vector2f holdPosition,
+        sf::Time holdElapsed
     ) const;
 
 private:

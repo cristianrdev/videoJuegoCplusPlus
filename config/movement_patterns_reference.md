@@ -211,6 +211,61 @@ el movimiento usara estas posiciones horizontales reales:
 
 Esto permite reutilizar el mismo movimiento desde distintos puntos de aparicion.
 
+## Tipo `approach_hold_retreat`
+
+Movimiento para enemigos que se acercan hacia la nave, se detienen a una distancia de radio configurable, disparan desde ese lugar y luego se retiran.
+
+Cuando el enemigo llega a `hold_radius`, su posicion de espera queda bloqueada. Es decir: no sigue persiguiendo ni corrigiendo su posicion si la nave se mueve despues. Durante la espera puede seguir mirando visualmente hacia la nave si el enemigo tiene rotacion habilitada desde codigo.
+
+```json
+{
+  "id": "green_rotor_drone_approach_hold_retreat",
+  "type": "approach_hold_retreat",
+  "hold_radius": 90.0,
+  "approach_speed": 38.0,
+  "hold_seconds": 6.0,
+  "retreat_speed": 96.0,
+  "retreat_direction_x": 0.0,
+  "retreat_direction_y": -1.0
+}
+```
+
+| Variable | Tipo | Unidad | Descripcion |
+|---|---:|---:|---|
+| `hold_radius` | float | px | Distancia a la que el enemigo fija su punto de espera respecto a la nave. |
+| `approach_speed` | float | px/s | Velocidad con la que se acerca hacia la nave. |
+| `hold_seconds` | float | segundos | Tiempo que se mantiene a distancia antes de retirarse. |
+| `retreat_speed` | float | px/s | Velocidad de retirada. Normalmente mayor que `approach_speed`. |
+| `retreat_direction_x` | float | direccion | Componente horizontal de la direccion de retirada. |
+| `retreat_direction_y` | float | direccion | Componente vertical de la direccion de retirada. `-1.0` significa hacia arriba. |
+| `approach_curve_amplitude` | float | px | Desplazamiento lateral maximo de la curva durante la aproximacion. `0.0` desactiva la curva. |
+| `approach_curve_direction` | float | direccion | Signo de la curva. `1.0` curva hacia un lado, `-1.0` hacia el lado contrario. |
+| `approach_ease_out` | bool | true/false | Si es `true`, el enemigo desacelera suavemente antes de fijar su posicion de espera. |
+
+### Disparo
+
+Los enemigos con este movimiento no disparan durante la aproximacion. Comienzan a disparar cuando ya estan a `hold_radius` de la nave y dejan de disparar cuando empieza la retirada.
+
+### Ajustar La Entrada Curva Del Drone
+
+Para una llegada mas pronunciada, sube:
+
+```json
+"approach_curve_amplitude": 24.0
+```
+
+Para invertir el lado de la curva:
+
+```json
+"approach_curve_direction": -1.0
+```
+
+Para que llegue sin desacelerar:
+
+```json
+"approach_ease_out": false
+```
+
 ## Coordenadas Del Juego
 
 La pantalla logica es:

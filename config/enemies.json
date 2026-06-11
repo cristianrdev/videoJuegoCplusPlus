@@ -31,6 +31,18 @@
       "hitbox_offset_y": 0.0
     },
     {
+      "id": "enemy_green_rotor_drone",
+      "texture": "textures/enemies/enemy_green_rotor_drone.png",
+      "health": 6,
+      "contact_damage": 3,
+      "hitbox_width": 18.0,
+      "hitbox_height": 18.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 2
+    },
+    {
       "id": "enemy_robot_fish",
       "texture": "textures/enemies/enemy_robot_fish_sheet.png",
       "health": 80,

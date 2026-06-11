@@ -8,6 +8,7 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include <optional>
 #include <string>
 
 class Enemy {
@@ -31,6 +32,11 @@ public:
     void render(sf::RenderTarget& target, bool showHitbox = false) const;
     void takeDamage(int damage);
     void setPosition(sf::Vector2f position);
+    void setRotationDegrees(float degrees);
+    void lockMovementHoldPosition(sf::Vector2f position);
+    bool hasMovementHoldPosition() const;
+    sf::Vector2f movementHoldPosition() const;
+    sf::Time movementHoldElapsed() const;
 
     bool isAlive() const;
     bool shouldFire() const;
@@ -64,6 +70,9 @@ private:
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
     sf::Time firingVisualTime_{sf::Time::Zero};
+    std::optional<sf::Vector2f> movementHoldPosition_;
+    sf::Time movementHoldElapsed_{sf::Time::Zero};
+    float rotationDegrees_{0.f};
     bool blinkEnabled_{false};
     int blinkHealthThreshold_{0};
     std::string enemyId_;
