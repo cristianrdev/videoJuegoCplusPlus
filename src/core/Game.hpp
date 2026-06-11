@@ -10,6 +10,8 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
 
+#include <memory>
+
 class Game {
 public:
     Game();
@@ -24,6 +26,7 @@ private:
     };
 
     void processEvents();
+    void restartPlayState();
     void togglePause();
     void applyFramePacingMode(FramePacingMode mode);
     const char* framePacingLabel() const;
@@ -50,5 +53,5 @@ private:
     FramePacingMode framePacingMode_{FramePacingMode::VSync};
     bool paused_{false};
     float smoothedFps_{0.f};
-    PlayState playState_;
+    std::unique_ptr<PlayState> playState_;
 };

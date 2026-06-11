@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iomanip>
 #include <initializer_list>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -65,8 +66,8 @@ Game::Game()
     , window_(sf::VideoMode::getDesktopMode(), "Shooter vertical", sf::State::Fullscreen)
     , logicalTarget_({LogicalWidth, LogicalHeight})
     , presentationSprite_(logicalTarget_.getTexture())
-    , debugText_(debugFont_)
-    , playState_(assets_, {static_cast<float>(LogicalWidth), static_cast<float>(LogicalHeight)}) {
+    , debugText_(debugFont_) {
+    restartPlayState();
     applyFramePacingMode(framePacingMode_);
     logicalTarget_.setSmooth(false);
 
@@ -99,12 +100,17 @@ void Game::processEvents() {
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             if (keyPressed->code == sf::Keyboard::Key::Escape) {
                 window_.close();
+            } else if (playState_ &&
+                       playState_->isGameOverVisible() &&
+                       (keyPressed->code == sf::Keyboard::Key::Enter ||
+                        keyPressed->code == sf::Keyboard::Key::Space)) {
+                restartPlayState();
             } else if (keyPressed->code == sf::Keyboard::Key::P) {
                 togglePause();
             } else if (keyPressed->code == sf::Keyboard::Key::G) {
-                playState_.toggleGodMode();
+                playState_->toggleGodMode();
             } else if (keyPressed->code == sf::Keyboard::Key::H) {
-                playState_.togglePlayerHitbox();
+                playState_->togglePlayerHitbox();
             } else if (keyPressed->code == sf::Keyboard::Key::Q) {
                 applyFramePacingMode(FramePacingMode::VSync);
             } else if (keyPressed->code == sf::Keyboard::Key::W) {
@@ -125,7 +131,7 @@ void Game::processEvents() {
                 updatePresentationSprite();
             } else if (keyPressed->code == sf::Keyboard::Key::Space ||
                        keyPressed->code == sf::Keyboard::Key::Z) {
-                playState_.fireLaserNormal();
+                playState_->fireLaserNormal();
             }
         }
 
@@ -135,6 +141,17 @@ void Game::processEvents() {
             }
         }
     }
+}
+
+void Game::restartPlayState() {
+    paused_ = false;
+    playState_ = std::make_unique<PlayState>(
+        assets_,
+        sf::Vector2f{
+            static_cast<float>(LogicalWidth),
+            static_cast<float>(LogicalHeight)
+        }
+    );
 }
 
 void Game::applyFramePacingMode(FramePacingMode mode) {
@@ -181,7 +198,7 @@ unsigned int Game::largestFittingIntegerScale() const {
 void Game::togglePause() {
     paused_ = !paused_;
     if (paused_) {
-        playState_.onPaused();
+        playState_->onPaused();
     }
 }
 
@@ -199,14 +216,14 @@ void Game::update(sf::Time deltaTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z) ||
         joystickFirePressed()) {
-        playState_.fireLaserNormal();
+        playState_->fireLaserNormal();
     }
 
-    playState_.update(deltaTime);
+    playState_->update(deltaTime);
 }
 
 void Game::render() {
-    playState_.render(logicalTarget_);
+    playState_->render(logicalTarget_);
     logicalTarget_.display();
 
     window_.clear(sf::Color::Black);
@@ -243,12 +260,12 @@ void Game::renderPauseOverlay() {
 }
 
 void Game::renderGameOverOverlay() {
-    if (!playState_.isGameOverVisible()) {
+    if (!playState_ || !playState_->isGameOverVisible()) {
         return;
     }
 
     auto gameOverText = sf::Text(debugFont_);
-    gameOverText.setString("GAME OVER");
+    gameOverText.setString("GAME OVER\nENTER / ESPACIO");
     gameOverText.setCharacterSize(36);
     gameOverText.setFillColor(sf::Color(255, 90, 90));
     gameOverText.setOutlineColor(sf::Color(8, 12, 20));
@@ -267,7 +284,7 @@ void Game::renderGameOverOverlay() {
 }
 
 void Game::renderPixelGrid() {
-    if (!playState_.isPlayerHitboxVisible()) {
+    if (!playState_ || !playState_->isPlayerHitboxVisible()) {
         return;
     }
 
@@ -321,14 +338,14 @@ void Game::renderDebugHud() {
 
     text << std::fixed << std::setprecision(2)
          << "TIME\n"
-         << playState_.stageTime().asSeconds()
+         << playState_->stageTime().asSeconds()
          << " s\n\n"
          << "VIDA\n"
-         << playState_.playerHealth()
+         << playState_->playerHealth()
          << "\n\nGOD\n"
-         << (playState_.isGodModeEnabled() ? "ON" : "OFF")
+         << (playState_->isGodModeEnabled() ? "ON" : "OFF")
          << "\n\nHITBOX\n"
-         << (playState_.isPlayerHitboxVisible() ? "ON" : "OFF")
+         << (playState_->isPlayerHitboxVisible() ? "ON" : "OFF")
          << "\n\n"
          << std::setprecision(1)
          << "FPS\n"
@@ -345,7 +362,9 @@ void Game::renderDebugHud() {
          << "\n\nTECLAS\n"
          << "Esc salir\n"
          << "P pausa\n"
+         << "Enter reintentar\n"
          << "Espacio disparo\n"
+         << "Espacio reintentar\n"
          << "Z disparo\n"
          << "G god mode\n"
          << "H hitbox\n"
