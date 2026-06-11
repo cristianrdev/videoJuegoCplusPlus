@@ -184,13 +184,14 @@
       "pattern": "enemy_turret_spread_3",
       "movement": "fast_drop"
     },
+    
     {
       "time": 1.0,
       "enemy": "enemy_green_rotor_drone",
       "x": 120,
       "y": -26,
       "pattern": "enemy_rock_turret_fast_small",
-      "movement": "green_rotor_drone_approach_hold_retreat"
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
     },
     {
       "time": 52.0,

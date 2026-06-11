@@ -221,6 +221,7 @@ Cuando el enemigo llega a `hold_radius`, su posicion de espera queda bloqueada. 
 {
   "id": "green_rotor_drone_approach_hold_retreat",
   "type": "approach_hold_retreat",
+  "stop_condition": "radius",
   "hold_radius": 90.0,
   "approach_speed": 38.0,
   "hold_seconds": 6.0,
@@ -232,6 +233,7 @@ Cuando el enemigo llega a `hold_radius`, su posicion de espera queda bloqueada. 
 
 | Variable | Tipo | Unidad | Descripcion |
 |---|---:|---:|---|
+| `stop_condition` | string | modo | Condicion de parada. `radius` detiene por distancia radial. `same_y` detiene cuando el enemigo llega a la misma altura Y que la nave. Si se omite, usa `radius`. |
 | `hold_radius` | float | px | Distancia a la que el enemigo fija su punto de espera respecto a la nave. |
 | `approach_speed` | float | px/s | Velocidad con la que se acerca hacia la nave. |
 | `hold_seconds` | float | segundos | Tiempo que se mantiene a distancia antes de retirarse. |
@@ -265,6 +267,28 @@ Para que llegue sin desacelerar:
 ```json
 "approach_ease_out": false
 ```
+
+### Variante Por Misma Altura En Y
+
+Usa esta variante cuando el enemigo debe entrar desde arriba y detenerse al quedar a la misma altura vertical que la nave, sin usar distancia radial:
+
+```json
+{
+  "id": "green_rotor_drone_approach_y_hold_retreat",
+  "type": "approach_hold_retreat",
+  "stop_condition": "same_y",
+  "approach_speed": 50.0,
+  "hold_seconds": 6.0,
+  "retreat_speed": 96.0,
+  "retreat_direction_x": 0.0,
+  "retreat_direction_y": -1.0,
+  "approach_curve_amplitude": 18.0,
+  "approach_curve_direction": -1.0,
+  "approach_ease_out": true
+}
+```
+
+Con `same_y`, el enemigo mantiene el `x` desde el que aparece en el stage y fija su punto de espera cuando su `y` coincide con la `y` de la nave. Luego mira a la nave, espera `hold_seconds` y se retira.
 
 ## Coordenadas Del Juego
 

@@ -30,6 +30,7 @@ public:
         float retreatDirectionY{-1.f};
         float approachCurveAmplitude{0.f};
         float approachCurveDirection{1.f};
+        std::string stopCondition{"radius"};
         bool approachEaseOut{false};
         float screenWidth{240.f};
         float screenHeight{320.f};

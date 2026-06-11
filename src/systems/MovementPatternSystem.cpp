@@ -138,9 +138,30 @@ sf::Vector2f normalizedOr(sf::Vector2f value, sf::Vector2f fallback) {
 }
 
 float approachTimeFor(const MovementPatternSystem::Pattern& pattern, sf::Vector2f startPosition, sf::Vector2f targetPosition) {
+    if (pattern.stopCondition == "same_y") {
+        const auto approachDistance = std::abs(targetPosition.y - startPosition.y);
+        return approachDistance / std::max(1.f, pattern.approachSpeed);
+    }
+
     const auto initialDistance = length(startPosition - targetPosition);
     const auto approachDistance = std::max(0.f, initialDistance - pattern.holdRadius);
     return approachDistance / std::max(1.f, pattern.approachSpeed);
+}
+
+sf::Vector2f approachHoldPositionFor(
+    const MovementPatternSystem::Pattern& pattern,
+    sf::Vector2f startPosition,
+    sf::Vector2f targetPosition
+) {
+    if (pattern.stopCondition == "same_y") {
+        return {startPosition.x, targetPosition.y};
+    }
+
+    const auto directionFromTarget = normalizedOr(
+        startPosition - targetPosition,
+        {pattern.retreatDirectionX, pattern.retreatDirectionY}
+    );
+    return targetPosition + directionFromTarget * pattern.holdRadius;
 }
 }
 
@@ -174,6 +195,7 @@ void MovementPatternSystem::loadFromFile(const std::string& path) {
         pattern.retreatDirectionY = matchFloat(object, "retreat_direction_y", -1.f);
         pattern.approachCurveAmplitude = matchFloat(object, "approach_curve_amplitude", 0.f);
         pattern.approachCurveDirection = matchFloat(object, "approach_curve_direction", 1.f);
+        pattern.stopCondition = matchString(object, "stop_condition", "radius");
         pattern.approachEaseOut = matchBool(object, "approach_ease_out", false);
         pattern.screenWidth = matchFloat(object, "screen_width", 240.f);
         pattern.screenHeight = matchFloat(object, "screen_height", 320.f);
@@ -262,7 +284,7 @@ sf::Vector2f MovementPatternSystem::positionFor(
             {pattern.retreatDirectionX, pattern.retreatDirectionY}
         );
         const auto approachTime = approachTimeFor(pattern, startPosition, targetPosition);
-        const auto holdPosition = targetPosition + directionFromTarget * pattern.holdRadius;
+        const auto holdPosition = approachHoldPositionFor(pattern, startPosition, targetPosition);
 
         if (t <= approachTime) {
             const auto linearT = approachTime <= 0.001f ? 1.f : std::clamp(t / approachTime, 0.f, 1.f);

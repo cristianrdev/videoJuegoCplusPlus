@@ -90,6 +90,19 @@
       "approach_ease_out": true
     },
     {
+      "id": "green_rotor_drone_approach_y_hold_retreat",
+      "type": "approach_hold_retreat",
+      "stop_condition": "same_y",
+      "approach_speed": 50.0,
+      "hold_seconds": 6.0,
+      "retreat_speed": 96.0,
+      "retreat_direction_x": 0.0,
+      "retreat_direction_y": -1.0,
+      "approach_curve_amplitude": 18.0,
+      "approach_curve_direction": -1.0,
+      "approach_ease_out": true
+    },
+    {
       "id": "mech_spider_zigzag_left_left",
       "type": "waypoints",
       "x_relative_to_spawn": true,
