@@ -234,6 +234,8 @@ Cuando el enemigo llega a `hold_radius`, su posicion de espera queda bloqueada. 
 | Variable | Tipo | Unidad | Descripcion |
 |---|---:|---:|---|
 | `stop_condition` | string | modo | Condicion de parada. `radius` detiene por distancia radial. `same_y` detiene cuando el enemigo llega a la misma altura Y que la nave. Si se omite, usa `radius`. |
+| `stop_offset_y` | float | px | Offset vertical aplicado a `same_y`. `40.0` detiene al enemigo cuando su `y` coincide con `y de la nave + 40 px`. |
+| `lock_target_on_start` | bool | true/false | Si es `true`, captura la posicion de la nave al aparecer el enemigo y usa esa referencia fija durante la aproximacion. Evita que el enemigo siga a la nave mientras entra. |
 | `hold_radius` | float | px | Distancia a la que el enemigo fija su punto de espera respecto a la nave. |
 | `approach_speed` | float | px/s | Velocidad con la que se acerca hacia la nave. |
 | `hold_seconds` | float | segundos | Tiempo que se mantiene a distancia antes de retirarse. |
@@ -277,6 +279,8 @@ Usa esta variante cuando el enemigo debe entrar desde arriba y detenerse al qued
   "id": "green_rotor_drone_approach_y_hold_retreat",
   "type": "approach_hold_retreat",
   "stop_condition": "same_y",
+  "stop_offset_y": 40.0,
+  "lock_target_on_start": true,
   "approach_speed": 50.0,
   "hold_seconds": 6.0,
   "retreat_speed": 96.0,
@@ -288,7 +292,7 @@ Usa esta variante cuando el enemigo debe entrar desde arriba y detenerse al qued
 }
 ```
 
-Con `same_y`, el enemigo mantiene el `x` desde el que aparece en el stage y fija su punto de espera cuando su `y` coincide con la `y` de la nave. Luego mira a la nave, espera `hold_seconds` y se retira.
+Con `same_y`, el enemigo mantiene el `x` desde el que aparece en el stage y fija su punto de espera cuando su `y` coincide con la `y` de la nave mas `stop_offset_y`. Si `lock_target_on_start` es `true`, esa `y` de referencia se toma al aparecer el enemigo y ya no cambia durante la entrada. Luego mira a la nave, espera `hold_seconds` y se retira.
 
 ## Coordenadas Del Juego
 

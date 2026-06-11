@@ -154,19 +154,28 @@ void PlayState::update(sf::Time deltaTime) {
     for (auto& enemy : enemies_) {
         enemy.update(deltaTime);
         if (movementPatternSystem_.isApproachHoldRetreat(enemy.movementId())) {
+            if (movementPatternSystem_.shouldLockTargetOnStart(enemy.movementId()) &&
+                !enemy.hasMovementTargetPosition()) {
+                enemy.lockMovementTargetPosition(player_->position());
+            }
+
+            const auto movementTargetPosition = enemy.hasMovementTargetPosition()
+                ? enemy.movementTargetPosition()
+                : player_->position();
+
             if (!enemy.hasMovementHoldPosition()) {
                 const auto nextPosition = movementPatternSystem_.positionFor(
                     enemy.movementId(),
                     enemy.startPosition(),
                     enemy.elapsed(),
-                    player_->position()
+                    movementTargetPosition
                 );
                 enemy.setPosition(nextPosition);
                 if (movementPatternSystem_.canFire(
                         enemy.movementId(),
                         enemy.startPosition(),
                         enemy.elapsed(),
-                        player_->position()
+                        movementTargetPosition
                     )) {
                     enemy.lockMovementHoldPosition(nextPosition);
                 }

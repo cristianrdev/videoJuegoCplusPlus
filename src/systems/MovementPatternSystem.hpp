@@ -30,8 +30,10 @@ public:
         float retreatDirectionY{-1.f};
         float approachCurveAmplitude{0.f};
         float approachCurveDirection{1.f};
+        float stopOffsetY{0.f};
         std::string stopCondition{"radius"};
         bool approachEaseOut{false};
+        bool lockTargetOnStart{false};
         float screenWidth{240.f};
         float screenHeight{320.f};
         float marginX{25.f};
@@ -58,6 +60,7 @@ public:
         sf::Time elapsed,
         sf::Vector2f targetPosition
     ) const;
+    bool shouldLockTargetOnStart(const std::string& patternId) const;
     bool isApproachHoldRetreat(const std::string& patternId) const;
     bool isHoldFinished(const std::string& patternId, sf::Time holdElapsed) const;
     sf::Vector2f retreatPositionFor(

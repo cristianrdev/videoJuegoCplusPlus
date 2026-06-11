@@ -139,7 +139,8 @@ sf::Vector2f normalizedOr(sf::Vector2f value, sf::Vector2f fallback) {
 
 float approachTimeFor(const MovementPatternSystem::Pattern& pattern, sf::Vector2f startPosition, sf::Vector2f targetPosition) {
     if (pattern.stopCondition == "same_y") {
-        const auto approachDistance = std::abs(targetPosition.y - startPosition.y);
+        const auto stopY = targetPosition.y + pattern.stopOffsetY;
+        const auto approachDistance = std::abs(stopY - startPosition.y);
         return approachDistance / std::max(1.f, pattern.approachSpeed);
     }
 
@@ -154,7 +155,7 @@ sf::Vector2f approachHoldPositionFor(
     sf::Vector2f targetPosition
 ) {
     if (pattern.stopCondition == "same_y") {
-        return {startPosition.x, targetPosition.y};
+        return {startPosition.x, targetPosition.y + pattern.stopOffsetY};
     }
 
     const auto directionFromTarget = normalizedOr(
@@ -195,8 +196,10 @@ void MovementPatternSystem::loadFromFile(const std::string& path) {
         pattern.retreatDirectionY = matchFloat(object, "retreat_direction_y", -1.f);
         pattern.approachCurveAmplitude = matchFloat(object, "approach_curve_amplitude", 0.f);
         pattern.approachCurveDirection = matchFloat(object, "approach_curve_direction", 1.f);
+        pattern.stopOffsetY = matchFloat(object, "stop_offset_y", 0.f);
         pattern.stopCondition = matchString(object, "stop_condition", "radius");
         pattern.approachEaseOut = matchBool(object, "approach_ease_out", false);
+        pattern.lockTargetOnStart = matchBool(object, "lock_target_on_start", false);
         pattern.screenWidth = matchFloat(object, "screen_width", 240.f);
         pattern.screenHeight = matchFloat(object, "screen_height", 320.f);
         pattern.marginX = matchFloat(object, "margin_x", 25.f);
@@ -398,6 +401,11 @@ bool MovementPatternSystem::canFire(
     }
 
     return elapsed.asSeconds() >= approachTimeFor(pattern, startPosition, targetPosition);
+}
+
+bool MovementPatternSystem::shouldLockTargetOnStart(const std::string& patternId) const {
+    const auto& pattern = patternFor(patternId);
+    return pattern.type == "approach_hold_retreat" && pattern.lockTargetOnStart;
 }
 
 bool MovementPatternSystem::isApproachHoldRetreat(const std::string& patternId) const {

@@ -194,6 +194,14 @@
       "movement": "green_rotor_drone_approach_y_hold_retreat"
     },
     {
+      "time": 2.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 200,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+    {
       "time": 52.0,
       "enemy": "enemy_mech_spider",
       "x": 60,

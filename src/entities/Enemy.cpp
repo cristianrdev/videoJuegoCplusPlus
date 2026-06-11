@@ -184,6 +184,18 @@ void Enemy::setRotationDegrees(float degrees) {
     rotationDegrees_ = degrees;
 }
 
+void Enemy::lockMovementTargetPosition(sf::Vector2f position) {
+    movementTargetPosition_ = position;
+}
+
+bool Enemy::hasMovementTargetPosition() const {
+    return movementTargetPosition_.has_value();
+}
+
+sf::Vector2f Enemy::movementTargetPosition() const {
+    return movementTargetPosition_.value_or(position_);
+}
+
 void Enemy::lockMovementHoldPosition(sf::Vector2f position) {
     movementHoldPosition_ = position;
     movementHoldElapsed_ = elapsed_;

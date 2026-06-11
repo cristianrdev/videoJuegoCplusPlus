@@ -33,6 +33,9 @@ public:
     void takeDamage(int damage);
     void setPosition(sf::Vector2f position);
     void setRotationDegrees(float degrees);
+    void lockMovementTargetPosition(sf::Vector2f position);
+    bool hasMovementTargetPosition() const;
+    sf::Vector2f movementTargetPosition() const;
     void lockMovementHoldPosition(sf::Vector2f position);
     bool hasMovementHoldPosition() const;
     sf::Vector2f movementHoldPosition() const;
@@ -70,6 +73,7 @@ private:
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
     sf::Time firingVisualTime_{sf::Time::Zero};
+    std::optional<sf::Vector2f> movementTargetPosition_;
     std::optional<sf::Vector2f> movementHoldPosition_;
     sf::Time movementHoldElapsed_{sf::Time::Zero};
     float rotationDegrees_{0.f};
