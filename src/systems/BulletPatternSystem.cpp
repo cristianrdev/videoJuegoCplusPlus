@@ -166,6 +166,7 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.spiralRadius = matchFloatOr(object, "spiral_radius", 24.f);
         pattern.spiralDescentSpeed = matchFloatOr(object, "spiral_descent_speed", 16.f);
         pattern.spiralRadiusExpansion = matchFloatOr(object, "spiral_radius_expansion", 0.f);
+        pattern.spiralOpenSeconds = matchFloatOr(object, "spiral_open_seconds", 0.f);
         pattern.clusterDuration = matchFloatOr(object, "cluster_duration_seconds", 0.f);
         pattern.bulletsPerSpiral = matchIntOr(object, "bullets_per_spiral", 24);
         pattern.spiralArms = matchIntOr(object, "spiral_arms", 1);
@@ -228,6 +229,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                         pattern.bulletFlickerBeforeDeath,
                         origin,
                         sf::Vector2f{0.f, 0.f},
+                        0.f,
+                        0.f,
                         0.f,
                         angle,
                         speed,
@@ -294,9 +297,10 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 const auto t = bulletsPerArm <= 1
                     ? 0.f
                     : static_cast<float>(bullet) / static_cast<float>(bulletsPerArm - 1);
-                const auto radius = pattern.fixedSpiralRadius
+                const auto targetRadius = pattern.fixedSpiralRadius
                     ? pattern.spiralRadius
                     : pattern.spiralRadius * t;
+                const auto initialRadius = pattern.spiralOpenSeconds > 0.f ? 0.f : targetRadius;
                 const auto angleDegrees =
                     clusterRotation +
                     armOffset +
@@ -320,7 +324,9 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                     flickerSeconds,
                     origin,
                     sf::Vector2f{0.f, pattern.spiralDescentSpeed},
-                    radius,
+                    initialRadius,
+                    targetRadius,
+                    pattern.spiralOpenSeconds,
                     angle,
                     pattern.spiralRadiusExpansion,
                     angularVelocity

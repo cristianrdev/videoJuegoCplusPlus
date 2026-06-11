@@ -99,6 +99,7 @@
       "rotation_direction": "clockwise",
       "spiral_radius_expansion": 0.0,
       "fixed_spiral_radius": true,
+      "spiral_open_seconds": 2.00,
       "cluster_duration_seconds": 6.0,
       "spiral_arms": 1,
       "angular_velocity": 80.0,

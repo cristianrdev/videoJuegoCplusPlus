@@ -52,6 +52,7 @@ private:
         float spiralRadius{24.f};
         float spiralDescentSpeed{16.f};
         float spiralRadiusExpansion{0.f};
+        float spiralOpenSeconds{0.f};
         float clusterDuration{0.f};
         int bulletsPerSpiral{24};
         int spiralArms{1};

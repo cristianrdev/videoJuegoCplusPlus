@@ -209,6 +209,7 @@ Este patron no persigue al jugador. Una vez creado el racimo, sus balas siguen l
   "rotation_direction": "clockwise",
   "spiral_radius_expansion": 0.0,
   "fixed_spiral_radius": true,
+  "spiral_open_seconds": 0.45,
   "cluster_duration_seconds": 6.0,
   "spiral_arms": 1,
   "angular_velocity": 32.0,
@@ -229,6 +230,7 @@ Campos relevantes:
 | `bullet_speed` | Velocidad radial individual de las balas. Usar `0.0` si se quiere una rueda de radio fijo. |
 | `spiral_radius_expansion` | Expansion radial adicional en pixeles por segundo. |
 | `fixed_spiral_radius` | Si es `true`, todas las balas nacen en el radio maximo y forman una rueda en vez de una espiral que nace desde el centro. |
+| `spiral_open_seconds` | Tiempo en segundos que tarda el racimo en abrirse desde radio `0` hasta `spiral_radius`. Despues conserva su radio si `spiral_radius_expansion` es `0`. |
 | `cluster_duration_seconds` | Tiempo de vida del racimo. Despues desaparece; si hay flicker configurado, parpadea antes. |
 | `spiral_arms` | Cantidad de brazos de la espiral. Valores utiles: `1`, `2`, `3`, `4`. |
 | `angular_velocity` | Velocidad de giro del racimo en grados por segundo. |

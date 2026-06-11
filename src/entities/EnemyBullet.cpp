@@ -103,6 +103,8 @@ EnemyBullet::EnemyBullet(
     sf::Vector2f polarOrigin,
     sf::Vector2f polarOriginVelocity,
     float initialRadius,
+    float targetRadius,
+    float radiusOpenSeconds,
     float polarAngleRadians,
     float radialSpeed,
     float angularVelocityRadians
@@ -127,6 +129,9 @@ EnemyBullet::EnemyBullet(
     radialSpeed_ = radialSpeed;
     angularVelocityRadians_ = angularVelocityRadians;
     polarRadius_ = initialRadius;
+    polarStartRadius_ = initialRadius;
+    polarTargetRadius_ = targetRadius;
+    polarOpenDuration_ = sf::seconds(radiusOpenSeconds);
     position_ = {
         polarOrigin_.x + std::sin(polarAngleRadians_) * polarRadius_,
         polarOrigin_.y + std::cos(polarAngleRadians_) * polarRadius_
@@ -142,7 +147,12 @@ void EnemyBullet::update(sf::Time deltaTime) {
     if (usesPolarMotion_) {
         const auto seconds = deltaTime.asSeconds();
         polarOrigin_ += polarOriginVelocity_ * seconds;
-        polarRadius_ += radialSpeed_ * seconds;
+        if (polarOpenDuration_ > sf::Time::Zero && age_ <= polarOpenDuration_) {
+            const auto t = std::clamp(age_.asSeconds() / polarOpenDuration_.asSeconds(), 0.f, 1.f);
+            polarRadius_ = polarStartRadius_ + (polarTargetRadius_ - polarStartRadius_) * t;
+        } else {
+            polarRadius_ += radialSpeed_ * seconds;
+        }
         polarAngleRadians_ += angularVelocityRadians_ * seconds;
         position_ = {
             polarOrigin_.x + std::sin(polarAngleRadians_) * polarRadius_,

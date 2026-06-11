@@ -42,6 +42,8 @@ public:
         sf::Vector2f polarOrigin,
         sf::Vector2f polarOriginVelocity,
         float initialRadius,
+        float targetRadius,
+        float radiusOpenSeconds,
         float polarAngleRadians,
         float radialSpeed,
         float angularVelocityRadians
@@ -72,6 +74,9 @@ private:
     sf::Vector2f polarOrigin_{};
     sf::Vector2f polarOriginVelocity_{};
     float polarRadius_{0.f};
+    float polarStartRadius_{0.f};
+    float polarTargetRadius_{0.f};
+    sf::Time polarOpenDuration_{sf::Time::Zero};
     float polarAngleRadians_{0.f};
     float radialSpeed_{0.f};
     float angularVelocityRadians_{0.f};
