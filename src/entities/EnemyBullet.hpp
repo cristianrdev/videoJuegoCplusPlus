@@ -23,7 +23,9 @@ public:
         sf::Vector2f visualSize,
         float visualGrowSeconds = 0.f,
         int ownerInstanceId = 0,
-        bool rotateToVelocity = false
+        bool rotateToVelocity = false,
+        float maxLifetimeSeconds = 0.f,
+        float flickerBeforeDeathSeconds = 0.f
     );
     EnemyBullet(
         sf::Vector2f position,
@@ -35,6 +37,8 @@ public:
         float visualGrowSeconds,
         int ownerInstanceId,
         bool rotateToVelocity,
+        float maxLifetimeSeconds,
+        float flickerBeforeDeathSeconds,
         sf::Vector2f polarOrigin,
         float polarAngleRadians,
         float radialSpeed,
@@ -58,6 +62,8 @@ private:
     std::string visualType_{"rect"};
     sf::Time age_{sf::Time::Zero};
     sf::Time growDuration_{sf::Time::Zero};
+    sf::Time maxLifetime_{sf::Time::Zero};
+    sf::Time flickerBeforeDeath_{sf::Time::Zero};
     int ownerInstanceId_{0};
     bool rotateToVelocity_{false};
     bool usesPolarMotion_{false};

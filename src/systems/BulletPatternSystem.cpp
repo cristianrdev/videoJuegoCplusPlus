@@ -97,6 +97,14 @@ bool matchBool(const std::string& text, const std::string& field) {
     return match[1].str() == "true";
 }
 
+float rotationDirectionFromText(const std::string& value) {
+    if (value == "counterclockwise" || value == "anticlockwise" || value == "ccw" || value == "antihorario") {
+        return -1.f;
+    }
+
+    return 1.f;
+}
+
 std::vector<float> matchFloatArray(const std::string& text, const std::string& field) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\\[([^\\]]*)\\]");
     auto match = std::smatch{};
@@ -143,12 +151,18 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.angleOffsets = matchFloatArray(object, "angle_offsets");
         pattern.rings = matchIntOr(object, "rings", 1);
         pattern.bulletsPerRing = matchIntOr(object, "bullets_per_ring", 1);
+        pattern.bulletsPerBurst = matchIntOr(object, "bullets_per_burst", 1);
         pattern.streams = matchIntOr(object, "streams", 1);
         pattern.speedStart = matchFloatOr(object, "speed_start", pattern.bulletSpeed);
         pattern.speedStep = matchFloatOr(object, "speed_step", 0.f);
         pattern.angleStep = matchFloatOr(object, "angle_step", 0.f);
+        pattern.burstAngleSpacing = matchFloatOr(object, "burst_angle_spacing", 0.f);
         pattern.rotationPerShot = matchFloatOr(object, "rotation_per_shot", 0.f);
         pattern.angularVelocity = matchFloatOr(object, "angular_velocity", 0.f);
+        pattern.bulletLifetime = matchFloatOr(object, "bullet_lifetime_seconds", 0.f);
+        pattern.bulletFlickerBeforeDeath = matchFloatOr(object, "bullet_flicker_seconds", 0.f);
+        pattern.rotationDirection = rotationDirectionFromText(matchStringOr(object, "rotation_direction", "clockwise"));
+        pattern.clearBulletsOnOwnerDestroyed = matchBoolOr(object, "clear_bullets_on_owner_destroyed", false);
 
         patterns_[pattern.id] = std::move(pattern);
     }
@@ -202,6 +216,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                         visualGrowSeconds,
                         ownerInstanceId,
                         rotateToVelocity,
+                        pattern.bulletLifetime,
+                        pattern.bulletFlickerBeforeDeath,
                         origin,
                         angle,
                         speed,
@@ -217,10 +233,40 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                         visualSize,
                         visualGrowSeconds,
                         ownerInstanceId,
-                        rotateToVelocity
+                        rotateToVelocity,
+                        pattern.bulletLifetime,
+                        pattern.bulletFlickerBeforeDeath
                     );
                 }
             }
+        }
+    } else if (pattern.type == "rotating_clock") {
+        bullets.reserve(static_cast<std::size_t>(std::max(1, pattern.bulletsPerBurst)));
+        const auto rotation = std::fmod(
+            static_cast<float>(pattern.shotCounter) * pattern.angleStep * pattern.rotationDirection,
+            360.f
+        );
+        const auto burstCount = std::max(1, pattern.bulletsPerBurst);
+        for (auto bullet = 0; bullet < burstCount; ++bullet) {
+            const auto offset = rotation + static_cast<float>(bullet) * pattern.burstAngleSpacing;
+            const auto angle = degreesToRadians(offset);
+            const auto velocity = sf::Vector2f{
+                std::sin(angle) * pattern.bulletSpeed,
+                std::cos(angle) * pattern.bulletSpeed
+            };
+            bullets.emplace_back(
+                origin,
+                velocity,
+                bulletTexture,
+                bulletDamage,
+                visualType,
+                visualSize,
+                visualGrowSeconds,
+                ownerInstanceId,
+                rotateToVelocity,
+                pattern.bulletLifetime,
+                pattern.bulletFlickerBeforeDeath
+            );
         }
     } else if (pattern.type == "rotating_stream") {
         bullets.reserve(static_cast<std::size_t>(pattern.streams));
@@ -238,7 +284,9 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 visualSize,
                 visualGrowSeconds,
                 ownerInstanceId,
-                rotateToVelocity
+                rotateToVelocity,
+                pattern.bulletLifetime,
+                pattern.bulletFlickerBeforeDeath
             );
         }
     } else {
@@ -260,7 +308,9 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 visualSize,
                 visualGrowSeconds,
                 ownerInstanceId,
-                rotateToVelocity
+                rotateToVelocity,
+                pattern.bulletLifetime,
+                pattern.bulletFlickerBeforeDeath
             );
         }
     }
@@ -287,6 +337,10 @@ const std::string& BulletPatternSystem::patternType(const std::string& patternId
 
 float BulletPatternSystem::laserDuration(const std::string& patternId) const {
     return patternFor(patternId).laserDuration;
+}
+
+bool BulletPatternSystem::clearBulletsOnOwnerDestroyed(const std::string& patternId) const {
+    return patternFor(patternId).clearBulletsOnOwnerDestroyed;
 }
 
 const BulletPatternSystem::Pattern& BulletPatternSystem::patternFor(const std::string& patternId) const {

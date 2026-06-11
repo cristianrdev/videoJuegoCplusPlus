@@ -8,6 +8,8 @@
 
 struct EnemyDestroyedEvent {
     std::string enemyId;
+    std::string patternId;
+    int enemyInstanceId;
     sf::Vector2f position;
 };
 

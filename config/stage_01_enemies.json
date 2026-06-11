@@ -292,6 +292,14 @@
       "y": -40,
       "pattern": "enemy_mecha_butterfly_concentric_flower",
       "movement": "mecha__butterfly_cosine_medium"
+    },
+    {
+      "time": 82.0,
+      "enemy": "enemy_mecha_butterfly",
+      "x": 120,
+      "y": -40,
+      "pattern": "enemy_mecha_butterfly_rotating_clock",
+      "movement": "mecha_butterfly_center_hold"
     }
   ]
 }

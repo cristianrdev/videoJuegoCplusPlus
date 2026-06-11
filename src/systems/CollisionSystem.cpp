@@ -54,7 +54,12 @@ void CollisionSystem::resolve(
                 });
                 enemy.takeDamage(laserIt->damage());
                 if (!enemy.isAlive()) {
-                    eventQueue.publish(EnemyDestroyedEvent{enemy.enemyId(), enemy.position()});
+                    eventQueue.publish(EnemyDestroyedEvent{
+                        enemy.enemyId(),
+                        enemy.patternId(),
+                        enemy.instanceId(),
+                        enemy.position()
+                    });
                 }
                 hitEnemy = true;
                 break;

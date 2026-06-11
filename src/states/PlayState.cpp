@@ -501,6 +501,18 @@ void PlayState::processEvents() {
     for (const auto& event : eventQueue_.drain()) {
         if (const auto* enemyDestroyed = std::get_if<EnemyDestroyedEvent>(&event)) {
             spawnExplosion(enemyDestroyed->enemyId, enemyDestroyed->position);
+            if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId)) {
+                enemyBullets_.erase(
+                    std::remove_if(
+                        enemyBullets_.begin(),
+                        enemyBullets_.end(),
+                        [enemyDestroyed](const EnemyBullet& bullet) {
+                            return bullet.ownerInstanceId() == enemyDestroyed->enemyInstanceId;
+                        }
+                    ),
+                    enemyBullets_.end()
+                );
+            }
         } else if (const auto* enemyHit = std::get_if<EnemyHitEvent>(&event)) {
             if (enemyHitSparkTexture_) {
                 explosions_.emplace_back(

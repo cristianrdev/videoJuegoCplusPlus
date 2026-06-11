@@ -31,6 +31,19 @@ float currentVisibleLength(sf::Vector2f size, sf::Time age, sf::Time growDuratio
     const auto t = std::clamp(age.asSeconds() / growDuration.asSeconds(), 0.f, 1.f);
     return std::max(1.f, std::round(size.y * t));
 }
+
+bool shouldRenderForLifetime(sf::Time age, sf::Time maxLifetime, sf::Time flickerBeforeDeath) {
+    if (maxLifetime <= sf::Time::Zero || flickerBeforeDeath <= sf::Time::Zero) {
+        return true;
+    }
+
+    if (age < maxLifetime - flickerBeforeDeath) {
+        return true;
+    }
+
+    const auto flickerStep = static_cast<int>(age.asSeconds() / 0.075f);
+    return flickerStep % 2 == 0;
+}
 }
 
 EnemyBullet::EnemyBullet(sf::Vector2f position, sf::Vector2f velocity, int damage)
@@ -50,13 +63,17 @@ EnemyBullet::EnemyBullet(
     sf::Vector2f visualSize,
     float visualGrowSeconds,
     int ownerInstanceId,
-    bool rotateToVelocity
+    bool rotateToVelocity,
+    float maxLifetimeSeconds,
+    float flickerBeforeDeathSeconds
 )
     : position_(position)
     , velocity_(velocity)
     , size_(visualSize)
     , visualType_(std::move(visualType))
     , growDuration_(sf::seconds(visualGrowSeconds))
+    , maxLifetime_(sf::seconds(maxLifetimeSeconds))
+    , flickerBeforeDeath_(sf::seconds(flickerBeforeDeathSeconds))
     , ownerInstanceId_(ownerInstanceId)
     , rotateToVelocity_(rotateToVelocity)
     , damage_(damage) {
@@ -81,6 +98,8 @@ EnemyBullet::EnemyBullet(
     float visualGrowSeconds,
     int ownerInstanceId,
     bool rotateToVelocity,
+    float maxLifetimeSeconds,
+    float flickerBeforeDeathSeconds,
     sf::Vector2f polarOrigin,
     float polarAngleRadians,
     float radialSpeed,
@@ -95,7 +114,9 @@ EnemyBullet::EnemyBullet(
         visualSize,
         visualGrowSeconds,
         ownerInstanceId,
-        rotateToVelocity
+        rotateToVelocity,
+        maxLifetimeSeconds,
+        flickerBeforeDeathSeconds
     ) {
     usesPolarMotion_ = true;
     polarOrigin_ = polarOrigin;
@@ -127,6 +148,10 @@ void EnemyBullet::update(sf::Time deltaTime) {
 }
 
 void EnemyBullet::render(sf::RenderTarget& target) const {
+    if (!shouldRenderForLifetime(age_, maxLifetime_, flickerBeforeDeath_)) {
+        return;
+    }
+
     if (sprite_) {
         auto sprite = *sprite_;
         sprite.setPosition({std::round(position_.x), std::round(position_.y)});
@@ -171,6 +196,10 @@ void EnemyBullet::render(sf::RenderTarget& target) const {
 }
 
 bool EnemyBullet::isAlive(sf::Vector2f logicalSize) const {
+    if (maxLifetime_ > sf::Time::Zero && age_ > maxLifetime_) {
+        return false;
+    }
+
     if (visualType_ == "pixel_line") {
         return age_ <= growDuration_ + sf::seconds(0.28f);
     }

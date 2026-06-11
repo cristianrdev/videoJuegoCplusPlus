@@ -67,7 +67,24 @@
       "speed_start": 20.0,
       "speed_step": 10.0,
       "rotation_per_shot": 18.0,
-      "angular_velocity": 20.0
+      "angular_velocity": 20.0,
+      "bullet_lifetime_seconds": 5.0,
+      "bullet_flicker_seconds": 1.0,
+      "clear_bullets_on_owner_destroyed": true
+    },
+    {
+      "id": "enemy_mecha_butterfly_rotating_clock",
+      "type": "rotating_clock",
+      "fire_interval": 0.12,
+      "bullet_speed": 72.0,
+      "angle_step": 15.0,
+      "rotation_direction": "clockwise",
+      "bullets_per_burst": 1,
+      "burst_angle_spacing": 0.0,
+      "bullet": "enemy_orb_purple",
+      "bullet_lifetime_seconds": 5.0,
+      "bullet_flicker_seconds": 1.0,
+      "clear_bullets_on_owner_destroyed": true
     },
     {
       "id": "enemy_rock_turret_fast_small",

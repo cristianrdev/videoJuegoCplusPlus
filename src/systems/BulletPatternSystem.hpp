@@ -38,12 +38,18 @@ private:
         std::vector<float> angleOffsets;
         int rings{1};
         int bulletsPerRing{1};
+        int bulletsPerBurst{1};
         int streams{1};
         float speedStart{60.f};
         float speedStep{0.f};
         float angleStep{0.f};
+        float burstAngleSpacing{0.f};
         float rotationPerShot{0.f};
         float angularVelocity{0.f};
+        float bulletLifetime{0.f};
+        float bulletFlickerBeforeDeath{0.f};
+        float rotationDirection{1.f};
+        bool clearBulletsOnOwnerDestroyed{false};
         int shotCounter{0};
     };
 
@@ -53,6 +59,7 @@ public:
     const std::string& laserId(const std::string& patternId) const;
     const std::string& patternType(const std::string& patternId) const;
     float laserDuration(const std::string& patternId) const;
+    bool clearBulletsOnOwnerDestroyed(const std::string& patternId) const;
 
 private:
     const Pattern& patternFor(const std::string& patternId) const;
