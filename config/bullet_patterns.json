@@ -77,7 +77,7 @@
       "type": "rotating_clock",
       "fire_interval": 0.12,
       "bullet_speed": 72.0,
-      "angle_step": 15.0,
+      "angle_step": 30.0,
       "rotation_direction": "clockwise",
       "bullets_per_burst": 1,
       "burst_angle_spacing": 0.0,
