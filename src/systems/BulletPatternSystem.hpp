@@ -44,6 +44,10 @@ private:
         float speedStep{0.f};
         float angleStep{0.f};
         float burstAngleSpacing{0.f};
+        float spreadAngle{0.f};
+        float randomSpread{0.f};
+        float randomSpeed{0.f};
+        float spawnJitter{0.f};
         float rotationPerShot{0.f};
         float angularVelocity{0.f};
         float bulletLifetime{0.f};

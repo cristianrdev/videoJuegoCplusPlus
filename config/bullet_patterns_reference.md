@@ -237,6 +237,40 @@ Campos relevantes:
 | `rotation_per_shot` | Rotacion inicial extra aplicada a cada nuevo racimo. Evita que todos los racimos nazcan iguales. |
 | `rotation_direction` | Sentido de giro: `clockwise`, `counterclockwise`, `ccw` o `antihorario`. |
 
+### `aimed_random_cone`
+
+Genera una nube de balas tipo shotgun apuntando hacia la posicion actual del jugador. La direccion se calcula solo al disparar; despues cada bala conserva su trayectoria original y no persigue al jugador.
+
+```json
+{
+  "id": "enemy_mecha_butterfly_aimed_random_cone",
+  "type": "aimed_random_cone",
+  "fire_interval": 0.95,
+  "bullet": "enemy_orb_purple",
+  "bullet_speed": 76.0,
+  "bullets_per_burst": 22,
+  "spread_angle": 46.0,
+  "random_spread": 12.0,
+  "random_speed": 24.0,
+  "spawn_jitter": 8.0,
+  "bullet_lifetime_seconds": 5.0,
+  "bullet_flicker_seconds": 1.0,
+  "clear_bullets_on_owner_destroyed": true
+}
+```
+
+Campos relevantes:
+
+| Campo | Descripcion |
+|---|---|
+| `fire_interval` | Tiempo entre rafagas. Equivale al inverso de fireRate. Por ejemplo, `0.75` es una rafaga cada 0.75 segundos. |
+| `bullet_speed` | Velocidad base de cada bala del cono. |
+| `bullets_per_burst` | Cantidad de balas simultaneas por disparo. |
+| `spread_angle` | Apertura total del cono en grados. Cada bala elige una direccion aleatoria dentro de este rango. |
+| `random_spread` | Desviacion aleatoria adicional, en grados, aplicada a cada bala para romper la regularidad. |
+| `random_speed` | Variacion aleatoria de velocidad respecto a `bullet_speed`. Esto hace que la nube se desordene al avanzar. |
+| `spawn_jitter` | Distancia aleatoria inicial desde el origen del disparo. Ayuda a que el racimo no nazca como una linea perfecta. |
+
 ### `continuous_laser`
 
 Dispara un laser continuo durante una duracion determinada.

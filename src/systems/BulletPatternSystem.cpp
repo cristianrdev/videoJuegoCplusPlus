@@ -6,6 +6,7 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <random>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -130,6 +131,12 @@ float aimedBaseAngleDegrees(sf::Vector2f origin, sf::Vector2f target) {
     return std::atan2(delta.x, delta.y) * 180.f / Pi;
 }
 
+float randomFloat(float min, float max) {
+    static auto generator = std::mt19937{std::random_device{}()};
+    auto distribution = std::uniform_real_distribution<float>{min, max};
+    return distribution(generator);
+}
+
 }
 
 void BulletPatternSystem::loadFromFile(const std::string& path) {
@@ -158,6 +165,10 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.speedStep = matchFloatOr(object, "speed_step", 0.f);
         pattern.angleStep = matchFloatOr(object, "angle_step", 0.f);
         pattern.burstAngleSpacing = matchFloatOr(object, "burst_angle_spacing", 0.f);
+        pattern.spreadAngle = matchFloatOr(object, "spread_angle", 0.f);
+        pattern.randomSpread = matchFloatOr(object, "random_spread", 0.f);
+        pattern.randomSpeed = matchFloatOr(object, "random_speed", 0.f);
+        pattern.spawnJitter = matchFloatOr(object, "spawn_jitter", 0.f);
         pattern.rotationPerShot = matchFloatOr(object, "rotation_per_shot", 0.f);
         pattern.angularVelocity = matchFloatOr(object, "angular_velocity", 0.f);
         pattern.bulletLifetime = matchFloatOr(object, "bullet_lifetime_seconds", 0.f);
@@ -269,6 +280,40 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
             };
             bullets.emplace_back(
                 origin,
+                velocity,
+                bulletTexture,
+                bulletDamage,
+                visualType,
+                visualSize,
+                visualGrowSeconds,
+                ownerInstanceId,
+                rotateToVelocity,
+                pattern.bulletLifetime,
+                pattern.bulletFlickerBeforeDeath
+            );
+        }
+    } else if (pattern.type == "aimed_random_cone") {
+        const auto bulletCount = std::max(1, pattern.bulletsPerBurst);
+        bullets.reserve(static_cast<std::size_t>(bulletCount));
+        const auto halfSpread = pattern.spreadAngle * 0.5f;
+        const auto base = aimedBaseAngleDegrees(origin, target);
+
+        for (auto bullet = 0; bullet < bulletCount; ++bullet) {
+            const auto coneOffset = randomFloat(-halfSpread, halfSpread);
+            const auto randomOffset = randomFloat(-pattern.randomSpread, pattern.randomSpread);
+            const auto speed = std::max(1.f, pattern.bulletSpeed + randomFloat(-pattern.randomSpeed, pattern.randomSpeed));
+            const auto angle = degreesToRadians(base + coneOffset + randomOffset);
+            const auto spawnDistance = randomFloat(0.f, pattern.spawnJitter);
+            const auto velocity = sf::Vector2f{
+                std::sin(angle) * speed,
+                std::cos(angle) * speed
+            };
+            const auto spawnPosition = sf::Vector2f{
+                origin.x + std::sin(angle) * spawnDistance,
+                origin.y + std::cos(angle) * spawnDistance
+            };
+            bullets.emplace_back(
+                spawnPosition,
                 velocity,
                 bulletTexture,
                 bulletDamage,
