@@ -2,6 +2,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -162,6 +163,13 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.bulletLifetime = matchFloatOr(object, "bullet_lifetime_seconds", 0.f);
         pattern.bulletFlickerBeforeDeath = matchFloatOr(object, "bullet_flicker_seconds", 0.f);
         pattern.rotationDirection = rotationDirectionFromText(matchStringOr(object, "rotation_direction", "clockwise"));
+        pattern.spiralRadius = matchFloatOr(object, "spiral_radius", 24.f);
+        pattern.spiralDescentSpeed = matchFloatOr(object, "spiral_descent_speed", 16.f);
+        pattern.spiralRadiusExpansion = matchFloatOr(object, "spiral_radius_expansion", 0.f);
+        pattern.clusterDuration = matchFloatOr(object, "cluster_duration_seconds", 0.f);
+        pattern.bulletsPerSpiral = matchIntOr(object, "bullets_per_spiral", 24);
+        pattern.spiralArms = matchIntOr(object, "spiral_arms", 1);
+        pattern.fixedSpiralRadius = matchBoolOr(object, "fixed_spiral_radius", false);
         pattern.clearBulletsOnOwnerDestroyed = matchBoolOr(object, "clear_bullets_on_owner_destroyed", false);
 
         patterns_[pattern.id] = std::move(pattern);
@@ -219,6 +227,8 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                         pattern.bulletLifetime,
                         pattern.bulletFlickerBeforeDeath,
                         origin,
+                        sf::Vector2f{0.f, 0.f},
+                        0.f,
                         angle,
                         speed,
                         angularVelocity
@@ -267,6 +277,55 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                 pattern.bulletLifetime,
                 pattern.bulletFlickerBeforeDeath
             );
+        }
+    } else if (pattern.type == "spiral_cluster") {
+        const auto armCount = std::max(1, pattern.spiralArms);
+        const auto bulletsPerArm = std::max(1, pattern.bulletsPerSpiral / armCount);
+        const auto totalBullets = bulletsPerArm * armCount;
+        bullets.reserve(static_cast<std::size_t>(totalBullets));
+        const auto clusterRotation = static_cast<float>(pattern.shotCounter) * pattern.rotationPerShot * pattern.rotationDirection;
+        const auto angularVelocity = degreesToRadians(pattern.angularVelocity * pattern.rotationDirection);
+        const auto clusterLifetime = pattern.clusterDuration > 0.f ? pattern.clusterDuration : pattern.bulletLifetime;
+        const auto flickerSeconds = pattern.bulletFlickerBeforeDeath;
+
+        for (auto arm = 0; arm < armCount; ++arm) {
+            const auto armOffset = static_cast<float>(arm) * 360.f / static_cast<float>(armCount);
+            for (auto bullet = 0; bullet < bulletsPerArm; ++bullet) {
+                const auto t = bulletsPerArm <= 1
+                    ? 0.f
+                    : static_cast<float>(bullet) / static_cast<float>(bulletsPerArm - 1);
+                const auto radius = pattern.fixedSpiralRadius
+                    ? pattern.spiralRadius
+                    : pattern.spiralRadius * t;
+                const auto angleDegrees =
+                    clusterRotation +
+                    armOffset +
+                    static_cast<float>(bullet) * pattern.angleStep * pattern.rotationDirection;
+                const auto angle = degreesToRadians(angleDegrees);
+                const auto velocity = sf::Vector2f{
+                    std::sin(angle) * pattern.bulletSpeed,
+                    std::cos(angle) * pattern.bulletSpeed
+                };
+                bullets.emplace_back(
+                    origin,
+                    velocity,
+                    bulletTexture,
+                    bulletDamage,
+                    visualType,
+                    visualSize,
+                    visualGrowSeconds,
+                    ownerInstanceId,
+                    rotateToVelocity,
+                    clusterLifetime,
+                    flickerSeconds,
+                    origin,
+                    sf::Vector2f{0.f, pattern.spiralDescentSpeed},
+                    radius,
+                    angle,
+                    pattern.spiralRadiusExpansion,
+                    angularVelocity
+                );
+            }
         }
     } else if (pattern.type == "rotating_stream") {
         bullets.reserve(static_cast<std::size_t>(pattern.streams));

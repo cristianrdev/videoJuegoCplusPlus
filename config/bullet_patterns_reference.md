@@ -189,6 +189,52 @@ Ejemplo con rafaga triple:
 
 Si la aguja apunta a `45` grados, las balas saldrian aproximadamente en `45`, `53` y `61` grados.
 
+### `spiral_cluster`
+
+Genera racimos de balas con forma de espiral o rueda. Cada racimo nace desde la posicion del enemigo, mantiene un centro propio que baja lentamente por la pantalla y puede expandirse o conservar un radio fijo mientras gira.
+
+Este patron no persigue al jugador. Una vez creado el racimo, sus balas siguen la trayectoria relativa definida por la espiral.
+
+```json
+{
+  "id": "enemy_mecha_butterfly_spiral_cluster",
+  "type": "spiral_cluster",
+  "fire_interval": 1.60,
+  "bullet": "enemy_orb_purple",
+  "spiral_radius": 42.0,
+  "angle_step": 24.0,
+  "spiral_descent_speed": 24.0,
+  "bullets_per_spiral": 36,
+  "bullet_speed": 0.0,
+  "rotation_direction": "clockwise",
+  "spiral_radius_expansion": 0.0,
+  "fixed_spiral_radius": true,
+  "cluster_duration_seconds": 6.0,
+  "spiral_arms": 1,
+  "angular_velocity": 32.0,
+  "rotation_per_shot": 18.0,
+  "bullet_flicker_seconds": 1.0,
+  "clear_bullets_on_owner_destroyed": true
+}
+```
+
+Campos relevantes:
+
+| Campo | Descripcion |
+|---|---|
+| `spiral_radius` | Radio inicial maximo del racimo. Las balas se reparten desde el centro hasta este radio. |
+| `angle_step` | Avance angular entre una bala y la siguiente dentro de cada brazo. |
+| `spiral_descent_speed` | Velocidad a la que baja el centro de la espiral en pixeles logicos por segundo. |
+| `bullets_per_spiral` | Cantidad total aproximada de balas del racimo. Si hay varios brazos, se reparte entre ellos. |
+| `bullet_speed` | Velocidad radial individual de las balas. Usar `0.0` si se quiere una rueda de radio fijo. |
+| `spiral_radius_expansion` | Expansion radial adicional en pixeles por segundo. |
+| `fixed_spiral_radius` | Si es `true`, todas las balas nacen en el radio maximo y forman una rueda en vez de una espiral que nace desde el centro. |
+| `cluster_duration_seconds` | Tiempo de vida del racimo. Despues desaparece; si hay flicker configurado, parpadea antes. |
+| `spiral_arms` | Cantidad de brazos de la espiral. Valores utiles: `1`, `2`, `3`, `4`. |
+| `angular_velocity` | Velocidad de giro del racimo en grados por segundo. |
+| `rotation_per_shot` | Rotacion inicial extra aplicada a cada nuevo racimo. Evita que todos los racimos nazcan iguales. |
+| `rotation_direction` | Sentido de giro: `clockwise`, `counterclockwise`, `ccw` o `antihorario`. |
+
 ### `continuous_laser`
 
 Dispara un laser continuo durante una duracion determinada.
@@ -271,4 +317,3 @@ Esto permite reutilizar el mismo enemigo con distintos patrones sin crear una cl
 | Hacer que las balas desaparezcan por tiempo | Usar `bullet_lifetime_seconds`. |
 | Avisar antes de desaparecer | Usar `bullet_flicker_seconds`. |
 | Limpiar balas al destruir al enemigo | Usar `clear_bullets_on_owner_destroyed: true`. |
-

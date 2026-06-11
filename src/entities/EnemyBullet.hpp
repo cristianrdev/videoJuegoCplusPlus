@@ -40,6 +40,8 @@ public:
         float maxLifetimeSeconds,
         float flickerBeforeDeathSeconds,
         sf::Vector2f polarOrigin,
+        sf::Vector2f polarOriginVelocity,
+        float initialRadius,
         float polarAngleRadians,
         float radialSpeed,
         float angularVelocityRadians
@@ -68,6 +70,7 @@ private:
     bool rotateToVelocity_{false};
     bool usesPolarMotion_{false};
     sf::Vector2f polarOrigin_{};
+    sf::Vector2f polarOriginVelocity_{};
     float polarRadius_{0.f};
     float polarAngleRadians_{0.f};
     float radialSpeed_{0.f};

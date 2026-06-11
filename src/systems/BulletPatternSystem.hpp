@@ -49,6 +49,13 @@ private:
         float bulletLifetime{0.f};
         float bulletFlickerBeforeDeath{0.f};
         float rotationDirection{1.f};
+        float spiralRadius{24.f};
+        float spiralDescentSpeed{16.f};
+        float spiralRadiusExpansion{0.f};
+        float clusterDuration{0.f};
+        int bulletsPerSpiral{24};
+        int spiralArms{1};
+        bool fixedSpiralRadius{false};
         bool clearBulletsOnOwnerDestroyed{false};
         int shotCounter{0};
     };

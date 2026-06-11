@@ -300,6 +300,14 @@
       "y": -40,
       "pattern": "enemy_mecha_butterfly_rotating_clock",
       "movement": "mecha_butterfly_center_hold"
+    },
+    {
+      "time": 1.0,
+      "enemy": "enemy_mecha_butterfly",
+      "x": 120,
+      "y": -40,
+      "pattern": "enemy_mecha_butterfly_spiral_cluster",
+      "movement": "mecha_butterfly_center_hold"
     }
   ]
 }

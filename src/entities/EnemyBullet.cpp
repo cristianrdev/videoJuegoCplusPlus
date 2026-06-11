@@ -101,6 +101,8 @@ EnemyBullet::EnemyBullet(
     float maxLifetimeSeconds,
     float flickerBeforeDeathSeconds,
     sf::Vector2f polarOrigin,
+    sf::Vector2f polarOriginVelocity,
+    float initialRadius,
     float polarAngleRadians,
     float radialSpeed,
     float angularVelocityRadians
@@ -120,11 +122,15 @@ EnemyBullet::EnemyBullet(
     ) {
     usesPolarMotion_ = true;
     polarOrigin_ = polarOrigin;
+    polarOriginVelocity_ = polarOriginVelocity;
     polarAngleRadians_ = polarAngleRadians;
     radialSpeed_ = radialSpeed;
     angularVelocityRadians_ = angularVelocityRadians;
-    polarRadius_ = 0.f;
-    position_ = polarOrigin_;
+    polarRadius_ = initialRadius;
+    position_ = {
+        polarOrigin_.x + std::sin(polarAngleRadians_) * polarRadius_,
+        polarOrigin_.y + std::cos(polarAngleRadians_) * polarRadius_
+    };
 }
 
 void EnemyBullet::update(sf::Time deltaTime) {
@@ -135,6 +141,7 @@ void EnemyBullet::update(sf::Time deltaTime) {
 
     if (usesPolarMotion_) {
         const auto seconds = deltaTime.asSeconds();
+        polarOrigin_ += polarOriginVelocity_ * seconds;
         polarRadius_ += radialSpeed_ * seconds;
         polarAngleRadians_ += angularVelocityRadians_ * seconds;
         position_ = {
