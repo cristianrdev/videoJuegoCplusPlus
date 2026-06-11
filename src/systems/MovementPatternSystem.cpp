@@ -45,6 +45,16 @@ float matchFloat(const std::string& text, const std::string& field, float fallba
     return std::stof(match[1].str());
 }
 
+bool matchBool(const std::string& text, const std::string& field, bool fallback = false) {
+    const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*(true|false)");
+    auto match = std::smatch{};
+    if (!std::regex_search(text, match, pattern)) {
+        return fallback;
+    }
+
+    return match[1].str() == "true";
+}
+
 std::vector<float> matchFloatArray(const std::string& text, const std::string& field) {
     const auto pattern = std::regex("\"" + field + "\"\\s*:\\s*\\[([^\\]]*)\\]");
     auto match = std::smatch{};
@@ -72,7 +82,10 @@ sf::Vector2f interpolateWaypoints(const MovementPatternSystem::Pattern& pattern,
     }
 
     if (time <= pattern.pointTimes.front()) {
-        return {pattern.pointX.front(), pattern.pointY.front()};
+        return {
+            (pattern.xRelativeToSpawn ? startPosition.x : 0.f) + pattern.pointX.front(),
+            pattern.pointY.front()
+        };
     }
 
     for (auto i = std::size_t{1}; i < pattern.pointTimes.size(); ++i) {
@@ -80,14 +93,18 @@ sf::Vector2f interpolateWaypoints(const MovementPatternSystem::Pattern& pattern,
             const auto startTime = pattern.pointTimes[i - 1];
             const auto endTime = pattern.pointTimes[i];
             const auto localT = (time - startTime) / std::max(0.001f, endTime - startTime);
+            const auto originX = pattern.xRelativeToSpawn ? startPosition.x : 0.f;
             return {
-                pattern.pointX[i - 1] + (pattern.pointX[i] - pattern.pointX[i - 1]) * localT,
+                originX + pattern.pointX[i - 1] + (pattern.pointX[i] - pattern.pointX[i - 1]) * localT,
                 pattern.pointY[i - 1] + (pattern.pointY[i] - pattern.pointY[i - 1]) * localT
             };
         }
     }
 
-    return {pattern.pointX.back(), pattern.pointY.back()};
+    return {
+        (pattern.xRelativeToSpawn ? startPosition.x : 0.f) + pattern.pointX.back(),
+        pattern.pointY.back()
+    };
 }
 
 sf::Vector2f interpolateSegment(sf::Vector2f from, sf::Vector2f to, float localT) {
@@ -126,6 +143,7 @@ void MovementPatternSystem::loadFromFile(const std::string& path) {
         pattern.marginTop = matchFloat(object, "margin_top", 50.f);
         pattern.marginBottom = matchFloat(object, "margin_bottom", 50.f);
         pattern.loopDirection = matchFloat(object, "loop_direction", 1.f);
+        pattern.xRelativeToSpawn = matchBool(object, "x_relative_to_spawn", false);
         pattern.pointTimes = matchFloatArray(object, "point_times");
         pattern.pointX = matchFloatArray(object, "point_x");
         pattern.pointY = matchFloatArray(object, "point_y");

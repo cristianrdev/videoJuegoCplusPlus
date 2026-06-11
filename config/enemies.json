@@ -103,14 +103,14 @@
     {
       "id": "enemy_mech_spider",
       "texture": "textures/enemies/enemy_mech_spider.png",
-      "health": 8,
-      "contact_damage": 3,
+      "health": 3,
+      "contact_damage": 2,
       "hitbox_width": 22.0,
       "hitbox_height": 20.0,
       "hitbox_offset_x": 0.0,
       "hitbox_offset_y": -2.0,
       "blink_enabled": true,
-      "blink_health_threshold": 3
+      "blink_health_threshold": 1
     },
     {
       "id": "enemy_mech_spider_mother",

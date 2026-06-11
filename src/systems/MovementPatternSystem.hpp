@@ -28,6 +28,7 @@ public:
         float marginTop{50.f};
         float marginBottom{50.f};
         float loopDirection{1.f};
+        bool xRelativeToSpawn{false};
         std::vector<float> pointTimes;
         std::vector<float> pointX;
         std::vector<float> pointY;

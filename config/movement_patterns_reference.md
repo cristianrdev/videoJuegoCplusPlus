@@ -146,6 +146,7 @@ Movimiento por puntos definidos manualmente. El enemigo interpola entre posicion
 | `point_times` | array float | segundos | Tiempos relativos desde que aparece el enemigo. |
 | `point_x` | array float | px | Posicion horizontal en cada punto. |
 | `point_y` | array float | px | Posicion vertical en cada punto. |
+| `x_relative_to_spawn` | bool | true/false | Si es `true`, `point_x` se interpreta como offset horizontal respecto al `x` del spawn. |
 
 Los tres arrays deben tener la misma cantidad de elementos.
 
@@ -172,6 +173,43 @@ Si `drop_then_diagonal_left` tiene:
 ```
 
 el enemigo usara esos puntos, aunque el spawn diga `x: 200`.
+
+### Waypoints Relativos Al Spawn En X
+
+Si el patron incluye:
+
+```json
+"x_relative_to_spawn": true
+```
+
+entonces `point_x` deja de ser una coordenada absoluta y pasa a ser un offset respecto al `x` configurado en el stage.
+
+Ejemplo:
+
+```json
+{
+  "id": "mech_spider_zigzag_right_left",
+  "type": "waypoints",
+  "x_relative_to_spawn": true,
+  "point_times": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
+  "point_x": [0.0, 0.0, 100.0, 100.0, 0.0, 0.0],
+  "point_y": [-20.0, 100.0, 100.0, 200.0, 200.0, 360.0]
+}
+```
+
+Si el enemigo aparece en el stage con:
+
+```json
+"x": 70
+```
+
+el movimiento usara estas posiciones horizontales reales:
+
+```txt
+70, 70, 170, 170, 70, 70
+```
+
+Esto permite reutilizar el mismo movimiento desde distintos puntos de aparicion.
 
 ## Coordenadas Del Juego
 
