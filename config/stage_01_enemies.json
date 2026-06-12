@@ -156,6 +156,25 @@
     },
 
 
+    {
+      "time": 9.0,
+      "enemy": "enemy_green_cargo_tank",
+      "x": 50,
+      "y": -48,
+      "pattern": "enemy_green_cargo_parallel_missiles",
+      "movement": "cargo_tank_slow_drop"
+    }
+    ,
+    {
+      "time": 9.01,
+      "enemy": "enemy_cargo_sphere_turret",
+      "x": 50,
+      "y": -47.88,
+      "pattern": "enemy_mecha_butterfly_rotating_clock",
+      "movement": "cargo_tank_slow_drop"
+    },
+
+
 
 
 
@@ -465,22 +484,6 @@
       "y": -40,
       "pattern": "enemy_mecha_butterfly_aimed_random_cone",
       "movement": "mecha_butterfly_center_hold"
-    },
-    {
-      "time": 104.0,
-      "enemy": "enemy_green_cargo_tank",
-      "x": 120,
-      "y": -48,
-      "pattern": "enemy_green_cargo_parallel_missiles",
-      "movement": "cargo_tank_slow_drop"
-    },
-    {
-      "time": 104.01,
-      "enemy": "enemy_cargo_sphere_turret",
-      "x": 120,
-      "y": -47.88,
-      "pattern": "enemy_mecha_butterfly_rotating_clock",
-      "movement": "cargo_tank_slow_drop"
     }
   ]
 }
