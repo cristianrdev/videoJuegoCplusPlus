@@ -10,7 +10,7 @@
       "id": "fast_drop",
       "type": "linear",
       "velocity_x": 0.0,
-      "velocity_y": 60.0
+      "velocity_y": 120.0
     },
     {
       "id": "cosine_sweep",

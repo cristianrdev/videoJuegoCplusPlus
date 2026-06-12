@@ -13,7 +13,7 @@
     {
       "id": "enemy_turret_pod",
       "texture": "textures/enemies/enemy_turret_pod.png",
-      "health": 5,
+      "health": 1,
       "contact_damage": 3,
       "hitbox_width": 24.0,
       "hitbox_height": 24.0,
@@ -33,7 +33,7 @@
     {
       "id": "enemy_green_rotor_drone",
       "texture": "textures/enemies/enemy_green_rotor_drone.png",
-      "health": 6,
+      "health": 2,
       "contact_damage": 3,
       "hitbox_width": 18.0,
       "hitbox_height": 18.0,

@@ -11,15 +11,7 @@
       "movement": "fast_drop"
     },
     {
-      "time": 5.3,
-      "enemy": "enemy_turret_pod",
-      "x": 60,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 5.6,
+      "time": 5.50,
       "enemy": "enemy_turret_pod",
       "x": 90,
       "y": -24,
@@ -27,160 +19,31 @@
       "movement": "fast_drop"
     },
     {
-      "time": 5.9,
+      "time": 6.0,
       "enemy": "enemy_turret_pod",
-      "x": 120,
+      "x": 90,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
+      "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 6.2,
+      "time": 6.50,
       "enemy": "enemy_turret_pod",
-      "x": 150,
+      "x": 90,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
+      "movement": "drop_then_diagonal_right"
     },
     {
-      "time": 6.5,
+      "time": 7.0,
       "enemy": "enemy_turret_pod",
-      "x": 180,
+      "x": 90,
       "y": -24,
       "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 6.8,
-      "enemy": "enemy_turret_pod",
-      "x": 210,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
+      "movement": "drop_then_diagonal_right"
     },
 
     
-
-    {
-      "time": 7.3,
-      "enemy": "enemy_green_rotor_drone",
-      "x": 30,
-      "y": -26,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "green_rotor_drone_approach_y_hold_retreat"
-    },
-    {
-      "time": 7.8,
-      "enemy": "enemy_green_rotor_drone",
-      "x": 100,
-      "y": -26,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "green_rotor_drone_approach_y_hold_retreat"
-    },
-    {
-      "time": 8.3,
-      "enemy": "enemy_green_rotor_drone",
-      "x": 170,
-      "y": -26,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "green_rotor_drone_approach_y_hold_retreat"
-    },
-
-
-
-    {
-      "time": 8.0,
-      "enemy": "enemy_turret_pod",
-      "x": 210,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 8.3,
-      "enemy": "enemy_turret_pod",
-      "x": 180,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 8.6,
-      "enemy": "enemy_turret_pod",
-      "x": 150,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 8.9,
-      "enemy": "enemy_turret_pod",
-      "x": 120,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 9.2,
-      "enemy": "enemy_turret_pod",
-      "x": 90,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 9.5,
-      "enemy": "enemy_turret_pod",
-      "x": 60,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-    {
-      "time": 9.8,
-      "enemy": "enemy_turret_pod",
-      "x": 30,
-      "y": -24,
-      "pattern": "enemy_turret_spread_3",
-      "movement": "fast_drop"
-    },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     {
       "time": 10.0,
       "enemy": "enemy_turret_pod",
@@ -322,7 +185,22 @@
       "movement": "fast_drop"
     },
     
-   
+    {
+      "time": 1.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 120,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+    {
+      "time": 2.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 200,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
     {
       "time": 52.0,
       "enemy": "enemy_mech_spider",
