@@ -13,6 +13,12 @@
       "velocity_y": 120.0
     },
     {
+      "id": "diagonal_from_right",
+      "type": "linear",
+      "velocity_x": 90.0,
+      "velocity_y": 90.0
+    },
+    {
       "id": "cosine_sweep",
       "type": "cosine",
       "velocity_y": 18.0,

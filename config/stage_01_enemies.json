@@ -59,6 +59,16 @@
       "movement": "fast_drop"
     },
 
+  {
+      "time": 7.2,
+      "enemy": "enemy_turret_pod",
+      "x": -20,
+      "y": 20,
+      "pattern": "enemy_turret_spread_3",
+      "movement": "diagonal_from_right"
+    },
+    
+
     
 
     {
@@ -72,7 +82,7 @@
     {
       "time": 7.8,
       "enemy": "enemy_green_rotor_drone",
-      "x": 100,
+      "x": 120,
       "y": -26,
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "green_rotor_drone_approach_y_hold_retreat"
@@ -80,7 +90,7 @@
     {
       "time": 8.3,
       "enemy": "enemy_green_rotor_drone",
-      "x": 170,
+      "x": 200,
       "y": -26,
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "green_rotor_drone_approach_y_hold_retreat"
