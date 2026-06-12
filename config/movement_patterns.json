@@ -83,6 +83,12 @@
       "velocity_y": 18.0
     },
     {
+      "id": "cargo_tank_slow_drop",
+      "type": "linear",
+      "velocity_x": 0.0,
+      "velocity_y": 12.0
+    },
+    {
       "id": "green_rotor_drone_approach_hold_retreat",
       "type": "approach_hold_retreat",
       "hold_radius": 90.0,
@@ -99,7 +105,7 @@
       "id": "green_rotor_drone_approach_y_hold_retreat",
       "type": "approach_hold_retreat",
       "stop_condition": "same_y",
-      "stop_offset_y": -50.0,
+      "stop_offset_y": -100.0,
       "lock_target_on_start": true,
       "approach_speed": 50.0,
       "hold_seconds": 5.0,

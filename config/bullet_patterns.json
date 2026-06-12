@@ -139,6 +139,17 @@
       "aimed": true,
       "angle_offsets": [0.0],
       "bullet": "enemy_web_line"
+    },
+    {
+      "id": "enemy_green_cargo_parallel_missiles",
+      "type": "spread",
+      "fire_interval": 1.0,
+      "bullet_speed": 76.0,
+      "aimed": false,
+      "angle_offsets": [0.0, 0.0],
+      "spawn_offset_x": [-18.0, 18.0],
+      "spawn_offset_y": [0.0, 0.0],
+      "bullet": "enemy_cargo_missile"
     }
   ]
 }

@@ -157,6 +157,8 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.bulletSpeed = matchFloatOr(object, "bullet_speed", 60.f);
         pattern.aimed = matchBoolOr(object, "aimed", false);
         pattern.angleOffsets = matchFloatArray(object, "angle_offsets");
+        pattern.spawnOffsetX = matchFloatArray(object, "spawn_offset_x");
+        pattern.spawnOffsetY = matchFloatArray(object, "spawn_offset_y");
         pattern.rings = matchIntOr(object, "rings", 1);
         pattern.bulletsPerRing = matchIntOr(object, "bullets_per_ring", 1);
         pattern.bulletsPerBurst = matchIntOr(object, "bullets_per_burst", 1);
@@ -406,11 +408,16 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
         }
 
         bullets.reserve(offsets.size());
-        for (const auto offset : offsets) {
+        for (auto index = std::size_t{0}; index < offsets.size(); ++index) {
+            const auto offset = offsets[index];
             const auto angle = degreesToRadians(baseAngle + offset);
             const auto velocity = sf::Vector2f{std::sin(angle) * pattern.bulletSpeed, std::cos(angle) * pattern.bulletSpeed};
+            const auto spawnPosition = sf::Vector2f{
+                origin.x + (index < pattern.spawnOffsetX.size() ? pattern.spawnOffsetX[index] : 0.f),
+                origin.y + (index < pattern.spawnOffsetY.size() ? pattern.spawnOffsetY[index] : 0.f)
+            };
             bullets.emplace_back(
-                origin,
+                spawnPosition,
                 velocity,
                 bulletTexture,
                 bulletDamage,

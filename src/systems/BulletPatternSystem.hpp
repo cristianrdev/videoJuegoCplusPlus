@@ -36,6 +36,8 @@ private:
         float bulletSpeed{60.f};
         bool aimed{false};
         std::vector<float> angleOffsets;
+        std::vector<float> spawnOffsetX;
+        std::vector<float> spawnOffsetY;
         int rings{1};
         int bulletsPerRing{1};
         int bulletsPerBurst{1};

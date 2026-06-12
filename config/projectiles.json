@@ -16,6 +16,12 @@
       "damage": 1
     },
     {
+      "id": "enemy_cargo_missile",
+      "texture": "textures/projectiles/enemy_cargo_missile.png",
+      "damage": 1,
+      "rotate_to_velocity": false
+    },
+    {
       "id": "enemy_web_line",
       "visual_type": "pixel_line",
       "visual_length": 100.0,

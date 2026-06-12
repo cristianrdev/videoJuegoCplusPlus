@@ -255,6 +255,14 @@ sf::Vector2f Enemy::bulletSpawnPosition() const {
         return position_;
     }
 
+    if (enemyId_ == "enemy_cargo_sphere_turret") {
+        return position_;
+    }
+
+    if (enemyId_ == "enemy_green_cargo_tank") {
+        return {position_.x, position_.y + 36.f};
+    }
+
     if (enemyId_ == "enemy_hex_rock_turret" || enemyId_ == "enemy_hex_rock_turret_big") {
         return position_;
     }

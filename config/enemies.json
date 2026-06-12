@@ -136,6 +136,31 @@
       "hitbox_offset_y": -1.0,
       "blink_enabled": true,
       "blink_health_threshold": 8
+    },
+    {
+      "id": "enemy_green_cargo_tank",
+      "texture": "textures/enemies/enemy_green_cargo_tank.png",
+      "health": 15,
+      "contact_damage": 3,
+      "hitbox_width": 54.0,
+      "hitbox_height": 86.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 5
+    },
+    {
+      "id": "enemy_cargo_sphere_turret",
+      "texture": "textures/enemies/enemy_cargo_sphere_turret.png",
+      "health": 6,
+      "contact_damage": 3,
+      "hitbox_shape": "oval",
+      "hitbox_width": 14.0,
+      "hitbox_height": 14.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 2
     }
   ]
 }
