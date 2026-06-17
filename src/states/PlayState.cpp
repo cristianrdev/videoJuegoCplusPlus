@@ -64,6 +64,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
+    explosionGreenCargoTankTexture_ = &assets_.loadTexture("explosion_enemy_green_cargo_tank", "textures/effects/explosion_enemy_green_cargo_tank.png");
     playerExplosionTexture_ = &assets_.loadTexture("explosion_player_ship", "textures/effects/player_ship_destroy_explosion.png");
     enemyHitSparkTexture_ = &assets_.loadTexture("enemy_hit_spark", "textures/effects/enemy_hit_spark.png");
 
@@ -94,9 +95,22 @@ void PlayState::update(sf::Time deltaTime) {
     if (playerDestroyed_) {
         playerDeathElapsed_ += deltaTime;
         starfield_.update(deltaTime);
+        for (auto& bullet : enemyBullets_) {
+            bullet.update(deltaTime);
+        }
         for (auto& explosion : explosions_) {
             explosion.update(deltaTime);
         }
+        enemyBullets_.erase(
+            std::remove_if(
+                enemyBullets_.begin(),
+                enemyBullets_.end(),
+                [this](const EnemyBullet& bullet) {
+                    return !bullet.isAlive(logicalSize_);
+                }
+            ),
+            enemyBullets_.end()
+        );
         explosions_.erase(
             std::remove_if(
                 explosions_.begin(),
@@ -470,6 +484,17 @@ void PlayState::spawnPowerUp(const std::string& powerUpId, sf::Vector2f position
 }
 
 void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position) {
+    if (enemyId == "enemy_green_cargo_tank" && explosionGreenCargoTankTexture_) {
+        explosions_.emplace_back(
+            position,
+            *explosionGreenCargoTankTexture_,
+            sf::Vector2i{64, 96},
+            3,
+            sf::seconds(0.08f)
+        );
+        return;
+    }
+
     auto texture = explosionDroneTexture_;
 
     if (enemyId == "enemy_turret_pod") {
@@ -639,7 +664,6 @@ void PlayState::processEvents() {
             }
             muzzleFlashTime_ = sf::Time::Zero;
             playerLasers_.clear();
-            enemyBullets_.clear();
             enemyLasers_.clear();
         }
     }

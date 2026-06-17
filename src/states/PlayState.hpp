@@ -90,6 +90,7 @@ private:
     const sf::Texture* explosionDroneTexture_{nullptr};
     const sf::Texture* explosionTurretPodTexture_{nullptr};
     const sf::Texture* explosionInterceptorTexture_{nullptr};
+    const sf::Texture* explosionGreenCargoTankTexture_{nullptr};
     const sf::Texture* playerExplosionTexture_{nullptr};
     const sf::Texture* enemyHitSparkTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};
