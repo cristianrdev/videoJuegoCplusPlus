@@ -235,12 +235,12 @@ void Game::update(sf::Time deltaTime) {
 
 void Game::render() {
     playState_->render(logicalTarget_);
+    renderGameOverOverlay(logicalTarget_);
     logicalTarget_.display();
 
     window_.clear(sf::Color::Black);
     window_.draw(presentationSprite_);
     renderPixelGrid();
-    renderGameOverOverlay();
     renderPauseOverlay();
     renderDebugHud();
     window_.display();
@@ -270,17 +270,17 @@ void Game::renderPauseOverlay() {
     window_.draw(pauseText);
 }
 
-void Game::renderGameOverOverlay() {
+void Game::renderGameOverOverlay(sf::RenderTarget& target) {
     if (!playState_ || !playState_->isGameOverVisible()) {
         return;
     }
 
     auto gameOverText = sf::Text(debugFont_);
     gameOverText.setString("GAME OVER\nENTER / ESPACIO");
-    gameOverText.setCharacterSize(36);
+    gameOverText.setCharacterSize(24);
     gameOverText.setFillColor(sf::Color(255, 90, 90));
     gameOverText.setOutlineColor(sf::Color(8, 12, 20));
-    gameOverText.setOutlineThickness(2.f);
+    gameOverText.setOutlineThickness(1.f);
 
     const auto bounds = gameOverText.getLocalBounds();
     gameOverText.setOrigin({
@@ -288,10 +288,10 @@ void Game::renderGameOverOverlay() {
         bounds.position.y + bounds.size.y * 0.5f
     });
     gameOverText.setPosition({
-        static_cast<float>(window_.getSize().x) * 0.5f,
-        static_cast<float>(window_.getSize().y) * 0.5f
+        static_cast<float>(LogicalWidth) * 0.5f,
+        static_cast<float>(LogicalHeight) * 0.5f
     });
-    window_.draw(gameOverText);
+    target.draw(gameOverText);
 }
 
 void Game::renderPixelGrid() {

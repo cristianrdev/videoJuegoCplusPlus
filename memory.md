@@ -67,6 +67,7 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - La simulacion sigue en resolucion logica `240x320`.
   - Se rota el framebuffer final 90 grados y se recalcula la escala entera contra `320x240`.
   - La grilla debug usa la misma transformacion para mantenerse alineada.
+  - `GAME OVER` se dibuja en el framebuffer logico para rotar/escalar junto con el juego.
 - La nave inicia con laser doble mediante `initial_projectile_count: 2` en `config/player.json`.
   - `Player` limita ese valor entre 1 y 8.
   - Los power-ups `P` siguen duplicando el conteo hasta 8.
