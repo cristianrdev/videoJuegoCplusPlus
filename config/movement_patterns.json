@@ -86,7 +86,7 @@
       "id": "cargo_tank_slow_drop",
       "type": "linear",
       "velocity_x": 0.0,
-      "velocity_y": 12.0
+      "velocity_y": 20.0
     },
     {
       "id": "green_rotor_drone_approach_hold_retreat",

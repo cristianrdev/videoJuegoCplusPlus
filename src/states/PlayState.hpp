@@ -57,6 +57,7 @@ private:
     void spawnItemCarrier(const ItemSpawnConfig& spawn);
     void spawnPowerUp(const std::string& powerUpId, sf::Vector2f position);
     void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
+    void destroyMountedCargoSphere(sf::Vector2f tankPosition);
     void updateEnemyShooting();
     void updateCollisions();
     void processEvents();

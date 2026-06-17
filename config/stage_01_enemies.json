@@ -157,7 +157,7 @@
 
 
     {
-      "time": 9.0,
+      "time": 12.0,
       "enemy": "enemy_green_cargo_tank",
       "x": 50,
       "y": -48,
@@ -166,9 +166,47 @@
     }
     ,
     {
-      "time": 9.01,
+      "time": 12.01,
       "enemy": "enemy_cargo_sphere_turret",
       "x": 50,
+      "y": -47.88,
+      "pattern": "enemy_mecha_butterfly_rotating_clock",
+      "movement": "cargo_tank_slow_drop"
+    },
+
+
+
+    {
+      "time": 18.0,
+      "enemy": "enemy_green_cargo_tank",
+      "x": 200,
+      "y": -48,
+      "pattern": "enemy_green_cargo_parallel_missiles",
+      "movement": "cargo_tank_slow_drop"
+    }
+    ,
+    {
+      "time": 18.01,
+      "enemy": "enemy_cargo_sphere_turret",
+      "x": 200,
+      "y": -47.88,
+      "pattern": "enemy_mecha_butterfly_rotating_clock",
+      "movement": "cargo_tank_slow_drop"
+    },
+
+    {
+      "time": 22.0,
+      "enemy": "enemy_green_cargo_tank",
+      "x": 100,
+      "y": -48,
+      "pattern": "enemy_green_cargo_parallel_missiles",
+      "movement": "cargo_tank_slow_drop"
+    }
+    ,
+    {
+      "time": 22.01,
+      "enemy": "enemy_cargo_sphere_turret",
+      "x": 100,
       "y": -47.88,
       "pattern": "enemy_mecha_butterfly_rotating_clock",
       "movement": "cargo_tank_slow_drop"
@@ -253,7 +291,7 @@
   
   
     {
-      "time": 18.0,
+      "time": 68.0,
       "enemy": "enemy_metal_squid",
       "x": 100,
       "y": -24,
@@ -261,7 +299,7 @@
       "movement": "metal_squid_cosine_medium"
     },
     {
-      "time": 22.0,
+      "time": 72.0,
       "enemy": "enemy_metal_squid",
       "x": 140,
       "y": -24,
@@ -269,7 +307,7 @@
       "movement": "metal_squid_cosine_medium"
     },
     {
-      "time": 26.0,
+      "time": 76.0,
       "enemy": "enemy_metal_squid",
       "x": 140,
       "y": -24,

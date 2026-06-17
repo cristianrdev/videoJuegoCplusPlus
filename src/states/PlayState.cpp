@@ -481,6 +481,37 @@ void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position
     explosions_.emplace_back(position, *texture);
 }
 
+void PlayState::destroyMountedCargoSphere(sf::Vector2f tankPosition) {
+    for (auto& enemy : enemies_) {
+        if (!enemy.isAlive() || enemy.enemyId() != "enemy_cargo_sphere_turret") {
+            continue;
+        }
+
+        const auto delta = enemy.position() - tankPosition;
+        const auto distanceSquared = delta.x * delta.x + delta.y * delta.y;
+        if (distanceSquared > 24.f * 24.f) {
+            continue;
+        }
+
+        enemy.takeDamage(9999);
+        spawnExplosion(enemy.enemyId(), enemy.position());
+
+        if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemy.patternId())) {
+            enemyBullets_.erase(
+                std::remove_if(
+                    enemyBullets_.begin(),
+                    enemyBullets_.end(),
+                    [&enemy](const EnemyBullet& bullet) {
+                        return bullet.ownerInstanceId() == enemy.instanceId();
+                    }
+                ),
+                enemyBullets_.end()
+            );
+        }
+        return;
+    }
+}
+
 void PlayState::updateEnemyShooting() {
     if (!player_) {
         return;
@@ -569,6 +600,9 @@ void PlayState::processEvents() {
     for (const auto& event : eventQueue_.drain()) {
         if (const auto* enemyDestroyed = std::get_if<EnemyDestroyedEvent>(&event)) {
             spawnExplosion(enemyDestroyed->enemyId, enemyDestroyed->position);
+            if (enemyDestroyed->enemyId == "enemy_green_cargo_tank") {
+                destroyMountedCargoSphere(enemyDestroyed->position);
+            }
             if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId)) {
                 enemyBullets_.erase(
                     std::remove_if(

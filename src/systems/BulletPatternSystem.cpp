@@ -165,6 +165,7 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.streams = matchIntOr(object, "streams", 1);
         pattern.speedStart = matchFloatOr(object, "speed_start", pattern.bulletSpeed);
         pattern.speedStep = matchFloatOr(object, "speed_step", 0.f);
+        pattern.initialAngle = matchFloatOr(object, "initial_angle", 0.f);
         pattern.angleStep = matchFloatOr(object, "angle_step", 0.f);
         pattern.burstAngleSpacing = matchFloatOr(object, "burst_angle_spacing", 0.f);
         pattern.spreadAngle = matchFloatOr(object, "spread_angle", 0.f);
@@ -269,7 +270,7 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
     } else if (pattern.type == "rotating_clock") {
         bullets.reserve(static_cast<std::size_t>(std::max(1, pattern.bulletsPerBurst)));
         const auto rotation = std::fmod(
-            static_cast<float>(pattern.shotCounter) * pattern.angleStep * pattern.rotationDirection,
+            pattern.initialAngle + static_cast<float>(pattern.shotCounter) * pattern.angleStep * pattern.rotationDirection,
             360.f
         );
         const auto burstCount = std::max(1, pattern.bulletsPerBurst);

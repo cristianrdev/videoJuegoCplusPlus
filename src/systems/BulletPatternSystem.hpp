@@ -44,6 +44,7 @@ private:
         int streams{1};
         float speedStart{60.f};
         float speedStep{0.f};
+        float initialAngle{0.f};
         float angleStep{0.f};
         float burstAngleSpacing{0.f};
         float spreadAngle{0.f};
