@@ -63,6 +63,7 @@ Player::Player(AssetManager& assets, sf::Vector2f logicalSize, const PlayerConfi
     , hitboxOffset_({config_.hitboxOffsetX, config_.hitboxOffsetY})
     , thrusterFrameSize_({config_.thrusterFrameWidth, config_.thrusterFrameHeight})
     , health_(config_.health)
+    , projectileCount_(std::clamp(config_.initialProjectileCount, 1, 8))
     , spriteSheetTexture_(&assets.getTexture("player_ship_sheet"))
     , thrusterTexture_(&assets.getTexture("player_thruster_flame"))
     , sprite_(*spriteSheetTexture_) {

@@ -56,6 +56,7 @@ void PlayerConfigSystem::loadFromFile(const std::string& path) {
     config_.laserTexture = matchStringOr(text, "laser_texture", config_.laserTexture);
     config_.muzzleFlashTexture = matchStringOr(text, "muzzle_flash_texture", config_.muzzleFlashTexture);
     config_.health = matchIntOr(text, "health", config_.health);
+    config_.initialProjectileCount = matchIntOr(text, "initial_projectile_count", config_.initialProjectileCount);
     config_.speed = matchFloatOr(text, "speed", config_.speed);
     config_.hitboxWidth = matchFloatOr(text, "hitbox_width", config_.hitboxWidth);
     config_.hitboxHeight = matchFloatOr(text, "hitbox_height", config_.hitboxHeight);

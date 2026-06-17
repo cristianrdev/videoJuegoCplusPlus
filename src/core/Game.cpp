@@ -97,6 +97,11 @@ void Game::processEvents() {
             window_.close();
         }
 
+        if (event->is<sf::Event::Resized>()) {
+            presentationIntegerScale_ = largestFittingIntegerScale();
+            updatePresentationSprite();
+        }
+
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             if (keyPressed->code == sf::Keyboard::Key::Escape) {
                 window_.close();
@@ -111,6 +116,10 @@ void Game::processEvents() {
                 playState_->toggleGodMode();
             } else if (keyPressed->code == sf::Keyboard::Key::H) {
                 playState_->togglePlayerHitbox();
+            } else if (keyPressed->code == sf::Keyboard::Key::T) {
+                tateMode_ = !tateMode_;
+                presentationIntegerScale_ = largestFittingIntegerScale();
+                updatePresentationSprite();
             } else if (keyPressed->code == sf::Keyboard::Key::Q) {
                 applyFramePacingMode(FramePacingMode::VSync);
             } else if (keyPressed->code == sf::Keyboard::Key::W) {
@@ -188,8 +197,10 @@ const char* Game::framePacingLabel() const {
 
 unsigned int Game::largestFittingIntegerScale() const {
     const auto windowSize = window_.getSize();
-    const auto scaleX = windowSize.x / LogicalWidth;
-    const auto scaleY = windowSize.y / LogicalHeight;
+    const auto presentedWidth = tateMode_ ? LogicalHeight : LogicalWidth;
+    const auto presentedHeight = tateMode_ ? LogicalWidth : LogicalHeight;
+    const auto scaleX = windowSize.x / presentedWidth;
+    const auto scaleY = windowSize.y / presentedHeight;
     const auto scale = std::min(scaleX, scaleY);
 
     return std::clamp(scale, 1u, 4u);
@@ -293,17 +304,49 @@ void Game::renderPixelGrid() {
         return;
     }
 
-    const auto origin = presentationSprite_.getPosition();
+    const auto color = sf::Color(255, 255, 255, 54);
+
+    if (tateMode_) {
+        auto verticalLine = sf::RectangleShape({
+            static_cast<float>(LogicalHeight) * scale,
+            1.f
+        });
+        verticalLine.setFillColor(color);
+        for (auto x = 0u; x <= LogicalWidth; ++x) {
+            const auto start = presentedLogicalPoint(static_cast<float>(x), 0.f);
+            verticalLine.setPosition({
+                std::round(start.x - static_cast<float>(LogicalHeight) * scale),
+                std::round(start.y)
+            });
+            window_.draw(verticalLine);
+        }
+
+        auto horizontalLine = sf::RectangleShape({
+            1.f,
+            static_cast<float>(LogicalWidth) * scale
+        });
+        horizontalLine.setFillColor(color);
+        for (auto y = 0u; y <= LogicalHeight; ++y) {
+            const auto start = presentedLogicalPoint(0.f, static_cast<float>(y));
+            horizontalLine.setPosition({
+                std::round(start.x),
+                std::round(start.y)
+            });
+            window_.draw(horizontalLine);
+        }
+        return;
+    }
+
+    const auto bounds = presentationBounds();
     const auto width = static_cast<float>(LogicalWidth) * scale;
     const auto height = static_cast<float>(LogicalHeight) * scale;
-    const auto color = sf::Color(255, 255, 255, 54);
 
     auto verticalLine = sf::RectangleShape({1.f, height});
     verticalLine.setFillColor(color);
     for (auto x = 0u; x <= LogicalWidth; ++x) {
         verticalLine.setPosition({
-            std::round(origin.x + static_cast<float>(x) * scale),
-            std::round(origin.y)
+            std::round(bounds.position.x + static_cast<float>(x) * scale),
+            std::round(bounds.position.y)
         });
         window_.draw(verticalLine);
     }
@@ -312,16 +355,16 @@ void Game::renderPixelGrid() {
     horizontalLine.setFillColor(color);
     for (auto y = 0u; y <= LogicalHeight; ++y) {
         horizontalLine.setPosition({
-            std::round(origin.x),
-            std::round(origin.y + static_cast<float>(y) * scale)
+            std::round(bounds.position.x),
+            std::round(bounds.position.y + static_cast<float>(y) * scale)
         });
         window_.draw(horizontalLine);
     }
 }
 
 void Game::renderDebugHud() {
-    const auto spritePosition = presentationSprite_.getPosition();
-    const auto leftPanelWidth = spritePosition.x;
+    const auto bounds = presentationBounds();
+    const auto leftPanelWidth = bounds.position.x;
 
     if (leftPanelWidth < 96.f) {
         return;
@@ -359,6 +402,8 @@ void Game::renderDebugHud() {
          << "\n\nSCALE\n"
          << std::setprecision(0)
          << scale.x << "x"
+         << "\n\nTATE\n"
+         << (tateMode_ ? "ON" : "OFF")
          << "\n\nTECLAS\n"
          << "Esc salir\n"
          << "P pausa\n"
@@ -366,6 +411,7 @@ void Game::renderDebugHud() {
          << "Espacio disparo\n"
          << "Espacio reintentar\n"
          << "Z disparo\n"
+         << "T tate\n"
          << "G god mode\n"
          << "H hitbox\n"
          << "1 escala 1x\n"
@@ -388,14 +434,47 @@ void Game::renderDebugHud() {
 void Game::updatePresentationSprite() {
     const auto windowSize = window_.getSize();
     const auto integerScale = static_cast<float>(presentationIntegerScale_);
+    const auto presentedWidth = static_cast<float>(tateMode_ ? LogicalHeight : LogicalWidth);
+    const auto presentedHeight = static_cast<float>(tateMode_ ? LogicalWidth : LogicalHeight);
+    const auto scaledWidth = presentedWidth * integerScale;
+    const auto scaledHeight = presentedHeight * integerScale;
+    const auto left = (static_cast<float>(windowSize.x) - scaledWidth) * 0.5f;
+    const auto top = (static_cast<float>(windowSize.y) - scaledHeight) * 0.5f;
 
     presentationSprite_.setTexture(logicalTarget_.getTexture(), true);
     presentationSprite_.setScale({integerScale, integerScale});
+    presentationSprite_.setOrigin({0.f, 0.f});
 
-    const auto scaledWidth = static_cast<float>(LogicalWidth) * integerScale;
-    const auto scaledHeight = static_cast<float>(LogicalHeight) * integerScale;
-    presentationSprite_.setPosition({
-        (static_cast<float>(windowSize.x) - scaledWidth) * 0.5f,
-        (static_cast<float>(windowSize.y) - scaledHeight) * 0.5f
-    });
+    if (tateMode_) {
+        presentationSprite_.setRotation(sf::degrees(90.f));
+        presentationSprite_.setPosition({
+            left + static_cast<float>(LogicalHeight) * integerScale,
+            top
+        });
+        return;
+    }
+
+    presentationSprite_.setRotation(sf::degrees(0.f));
+    presentationSprite_.setPosition({left, top});
+}
+
+sf::FloatRect Game::presentationBounds() const {
+    return presentationSprite_.getGlobalBounds();
+}
+
+sf::Vector2f Game::presentedLogicalPoint(float x, float y) const {
+    const auto scale = presentationSprite_.getScale().x;
+    const auto bounds = presentationBounds();
+
+    if (tateMode_) {
+        return {
+            bounds.position.x + (static_cast<float>(LogicalHeight) - y) * scale,
+            bounds.position.y + x * scale
+        };
+    }
+
+    return {
+        bounds.position.x + x * scale,
+        bounds.position.y + y * scale
+    };
 }

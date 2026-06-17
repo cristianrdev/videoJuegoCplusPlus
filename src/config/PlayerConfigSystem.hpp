@@ -8,6 +8,7 @@ struct PlayerConfig {
     std::string laserTexture{"textures/player/player_laser_normal.png"};
     std::string muzzleFlashTexture{"textures/player/player_laser_muzzle_flash.png"};
     int health{3};
+    int initialProjectileCount{1};
     float speed{120.f};
     float hitboxWidth{6.f};
     float hitboxHeight{6.f};

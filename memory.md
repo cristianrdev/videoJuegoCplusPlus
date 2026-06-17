@@ -63,6 +63,13 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - `enemyLasers_` todavia se limpian al morir la nave.
 - Cuando muere `enemy_cargo_sphere_turret`, sus orbes no se eliminan aunque su patron tenga `clear_bullets_on_owner_destroyed: true`.
   - Esto aplica tambien cuando la esfera se destruye de forma forzada al morir el `enemy_green_cargo_tank` que la lleva.
+- La tecla `T` alterna modo TATE en `Game`.
+  - La simulacion sigue en resolucion logica `240x320`.
+  - Se rota el framebuffer final 90 grados y se recalcula la escala entera contra `320x240`.
+  - La grilla debug usa la misma transformacion para mantenerse alineada.
+- La nave inicia con laser doble mediante `initial_projectile_count: 2` en `config/player.json`.
+  - `Player` limita ese valor entre 1 y 8.
+  - Los power-ups `P` siguen duplicando el conteo hasta 8.
 
 ## Archivos clave
 

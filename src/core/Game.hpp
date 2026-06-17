@@ -4,11 +4,13 @@
 #include "PlayState.hpp"
 
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 
 #include <memory>
 
@@ -38,6 +40,8 @@ private:
     void renderDebugHud();
     void renderPixelGrid();
     void updatePresentationSprite();
+    sf::FloatRect presentationBounds() const;
+    sf::Vector2f presentedLogicalPoint(float x, float y) const;
 
     static constexpr unsigned int LogicalWidth = 240;
     static constexpr unsigned int LogicalHeight = 320;
@@ -52,6 +56,7 @@ private:
     unsigned int presentationIntegerScale_{1};
     FramePacingMode framePacingMode_{FramePacingMode::VSync};
     bool paused_{false};
+    bool tateMode_{false};
     float smoothedFps_{0.f};
     std::unique_ptr<PlayState> playState_;
 };
