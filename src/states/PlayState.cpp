@@ -521,7 +521,8 @@ void PlayState::destroyMountedCargoSphere(sf::Vector2f tankPosition) {
         enemy.takeDamage(9999);
         spawnExplosion(enemy.enemyId(), enemy.position());
 
-        if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemy.patternId())) {
+        if (enemy.enemyId() != "enemy_cargo_sphere_turret" &&
+            bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemy.patternId())) {
             enemyBullets_.erase(
                 std::remove_if(
                     enemyBullets_.begin(),
@@ -628,7 +629,8 @@ void PlayState::processEvents() {
             if (enemyDestroyed->enemyId == "enemy_green_cargo_tank") {
                 destroyMountedCargoSphere(enemyDestroyed->position);
             }
-            if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId)) {
+            if (enemyDestroyed->enemyId != "enemy_cargo_sphere_turret" &&
+                bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId)) {
                 enemyBullets_.erase(
                     std::remove_if(
                         enemyBullets_.begin(),

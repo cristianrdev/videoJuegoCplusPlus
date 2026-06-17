@@ -61,6 +61,8 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - `enemyBullets_` sigue actualizandose durante el estado `playerDestroyed_`.
   - Las balas se limpian solo cuando dejan de estar vivas/salen del area logica.
   - `enemyLasers_` todavia se limpian al morir la nave.
+- Cuando muere `enemy_cargo_sphere_turret`, sus orbes no se eliminan aunque su patron tenga `clear_bullets_on_owner_destroyed: true`.
+  - Esto aplica tambien cuando la esfera se destruye de forma forzada al morir el `enemy_green_cargo_tank` que la lleva.
 
 ## Archivos clave
 
