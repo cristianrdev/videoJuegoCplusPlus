@@ -491,14 +491,7 @@
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "mech_spider_random_zigzag"
     },
-    {
-      "time": 70.0,
-      "enemy": "enemy_mecha_butterfly",
-      "x": 120,
-      "y": -40,
-      "pattern": "enemy_mecha_butterfly_concentric_flower",
-      "movement": "mecha__butterfly_cosine_medium"
-    },
+    
     {
       "time": 82.0,
       "enemy": "enemy_mecha_butterfly",
