@@ -16,7 +16,7 @@
     {
       "id": "enemy_turret_spread_3",
       "type": "spread",
-      "fire_interval": 0.9,
+      "fire_interval": 1.5,
       "bullet_speed": 160.0,
       "aimed": true,
       "angle_offsets": [0.0],
