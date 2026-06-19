@@ -125,6 +125,19 @@
       "blink_health_threshold": 1
     },
     {
+      "id": "enemy_mechanical_spiked_shell",
+      "texture": "textures/enemies/enemy_mechanical_spiked_shell.png",
+      "health": 12,
+      "contact_damage": 3,
+      "hitbox_shape": "oval",
+      "hitbox_width": 24.0,
+      "hitbox_height": 24.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 3
+    },
+    {
       "id": "enemy_mech_spider_mother",
       "texture": "textures/enemies/enemy_mech_spider_mother.png",
       "health": 35,

@@ -607,6 +607,14 @@
       "pattern": "enemy_armored_flail_tether_counterclockwise",
       "movement": "slow_drop"
     },
+    {
+      "time": 1.0,
+      "enemy": "enemy_mechanical_spiked_shell",
+      "x": 120,
+      "y": -32,
+      "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+      "movement": "mecha_butterfly_center_hold"
+    },
 
 
 
