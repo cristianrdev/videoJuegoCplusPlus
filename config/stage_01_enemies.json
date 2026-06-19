@@ -416,6 +416,51 @@
       "movement": "fast_drop"
     },
 
+
+
+
+
+
+  {
+    "time": 41.0,
+    "enemy": "enemy_green_rotor_drone",
+    "x": 30,
+    "y": -26,
+    "pattern": "enemy_rock_turret_fast_small",
+    "movement": "green_rotor_drone_approach_y_hold_retreat"
+  },
+  {
+    "time": 41.3,
+    "enemy": "enemy_green_rotor_drone",
+    "x": 120,
+    "y": -26,
+    "pattern": "enemy_rock_turret_fast_small",
+    "movement": "green_rotor_drone_approach_y_hold_retreat"
+  },
+  {
+    "time": 41.6,
+    "enemy": "enemy_green_rotor_drone",
+    "x": 140,
+    "y": -26,
+    "pattern": "enemy_rock_turret_fast_small",
+    "movement": "green_rotor_drone_approach_y_hold_retreat"
+  },
+  {
+    "time": 41.9,
+    "enemy": "enemy_green_rotor_drone",
+    "x": 180,
+    "y": -26,
+    "pattern": "enemy_rock_turret_fast_small",
+    "movement": "green_rotor_drone_approach_y_hold_retreat"
+  },
+
+
+
+
+
+
+
+
     {
       "time": 42.1,
       "enemy": "enemy_rock_turret",
