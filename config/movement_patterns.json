@@ -77,6 +77,14 @@
       "point_y": [-40.0, 80.0, 80.0]
     },
     {
+      "id": "mechanical_spiked_shell_drop_hold_exit",
+      "type": "waypoints",
+      "x_relative_to_spawn": true,
+      "point_times": [0.0, 2.0, 9.0, 13.0],
+      "point_x": [0.0, 0.0, 0.0, 0.0],
+      "point_y": [-32.0, 80.0, 80.0, 360.0]
+    },
+    {
       "id": "floating_rock_turret_drop",
       "type": "linear",
       "velocity_x": 0.0,

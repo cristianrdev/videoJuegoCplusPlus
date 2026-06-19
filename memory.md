@@ -88,8 +88,10 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - Concepto inicial de tortuga guardado en `assets/textures/enemies/concepts/enemy_mechanical_turtle_concept.png`.
   - Asset final: `assets/textures/enemies/enemy_mechanical_spiked_shell.png`, 128x32, 4 frames de 32x32.
   - Es un circulo mecanico con pinchos, tonos metalicos verdes oscuros y centro rojo, sin cabeza/patas/cola.
-  - Usa `enemy_mecha_butterfly_aimed_random_cone` y `mecha_butterfly_center_hold`.
+  - Usa `enemy_mecha_butterfly_aimed_random_cone` y `mechanical_spiked_shell_drop_hold_exit`.
+  - Movimiento: baja verticalmente hasta `y=80`, espera 7 segundos y luego sigue bajando hasta salir de pantalla.
   - Dispara desde el centro.
+  - Explosion propia: `assets/textures/effects/explosion_enemy_mechanical_spiked_shell.png`, 144x48, 3 frames de 48x48, paleta verde metalica con nucleo rojo/naranja.
 
 ## Archivos clave
 

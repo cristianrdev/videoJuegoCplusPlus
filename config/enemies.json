@@ -127,7 +127,7 @@
     {
       "id": "enemy_mechanical_spiked_shell",
       "texture": "textures/enemies/enemy_mechanical_spiked_shell.png",
-      "health": 12,
+      "health": 20,
       "contact_damage": 3,
       "hitbox_shape": "oval",
       "hitbox_width": 24.0,

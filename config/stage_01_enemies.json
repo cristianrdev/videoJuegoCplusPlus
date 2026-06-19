@@ -67,9 +67,8 @@
       "pattern": "enemy_turret_spread_3",
       "movement": "diagonal_from_right"
     },
-    
 
-    
+
 
     {
       "time": 7.3,
@@ -173,6 +172,16 @@
       "pattern": "enemy_mecha_butterfly_rotating_clock",
       "movement": "cargo_tank_slow_drop"
     },
+
+    {
+      "time": 13.0,
+      "enemy": "enemy_mechanical_spiked_shell",
+      "x": 120,
+      "y": -32,
+      "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+      "movement": "mechanical_spiked_shell_drop_hold_exit"
+    },
+
 
 
 
@@ -314,8 +323,8 @@
       "pattern": "enemy_turret_spread_3",
       "movement": "drop_then_diagonal_left"
     },
-  
-  
+
+
     {
       "time": 68.0,
       "enemy": "enemy_metal_squid",
@@ -485,8 +494,7 @@
       "pattern": "enemy_turret_spread_3",
       "movement": "fast_drop"
     },
-    
-   
+
     {
       "time": 52.0,
       "enemy": "enemy_mech_spider",
@@ -607,14 +615,6 @@
       "pattern": "enemy_armored_flail_tether_counterclockwise",
       "movement": "slow_drop"
     },
-    {
-      "time": 1.0,
-      "enemy": "enemy_mechanical_spiked_shell",
-      "x": 120,
-      "y": -32,
-      "pattern": "enemy_mecha_butterfly_aimed_random_cone",
-      "movement": "mecha_butterfly_center_hold"
-    },
 
 
 
@@ -622,7 +622,7 @@
 
 
 
-    
+
     {
       "time": 182.0,
       "enemy": "enemy_mecha_butterfly",

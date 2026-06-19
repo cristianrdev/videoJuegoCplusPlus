@@ -65,6 +65,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     explosionGreenCargoTankTexture_ = &assets_.loadTexture("explosion_enemy_green_cargo_tank", "textures/effects/explosion_enemy_green_cargo_tank.png");
+    explosionMechanicalSpikedShellTexture_ = &assets_.loadTexture("explosion_enemy_mechanical_spiked_shell", "textures/effects/explosion_enemy_mechanical_spiked_shell.png");
     playerExplosionTexture_ = &assets_.loadTexture("explosion_player_ship", "textures/effects/player_ship_destroy_explosion.png");
     enemyHitSparkTexture_ = &assets_.loadTexture("enemy_hit_spark", "textures/effects/enemy_hit_spark.png");
 
@@ -514,6 +515,17 @@ void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position
             sf::Vector2i{64, 96},
             3,
             sf::seconds(0.08f)
+        );
+        return;
+    }
+
+    if (enemyId == "enemy_mechanical_spiked_shell" && explosionMechanicalSpikedShellTexture_) {
+        explosions_.emplace_back(
+            position,
+            *explosionMechanicalSpikedShellTexture_,
+            sf::Vector2i{48, 48},
+            3,
+            sf::seconds(0.07f)
         );
         return;
     }
