@@ -76,7 +76,11 @@ void CollisionSystem::resolve(
     for (auto bulletIt = enemyBullets.begin(); bulletIt != enemyBullets.end();) {
         if (intersects(bulletIt->hitbox(), player.hitbox())) {
             damagePlayer(player, bulletIt->damage(), eventQueue);
-            bulletIt = enemyBullets.erase(bulletIt);
+            if (bulletIt->persistsOnHit()) {
+                ++bulletIt;
+            } else {
+                bulletIt = enemyBullets.erase(bulletIt);
+            }
         } else {
             ++bulletIt;
         }

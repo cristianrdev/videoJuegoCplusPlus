@@ -71,6 +71,19 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
 - La nave inicia con laser doble mediante `initial_projectile_count: 2` en `config/player.json`.
   - `Player` limita ese valor entre 1 y 8.
   - Los power-ups `P` siguen duplicando el conteo hasta 8.
+- Se preparo un patron data-driven `enemy_armored_flail_tether` de tipo `tethered_flail`.
+  - El mangual sigue anclado al enemigo, orbita, se extiende cada 3 segundos, se retrae y vuelve a orbitar.
+  - La cadena se renderiza desde runtime y la bola persiste al golpear al jugador.
+  - El enemigo aprobado se integro como `enemy_armored_flail_ship`.
+  - Asset nave: `assets/textures/enemies/enemy_armored_flail_ship.png`, 56x80, nariz hacia abajo y cohetes arriba.
+  - Asset bola: `assets/textures/projectiles/enemy_flail_ball.png`, 18x18.
+  - Spawn de prueba en `config/stage_01_enemies.json` al tiempo 30.0.
+- Se integro un planeta tipo Tierra como background element.
+  - Asset: `assets/textures/background/earth_like_planet_horizon.png`, 240x320.
+  - Tileset: `earth_like_planet`.
+  - Spawn en `config/stage_01_background_elements.json` al segundo 60.0, `x=0`, `y=-300`, `speed_y=4.5`.
+  - `PlayState` soporta este tileset con tile size especial de 240x320.
+  - El asset debe verse como planeta redondo recortado en los laterales, no como ovalo achatado.
 
 ## Archivos clave
 

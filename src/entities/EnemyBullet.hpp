@@ -48,6 +48,21 @@ public:
         float radialSpeed,
         float angularVelocityRadians
     );
+    static EnemyBullet tetheredFlail(
+        sf::Vector2f origin,
+        const sf::Texture* texture,
+        int damage,
+        sf::Vector2f visualSize,
+        int ownerInstanceId,
+        float orbitRadius,
+        float throwRadius,
+        float orbitSeconds,
+        float extendSeconds,
+        float holdSeconds,
+        float retractSeconds,
+        float initialAngleRadians,
+        float angularVelocityRadians
+    );
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
@@ -55,7 +70,10 @@ public:
     bool isAlive(sf::Vector2f logicalSize) const;
     sf::FloatRect hitbox() const;
     bool isPixelLine() const;
+    bool followsOwnerAnchor() const;
+    bool persistsOnHit() const;
     void setPosition(sf::Vector2f position);
+    void setTetherOrigin(sf::Vector2f origin);
     int ownerInstanceId() const;
     int damage() const;
 
@@ -71,6 +89,7 @@ private:
     int ownerInstanceId_{0};
     bool rotateToVelocity_{false};
     bool usesPolarMotion_{false};
+    bool usesTetheredFlail_{false};
     sf::Vector2f polarOrigin_{};
     sf::Vector2f polarOriginVelocity_{};
     float polarRadius_{0.f};
@@ -80,6 +99,14 @@ private:
     float polarAngleRadians_{0.f};
     float radialSpeed_{0.f};
     float angularVelocityRadians_{0.f};
+    sf::Vector2f tetherOrigin_{};
+    float tetherOrbitRadius_{18.f};
+    float tetherThrowRadius_{52.f};
+    sf::Time tetherOrbitDuration_{sf::seconds(3.f)};
+    sf::Time tetherExtendDuration_{sf::seconds(0.25f)};
+    sf::Time tetherHoldDuration_{sf::seconds(0.08f)};
+    sf::Time tetherRetractDuration_{sf::seconds(0.30f)};
+    float tetherAngleRadians_{0.f};
     int damage_{1};
     std::optional<sf::Sprite> sprite_;
 };

@@ -145,12 +145,44 @@
       "id": "enemy_green_cargo_parallel_missiles",
       "type": "spread",
       "fire_interval": 2.0,
-      "bullet_speed": 76.0,
+      "bullet_speed": 86.0,
       "aimed": false,
       "angle_offsets": [0.0, 0.0],
       "spawn_offset_x": [-18.0, 18.0],
       "spawn_offset_y": [0.0, 0.0],
       "bullet": "enemy_cargo_missile"
+    },
+    {
+      "id": "enemy_armored_flail_tether",
+      "type": "tethered_flail",
+      "fire_interval": 9999.0,
+      "bullet": "enemy_tethered_flail",
+      "initial_angle": 0.0,
+      "angular_velocity": 260.0,
+      "rotation_direction": "clockwise",
+      "tether_orbit_radius": 50.0,
+      "tether_throw_radius": 120.0,
+      "tether_orbit_seconds": 3.0,
+      "tether_extend_seconds": 0.28,
+      "tether_hold_seconds": 0.10,
+      "tether_retract_seconds": 0.34,
+      "clear_bullets_on_owner_destroyed": true
+    },
+    {
+      "id": "enemy_armored_flail_tether_counterclockwise",
+      "type": "tethered_flail",
+      "fire_interval": 9999.0,
+      "bullet": "enemy_tethered_flail",
+      "initial_angle": 0.0,
+      "angular_velocity": 260.0,
+      "rotation_direction": "counterclockwise",
+      "tether_orbit_radius": 50.0,
+      "tether_throw_radius": 120.0,
+      "tether_orbit_seconds": 3.0,
+      "tether_extend_seconds": 0.28,
+      "tether_hold_seconds": 0.10,
+      "tether_retract_seconds": 0.34,
+      "clear_bullets_on_owner_destroyed": true
     }
   ]
 }

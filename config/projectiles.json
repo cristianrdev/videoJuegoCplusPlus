@@ -28,6 +28,14 @@
       "visual_width": 1.0,
       "visual_grow_seconds": 1.0,
       "damage": 1
+    },
+    {
+      "id": "enemy_tethered_flail",
+      "texture": "textures/projectiles/enemy_flail_ball.png",
+      "visual_type": "tethered_flail",
+      "visual_width": 14.0,
+      "visual_length": 14.0,
+      "damage": 1
     }
   ]
 }

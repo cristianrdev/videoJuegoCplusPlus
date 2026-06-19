@@ -182,6 +182,12 @@ void BulletPatternSystem::loadFromFile(const std::string& path) {
         pattern.spiralRadiusExpansion = matchFloatOr(object, "spiral_radius_expansion", 0.f);
         pattern.spiralOpenSeconds = matchFloatOr(object, "spiral_open_seconds", 0.f);
         pattern.clusterDuration = matchFloatOr(object, "cluster_duration_seconds", 0.f);
+        pattern.tetherOrbitRadius = matchFloatOr(object, "tether_orbit_radius", pattern.tetherOrbitRadius);
+        pattern.tetherThrowRadius = matchFloatOr(object, "tether_throw_radius", pattern.tetherThrowRadius);
+        pattern.tetherOrbitSeconds = matchFloatOr(object, "tether_orbit_seconds", pattern.tetherOrbitSeconds);
+        pattern.tetherExtendSeconds = matchFloatOr(object, "tether_extend_seconds", pattern.tetherExtendSeconds);
+        pattern.tetherHoldSeconds = matchFloatOr(object, "tether_hold_seconds", pattern.tetherHoldSeconds);
+        pattern.tetherRetractSeconds = matchFloatOr(object, "tether_retract_seconds", pattern.tetherRetractSeconds);
         pattern.bulletsPerSpiral = matchIntOr(object, "bullets_per_spiral", 24);
         pattern.spiralArms = matchIntOr(object, "spiral_arms", 1);
         pattern.fixedSpiralRadius = matchBoolOr(object, "fixed_spiral_radius", false);
@@ -217,7 +223,23 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
 
     auto bullets = std::vector<EnemyBullet>{};
 
-    if (pattern.type == "radial_burst") {
+    if (pattern.type == "tethered_flail") {
+        bullets.emplace_back(EnemyBullet::tetheredFlail(
+            origin,
+            bulletTexture,
+            bulletDamage,
+            visualSize,
+            ownerInstanceId,
+            pattern.tetherOrbitRadius,
+            pattern.tetherThrowRadius,
+            pattern.tetherOrbitSeconds,
+            pattern.tetherExtendSeconds,
+            pattern.tetherHoldSeconds,
+            pattern.tetherRetractSeconds,
+            degreesToRadians(pattern.initialAngle),
+            degreesToRadians(pattern.angularVelocity * pattern.rotationDirection)
+        ));
+    } else if (pattern.type == "radial_burst") {
         bullets.reserve(static_cast<std::size_t>(pattern.rings * pattern.bulletsPerRing));
         const auto rotation = static_cast<float>(pattern.shotCounter) * pattern.rotationPerShot;
 

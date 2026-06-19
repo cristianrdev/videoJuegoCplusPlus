@@ -61,6 +61,12 @@ private:
         float spiralRadiusExpansion{0.f};
         float spiralOpenSeconds{0.f};
         float clusterDuration{0.f};
+        float tetherOrbitRadius{18.f};
+        float tetherThrowRadius{54.f};
+        float tetherOrbitSeconds{3.f};
+        float tetherExtendSeconds{0.25f};
+        float tetherHoldSeconds{0.08f};
+        float tetherRetractSeconds{0.30f};
         int bulletsPerSpiral{24};
         int spiralArms{1};
         bool fixedSpiralRadius{false};

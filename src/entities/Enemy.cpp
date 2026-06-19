@@ -259,6 +259,10 @@ sf::Vector2f Enemy::bulletSpawnPosition() const {
         return position_;
     }
 
+    if (enemyId_ == "enemy_armored_flail_ship") {
+        return position_;
+    }
+
     if (enemyId_ == "enemy_green_cargo_tank") {
         return {position_.x, position_.y + 36.f};
     }

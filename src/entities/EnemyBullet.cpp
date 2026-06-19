@@ -1,6 +1,8 @@
 #include "EnemyBullet.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
 
 #include <algorithm>
 #include <array>
@@ -43,6 +45,23 @@ bool shouldRenderForLifetime(sf::Time age, sf::Time maxLifetime, sf::Time flicke
 
     const auto flickerStep = static_cast<int>(age.asSeconds() / 0.075f);
     return flickerStep % 2 == 0;
+}
+
+float smoothStep(float t) {
+    const auto clamped = std::clamp(t, 0.f, 1.f);
+    return clamped * clamped * (3.f - 2.f * clamped);
+}
+
+float tetherCycleSeconds(
+    sf::Time orbitDuration,
+    sf::Time extendDuration,
+    sf::Time holdDuration,
+    sf::Time retractDuration
+) {
+    return orbitDuration.asSeconds() +
+        extendDuration.asSeconds() +
+        holdDuration.asSeconds() +
+        retractDuration.asSeconds();
 }
 }
 
@@ -138,6 +157,52 @@ EnemyBullet::EnemyBullet(
     };
 }
 
+EnemyBullet EnemyBullet::tetheredFlail(
+    sf::Vector2f origin,
+    const sf::Texture* texture,
+    int damage,
+    sf::Vector2f visualSize,
+    int ownerInstanceId,
+    float orbitRadius,
+    float throwRadius,
+    float orbitSeconds,
+    float extendSeconds,
+    float holdSeconds,
+    float retractSeconds,
+    float initialAngleRadians,
+    float angularVelocityRadians
+) {
+    auto bullet = EnemyBullet(
+        origin,
+        {0.f, 0.f},
+        texture,
+        damage,
+        texture ? "sprite" : "tethered_flail",
+        visualSize,
+        0.f,
+        ownerInstanceId,
+        false,
+        0.f,
+        0.f
+    );
+    bullet.visualType_ = "tethered_flail";
+    bullet.usesTetheredFlail_ = true;
+    bullet.tetherOrigin_ = origin;
+    bullet.tetherOrbitRadius_ = std::max(1.f, orbitRadius);
+    bullet.tetherThrowRadius_ = std::max(bullet.tetherOrbitRadius_, throwRadius);
+    bullet.tetherOrbitDuration_ = sf::seconds(std::max(0.01f, orbitSeconds));
+    bullet.tetherExtendDuration_ = sf::seconds(std::max(0.01f, extendSeconds));
+    bullet.tetherHoldDuration_ = sf::seconds(std::max(0.f, holdSeconds));
+    bullet.tetherRetractDuration_ = sf::seconds(std::max(0.01f, retractSeconds));
+    bullet.tetherAngleRadians_ = initialAngleRadians;
+    bullet.angularVelocityRadians_ = angularVelocityRadians;
+    bullet.position_ = {
+        origin.x + std::sin(initialAngleRadians) * bullet.tetherOrbitRadius_,
+        origin.y + std::cos(initialAngleRadians) * bullet.tetherOrbitRadius_
+    };
+    return bullet;
+}
+
 void EnemyBullet::update(sf::Time deltaTime) {
     age_ += deltaTime;
     if (visualType_ == "pixel_line") {
@@ -161,21 +226,45 @@ void EnemyBullet::update(sf::Time deltaTime) {
         return;
     }
 
+    if (usesTetheredFlail_) {
+        tetherAngleRadians_ += angularVelocityRadians_ * deltaTime.asSeconds();
+        const auto cycle = tetherCycleSeconds(
+            tetherOrbitDuration_,
+            tetherExtendDuration_,
+            tetherHoldDuration_,
+            tetherRetractDuration_
+        );
+        const auto cycleAge = std::fmod(age_.asSeconds(), cycle);
+        const auto orbitSeconds = tetherOrbitDuration_.asSeconds();
+        const auto extendSeconds = tetherExtendDuration_.asSeconds();
+        const auto holdSeconds = tetherHoldDuration_.asSeconds();
+
+        auto radius = tetherOrbitRadius_;
+        if (cycleAge < orbitSeconds) {
+            radius = tetherOrbitRadius_;
+        } else if (cycleAge < orbitSeconds + extendSeconds) {
+            const auto t = (cycleAge - orbitSeconds) / extendSeconds;
+            radius = tetherOrbitRadius_ + (tetherThrowRadius_ - tetherOrbitRadius_) * smoothStep(t);
+        } else if (cycleAge < orbitSeconds + extendSeconds + holdSeconds) {
+            radius = tetherThrowRadius_;
+        } else {
+            const auto t = (cycleAge - orbitSeconds - extendSeconds - holdSeconds) /
+                tetherRetractDuration_.asSeconds();
+            radius = tetherThrowRadius_ + (tetherOrbitRadius_ - tetherThrowRadius_) * smoothStep(t);
+        }
+
+        position_ = {
+            tetherOrigin_.x + std::sin(tetherAngleRadians_) * radius,
+            tetherOrigin_.y + std::cos(tetherAngleRadians_) * radius
+        };
+        return;
+    }
+
     position_ += velocity_ * deltaTime.asSeconds();
 }
 
 void EnemyBullet::render(sf::RenderTarget& target) const {
     if (!shouldRenderForLifetime(age_, maxLifetime_, flickerBeforeDeath_)) {
-        return;
-    }
-
-    if (sprite_) {
-        auto sprite = *sprite_;
-        sprite.setPosition({std::round(position_.x), std::round(position_.y)});
-        if (rotateToVelocity_) {
-            sprite.setRotation(sf::degrees(angleDegrees(velocity_)));
-        }
-        target.draw(sprite);
         return;
     }
 
@@ -199,6 +288,64 @@ void EnemyBullet::render(sf::RenderTarget& target) const {
         return;
     }
 
+    if (visualType_ == "tethered_flail") {
+        const auto delta = position_ - tetherOrigin_;
+        const auto length = std::max(1.f, std::sqrt(delta.x * delta.x + delta.y * delta.y));
+        const auto direction = sf::Vector2f{delta.x / length, delta.y / length};
+        const auto chainSegments = std::max(2, static_cast<int>(length / 5.f));
+        auto link = sf::RectangleShape({3.f, 2.f});
+        link.setOrigin({1.5f, 1.f});
+        link.setRotation(sf::degrees(angleDegrees(direction)));
+
+        for (auto index = 1; index < chainSegments; ++index) {
+            const auto t = static_cast<float>(index) / static_cast<float>(chainSegments);
+            const auto point = tetherOrigin_ + direction * (length * t);
+            link.setPosition({std::round(point.x), std::round(point.y)});
+            link.setFillColor(index % 2 == 0 ? sf::Color(180, 190, 200) : sf::Color(92, 102, 116));
+            target.draw(link);
+        }
+
+        if (sprite_) {
+            auto sprite = *sprite_;
+            sprite.setPosition({std::round(position_.x), std::round(position_.y)});
+            target.draw(sprite);
+            return;
+        }
+
+        const auto radius = std::max(3.f, std::min(size_.x, size_.y) * 0.5f);
+        auto ball = sf::CircleShape(radius, 12);
+        ball.setOrigin({radius, radius});
+        ball.setPosition({std::round(position_.x), std::round(position_.y)});
+        ball.setFillColor(sf::Color(80, 88, 98));
+        ball.setOutlineColor(sf::Color(205, 214, 224));
+        ball.setOutlineThickness(1.f);
+        target.draw(ball);
+
+        for (auto spike = 0; spike < 8; ++spike) {
+            const auto angle = static_cast<float>(spike) * 2.f * Pi / 8.f + tetherAngleRadians_;
+            const auto outward = sf::Vector2f{std::sin(angle), std::cos(angle)};
+            const auto perp = sf::Vector2f{-outward.y, outward.x};
+            const auto base = position_ + outward * (radius - 1.f);
+            auto shape = sf::ConvexShape(3);
+            shape.setPoint(0, base + perp * 2.f);
+            shape.setPoint(1, position_ + outward * (radius + 4.f));
+            shape.setPoint(2, base - perp * 2.f);
+            shape.setFillColor(sf::Color(185, 194, 206));
+            target.draw(shape);
+        }
+        return;
+    }
+
+    if (sprite_) {
+        auto sprite = *sprite_;
+        sprite.setPosition({std::round(position_.x), std::round(position_.y)});
+        if (rotateToVelocity_) {
+            sprite.setRotation(sf::degrees(angleDegrees(velocity_)));
+        }
+        target.draw(sprite);
+        return;
+    }
+
     auto shape = sf::RectangleShape(size_);
     shape.setOrigin({size_.x * 0.5f, size_.y * 0.5f});
     shape.setPosition({std::round(position_.x), std::round(position_.y)});
@@ -219,6 +366,10 @@ bool EnemyBullet::isAlive(sf::Vector2f logicalSize) const {
 
     if (visualType_ == "pixel_line") {
         return age_ <= growDuration_ + sf::seconds(0.28f);
+    }
+
+    if (visualType_ == "tethered_flail") {
+        return true;
     }
 
     return position_.x >= -8.f &&
@@ -265,8 +416,20 @@ bool EnemyBullet::isPixelLine() const {
     return visualType_ == "pixel_line";
 }
 
+bool EnemyBullet::followsOwnerAnchor() const {
+    return usesTetheredFlail_;
+}
+
+bool EnemyBullet::persistsOnHit() const {
+    return usesTetheredFlail_;
+}
+
 void EnemyBullet::setPosition(sf::Vector2f position) {
     position_ = position;
+}
+
+void EnemyBullet::setTetherOrigin(sf::Vector2f origin) {
+    tetherOrigin_ = origin;
 }
 
 int EnemyBullet::ownerInstanceId() const {

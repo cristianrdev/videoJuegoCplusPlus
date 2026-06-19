@@ -29,6 +29,15 @@
       "contact_damage": 0
     },
     {
+      "time": 65.0,
+      "tileset": "earth_like_planet",
+      "tile": 0,
+      "x": 0,
+      "y": -300,
+      "speed_y": 3.0,
+      "contact_damage": 0
+    },
+    {
       "time": 100.0,
       "tileset": "floating_red_rocks",
       "tile": 3,

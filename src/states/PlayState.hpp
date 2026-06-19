@@ -94,6 +94,7 @@ private:
     const sf::Texture* playerExplosionTexture_{nullptr};
     const sf::Texture* enemyHitSparkTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};
+    const sf::Texture* earthLikePlanetTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
     EnemyConfigSystem enemyConfigSystem_;
     EnemySpawner enemySpawner_;

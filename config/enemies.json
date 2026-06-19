@@ -150,6 +150,18 @@
       "blink_health_threshold": 4
     },
     {
+      "id": "enemy_armored_flail_ship",
+      "texture": "textures/enemies/enemy_armored_flail_ship.png",
+      "health": 18,
+      "contact_damage": 3,
+      "hitbox_width": 34.0,
+      "hitbox_height": 52.0,
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 4.0,
+      "blink_enabled": true,
+      "blink_health_threshold": 4
+    },
+    {
       "id": "enemy_cargo_sphere_turret",
       "texture": "textures/enemies/enemy_cargo_sphere_turret.png",
       "health": 6,

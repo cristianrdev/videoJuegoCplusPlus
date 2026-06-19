@@ -44,6 +44,15 @@
       "hitbox_offset_y": 20.0,
       "hitbox_width": 70.0,
       "hitbox_height": 50.0
+    },
+    {
+      "tileset": "earth_like_planet",
+      "tile": 0,
+      "hitbox_shape": "oval",
+      "hitbox_offset_x": 0.0,
+      "hitbox_offset_y": 0.0,
+      "hitbox_width": 0.0,
+      "hitbox_height": 0.0
     }
   ]
 }

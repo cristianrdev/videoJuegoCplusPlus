@@ -82,6 +82,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     itemConfigSystem_.loadStageSpawnsFromFile("config/stage_01_items.json");
 
     floatingRedRocksTexture_ = &assets_.loadTexture("floating_red_rocks_tileset", "textures/background/floating_red_rocks_tileset.png");
+    earthLikePlanetTexture_ = &assets_.loadTexture("earth_like_planet_horizon", "textures/background/earth_like_planet_horizon.png");
     backgroundElementConfigSystem_.loadFromFile("config/background_elements.json");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
@@ -224,13 +225,17 @@ void PlayState::update(sf::Time deltaTime) {
     updateEnemyShooting();
 
     for (auto& bullet : enemyBullets_) {
-        if (!bullet.isPixelLine()) {
+        if (!bullet.isPixelLine() && !bullet.followsOwnerAnchor()) {
             continue;
         }
 
         for (const auto& enemy : enemies_) {
             if (enemy.instanceId() == bullet.ownerInstanceId() && enemy.isAlive()) {
-                bullet.setPosition(enemy.bulletSpawnPosition());
+                if (bullet.followsOwnerAnchor()) {
+                    bullet.setTetherOrigin(enemy.bulletSpawnPosition());
+                } else {
+                    bullet.setPosition(enemy.bulletSpawnPosition());
+                }
                 break;
             }
         }
@@ -272,6 +277,18 @@ void PlayState::update(sf::Time deltaTime) {
             enemyBullets_.begin(),
             enemyBullets_.end(),
             [this](const EnemyBullet& bullet) {
+                if (bullet.followsOwnerAnchor()) {
+                    const auto ownerAlive = std::any_of(
+                        enemies_.begin(),
+                        enemies_.end(),
+                        [&bullet](const Enemy& enemy) {
+                            return enemy.instanceId() == bullet.ownerInstanceId() && enemy.isAlive();
+                        }
+                    );
+                    if (!ownerAlive) {
+                        return true;
+                    }
+                }
                 return !bullet.isAlive(logicalSize_);
             }
         ),
@@ -451,7 +468,13 @@ void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
 }
 
 void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEvent& spawn) {
-    if (spawn.tilesetId != "floating_red_rocks") {
+    const auto* texture = floatingRedRocksTexture_;
+    auto tileSize = sf::Vector2i{100, 100};
+
+    if (spawn.tilesetId == "earth_like_planet") {
+        texture = earthLikePlanetTexture_;
+        tileSize = sf::Vector2i{240, 320};
+    } else if (spawn.tilesetId != "floating_red_rocks") {
         throw std::runtime_error("Tileset de fondo no configurado: " + spawn.tilesetId);
     }
 
@@ -459,9 +482,9 @@ void PlayState::spawnBackgroundElement(const BackgroundElementDirector::SpawnEve
     backgroundElements_.emplace_back(
         sf::Vector2f{spawn.x, spawn.y},
         spawn.speedY,
-        *floatingRedRocksTexture_,
+        *texture,
         spawn.tileIndex,
-        sf::Vector2i{100, 100},
+        tileSize,
         elementConfig.hitboxShape,
         elementConfig.hitboxOffset,
         elementConfig.hitboxSize,
