@@ -8,19 +8,19 @@
 
 class LaserNormal {
 public:
-    LaserNormal(sf::Vector2f position, const sf::Texture& texture, float speed, int damage);
+    LaserNormal(sf::Vector2f position, const sf::Texture& texture, float speed, float damage);
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
 
     bool isAlive() const;
     sf::FloatRect hitbox() const;
-    int damage() const;
+    float damage() const;
 
 private:
     sf::Vector2f position_;
     sf::Vector2f size_{4.f, 12.f};
     float speed_{0.f};
-    int damage_{0};
+    float damage_{0.f};
     sf::Sprite sprite_;
 };

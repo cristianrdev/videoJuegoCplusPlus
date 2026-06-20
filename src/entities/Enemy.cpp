@@ -185,8 +185,8 @@ void Enemy::render(sf::RenderTarget& target, bool showHitbox) const {
     }
 }
 
-void Enemy::takeDamage(int damage) {
-    health_ = std::max(0, health_ - damage);
+void Enemy::takeDamage(float damage) {
+    health_ = std::max(0.f, health_ - damage);
 }
 
 void Enemy::setPosition(sf::Vector2f position) {

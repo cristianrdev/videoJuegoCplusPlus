@@ -30,7 +30,7 @@ public:
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target, bool showHitbox = false) const;
-    void takeDamage(int damage);
+    void takeDamage(float damage);
     void setPosition(sf::Vector2f position);
     void setRotationDegrees(float degrees);
     void lockMovementTargetPosition(sf::Vector2f position);
@@ -68,7 +68,7 @@ private:
     std::string hitboxShape_{"square"};
     sf::Vector2f visualSize_{24.f, 24.f};
     int instanceId_{0};
-    int health_{3};
+    float health_{3.f};
     int contactDamage_{0};
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};

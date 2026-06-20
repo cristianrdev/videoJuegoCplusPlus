@@ -16,7 +16,7 @@ public:
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
-    void takeDamage(int damage);
+    void takeDamage(float damage);
 
     bool isAlive(sf::Vector2f logicalSize) const;
     bool isDestroyed() const;
@@ -28,7 +28,7 @@ private:
     sf::Vector2f position_;
     sf::Vector2f hitboxSize_;
     float speedY_{0.f};
-    int health_{0};
+    float health_{0.f};
     std::string dropId_;
     sf::Sprite sprite_;
 };

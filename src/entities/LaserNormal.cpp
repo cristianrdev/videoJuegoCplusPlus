@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-LaserNormal::LaserNormal(sf::Vector2f position, const sf::Texture& texture, float speed, int damage)
+LaserNormal::LaserNormal(sf::Vector2f position, const sf::Texture& texture, float speed, float damage)
     : position_(position)
     , speed_(speed)
     , damage_(damage)
@@ -39,6 +39,6 @@ sf::FloatRect LaserNormal::hitbox() const {
     };
 }
 
-int LaserNormal::damage() const {
+float LaserNormal::damage() const {
     return damage_;
 }

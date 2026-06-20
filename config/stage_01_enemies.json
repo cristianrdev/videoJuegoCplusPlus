@@ -1,7 +1,6 @@
 {
   "stage": "stage_01",
   "spawns": [
-
     {
       "time": 5.0,
       "enemy": "enemy_turret_pod",
@@ -524,6 +523,60 @@
       "pattern": "enemy_rock_turret_fast_small",
       "movement": "mech_spider_random_zigzag"
     },
+
+
+
+ {
+      "time": 60.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 70,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether",
+      "movement": "slow_drop"
+    },
+    {
+      "time": 60.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 180,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether_counterclockwise",
+      "movement": "slow_drop"
+    },
+
+ {
+      "time": 65.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 70,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether",
+      "movement": "slow_drop"
+    },
+    {
+      "time": 65.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 180,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether_counterclockwise",
+      "movement": "slow_drop"
+    },
+ {
+      "time": 70.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 70,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether",
+      "movement": "slow_drop"
+    },
+    {
+      "time": 70.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 180,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether_counterclockwise",
+      "movement": "slow_drop"
+    },
+
+
     {
       "time": 60.0,
       "enemy": "enemy_mech_spider",
@@ -599,22 +652,7 @@
 
 
 
-     {
-      "time": 74.0,
-      "enemy": "enemy_armored_flail_ship",
-      "x": 70,
-      "y": -56,
-      "pattern": "enemy_armored_flail_tether",
-      "movement": "slow_drop"
-    },
-    {
-      "time": 74.0,
-      "enemy": "enemy_armored_flail_ship",
-      "x": 180,
-      "y": -56,
-      "pattern": "enemy_armored_flail_tether_counterclockwise",
-      "movement": "slow_drop"
-    },
+
 
 
 

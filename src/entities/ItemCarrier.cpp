@@ -27,8 +27,8 @@ void ItemCarrier::render(sf::RenderTarget& target) const {
     target.draw(sprite);
 }
 
-void ItemCarrier::takeDamage(int damage) {
-    health_ = std::max(0, health_ - damage);
+void ItemCarrier::takeDamage(float damage) {
+    health_ = std::max(0.f, health_ - damage);
 }
 
 bool ItemCarrier::isAlive(sf::Vector2f logicalSize) const {

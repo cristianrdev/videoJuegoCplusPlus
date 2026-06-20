@@ -57,6 +57,10 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - tamano: `192x96`
   - frames: 3 frames horizontales de `64x96`
   - estilo: explosion grande con humo oliva, fuego amarillo/naranja y fragmentos verdes del tanque.
+- `enemy_green_cargo_tank` dispara `enemy_cargo_missile` con el mismo comportamiento de `enemy_green_cargo_parallel_missiles`, pero el visual aprobado ahora es un laser naranja vertical.
+  - asset: `assets/textures/projectiles/enemy_cargo_missile.png`
+  - tamano: `8x26`
+  - estilo: borde naranja, cuerpo naranja intenso y nucleo amarillo alargado.
 - En `PlayState`, los proyectiles enemigos ya no se eliminan repentinamente cuando se destruye la nave.
   - `enemyBullets_` sigue actualizandose durante el estado `playerDestroyed_`.
   - Las balas se limpian solo cuando dejan de estar vivas/salen del area logica.
@@ -71,6 +75,8 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
 - La nave inicia con laser doble mediante `initial_projectile_count: 2` en `config/player.json`.
   - `Player` limita ese valor entre 1 y 8.
   - Los power-ups `P` siguen duplicando el conteo hasta 8.
+  - El dano por proyectil se balancea con `projectile_damage_by_count`: `1=1.0`, `2=1.0`, `4=0.65`, `6=0.50`, `8=0.42`.
+  - Si no hay valor para la cantidad actual, se usa `laser_damage`.
 - Se preparo un patron data-driven `enemy_armored_flail_tether` de tipo `tethered_flail`.
   - El mangual sigue anclado al enemigo, orbita, se extiende cada 3 segundos, se retrae y vuelve a orbitar.
   - La cadena se renderiza desde runtime y la bola persiste al golpear al jugador.

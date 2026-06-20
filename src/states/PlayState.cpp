@@ -407,12 +407,14 @@ void PlayState::fireLaserNormal() {
 
     const auto& config = playerConfigSystem_.config();
     const auto spawn = player_->laserSpawnPosition();
-    for (const auto offset : playerProjectileOffsets(player_->projectileCount())) {
+    const auto projectileCount = player_->projectileCount();
+    const auto projectileDamage = config.laserDamageForProjectileCount(projectileCount);
+    for (const auto offset : playerProjectileOffsets(projectileCount)) {
         playerLasers_.emplace_back(
             sf::Vector2f{spawn.x + offset.x, spawn.y + offset.y},
             *laserNormalTexture_,
             config.laserSpeed,
-            config.laserDamage
+            projectileDamage
         );
     }
     fireCooldown_ = sf::seconds(config.fireCooldownSeconds);

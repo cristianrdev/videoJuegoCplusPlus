@@ -33,7 +33,8 @@ Los valores de posicion, velocidad, tamano y offsets se expresan en pixeles logi
 | `fire_cooldown_seconds` | float | segundos | Cadencia de disparo. Tiempo minimo entre disparos normales. Menor valor significa disparar mas rapido. |
 | `muzzle_flash_seconds` | float | segundos | Duracion visible del fogueo al disparar. |
 | `laser_speed` | float | px/s | Velocidad vertical del laser normal de la nave. |
-| `laser_damage` | int | puntos | Dano que causa cada laser normal al impactar un enemigo. |
+| `laser_damage` | float | puntos | Dano base que causa cada laser normal al impactar un enemigo. Se usa como fallback si no hay entrada en `projectile_damage_by_count`. |
+| `projectile_damage_by_count` | object | puntos | Dano por proyectil segun la cantidad de lasers activos. Las claves son cantidades como `"2"`, `"4"`, `"6"` y `"8"`. |
 | `thruster_animation_seconds` | float | segundos/frame | Duracion de cada frame de la animacion de las toberas. Menor valor anima mas rapido. |
 | `thruster_frame_width` | int | px | Ancho de cada frame dentro del sprite sheet de toberas. |
 | `thruster_frame_height` | int | px | Alto maximo de cada frame dentro del sprite sheet de toberas. |
@@ -86,6 +87,20 @@ Ejemplos aproximados:
 
 Cada proyectil de la nave quitara mas vida a los enemigos.
 
+### Ajustar Dano Por Cantidad De Proyectiles
+
+```json
+"projectile_damage_by_count": {
+  "1": 1.0,
+  "2": 1.0,
+  "4": 0.65,
+  "6": 0.50,
+  "8": 0.42
+}
+```
+
+Permite que el power-up aumente la cobertura visual sin duplicar el dano total de golpe. Si la cantidad actual de proyectiles no existe en esta tabla, se usa `laser_damage`.
+
 ### Aumentar La Velocidad Del Laser
 
 ```json
@@ -113,7 +128,7 @@ La hitbox debe permanecer pequena y centrada para mantener una sensacion justa d
 
 ## Notas De Balance
 
-- `speed`, `fire_cooldown_seconds`, `laser_speed` y `laser_damage` afectan directamente la dificultad.
+- `speed`, `fire_cooldown_seconds`, `laser_speed`, `laser_damage` y `projectile_damage_by_count` afectan directamente la dificultad.
 - Cambiar `laser_damage` puede volver inutiles enemigos con poca vida si no se ajusta `config/enemies.json`.
 - Cambiar `fire_cooldown_seconds` tambien puede afectar rendimiento si se generan demasiados proyectiles.
 - Para un shmup arcade vertical, es recomendable que la nave sea rapida pero precisa, y que la hitbox sea mas pequena que el sprite visual.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 struct PlayerConfig {
     std::string shipTexture{"textures/player/player_ship_red_triangle_test.png"};
@@ -22,7 +23,8 @@ struct PlayerConfig {
     float muzzleFlashSeconds{0.06f};
     float damageInvincibilitySeconds{1.f};
     float laserSpeed{260.f};
-    int laserDamage{1};
+    float laserDamage{1.f};
+    std::unordered_map<int, float> projectileDamageByCount;
     float thrusterAnimationSeconds{0.06f};
     int thrusterFrameWidth{8};
     int thrusterFrameHeight{12};
@@ -32,6 +34,8 @@ struct PlayerConfig {
     float thrusterLeftOffsetX{-3.f};
     float thrusterRightOffsetX{3.f};
     float thrusterOffsetY{13.f};
+
+    float laserDamageForProjectileCount(int projectileCount) const;
 };
 
 class PlayerConfigSystem {

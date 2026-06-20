@@ -4,6 +4,7 @@
 #include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace {
 std::string readTextFile(const std::string& path) {
@@ -46,6 +47,38 @@ int matchIntOr(const std::string& text, const std::string& field, int fallback) 
 
     return std::stoi(match[1].str());
 }
+
+std::unordered_map<int, float> matchDamageMapOr(
+    const std::string& text,
+    const std::string& field,
+    const std::unordered_map<int, float>& fallback
+) {
+    const auto objectPattern = std::regex("\"" + field + "\"\\s*:\\s*\\{([\\s\\S]*?)\\}");
+    auto objectMatch = std::smatch{};
+    if (!std::regex_search(text, objectMatch, objectPattern)) {
+        return fallback;
+    }
+
+    auto values = std::unordered_map<int, float>{};
+    const auto object = objectMatch[1].str();
+    const auto pairPattern = std::regex("\"(\\d+)\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)");
+    const auto begin = std::sregex_iterator(object.begin(), object.end(), pairPattern);
+    const auto end = std::sregex_iterator{};
+    for (auto it = begin; it != end; ++it) {
+        values[std::stoi((*it)[1].str())] = std::stof((*it)[2].str());
+    }
+
+    return values.empty() ? fallback : values;
+}
+}
+
+float PlayerConfig::laserDamageForProjectileCount(int projectileCount) const {
+    const auto it = projectileDamageByCount.find(projectileCount);
+    if (it != projectileDamageByCount.end()) {
+        return it->second;
+    }
+
+    return laserDamage;
 }
 
 void PlayerConfigSystem::loadFromFile(const std::string& path) {
@@ -70,7 +103,8 @@ void PlayerConfigSystem::loadFromFile(const std::string& path) {
     config_.muzzleFlashSeconds = matchFloatOr(text, "muzzle_flash_seconds", config_.muzzleFlashSeconds);
     config_.damageInvincibilitySeconds = matchFloatOr(text, "damage_invincibility_seconds", config_.damageInvincibilitySeconds);
     config_.laserSpeed = matchFloatOr(text, "laser_speed", config_.laserSpeed);
-    config_.laserDamage = matchIntOr(text, "laser_damage", config_.laserDamage);
+    config_.laserDamage = matchFloatOr(text, "laser_damage", config_.laserDamage);
+    config_.projectileDamageByCount = matchDamageMapOr(text, "projectile_damage_by_count", config_.projectileDamageByCount);
     config_.thrusterAnimationSeconds = matchFloatOr(text, "thruster_animation_seconds", config_.thrusterAnimationSeconds);
     config_.thrusterFrameWidth = matchIntOr(text, "thruster_frame_width", config_.thrusterFrameWidth);
     config_.thrusterFrameHeight = matchIntOr(text, "thruster_frame_height", config_.thrusterFrameHeight);

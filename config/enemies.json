@@ -54,7 +54,7 @@
     {
       "id": "enemy_metal_squid",
       "texture": "textures/enemies/enemy_metal_squid.png",
-      "health": 15,
+      "health": 10,
       "contact_damage": 3,
       "hitbox_width": 17.0,
       "hitbox_height": 22.0,
@@ -165,7 +165,7 @@
     {
       "id": "enemy_armored_flail_ship",
       "texture": "textures/enemies/enemy_armored_flail_ship.png",
-      "health": 18,
+      "health": 25,
       "contact_damage": 3,
       "hitbox_width": 34.0,
       "hitbox_height": 52.0,
