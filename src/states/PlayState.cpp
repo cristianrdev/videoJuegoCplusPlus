@@ -66,6 +66,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
     explosionGreenCargoTankTexture_ = &assets_.loadTexture("explosion_enemy_green_cargo_tank", "textures/effects/explosion_enemy_green_cargo_tank.png");
     explosionMechanicalSpikedShellTexture_ = &assets_.loadTexture("explosion_enemy_mechanical_spiked_shell", "textures/effects/explosion_enemy_mechanical_spiked_shell.png");
+    explosionArmoredFlailShipTexture_ = &assets_.loadTexture("explosion_enemy_armored_flail_ship", "textures/effects/explosion_enemy_armored_flail_ship.png");
     playerExplosionTexture_ = &assets_.loadTexture("explosion_player_ship", "textures/effects/player_ship_destroy_explosion.png");
     enemyHitSparkTexture_ = &assets_.loadTexture("enemy_hit_spark", "textures/effects/enemy_hit_spark.png");
 
@@ -532,6 +533,17 @@ void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position
         return;
     }
 
+    if (enemyId == "enemy_armored_flail_ship" && explosionArmoredFlailShipTexture_) {
+        explosions_.emplace_back(
+            position,
+            *explosionArmoredFlailShipTexture_,
+            sf::Vector2i{64, 80},
+            3,
+            sf::seconds(0.08f)
+        );
+        return;
+    }
+
     auto texture = explosionDroneTexture_;
 
     if (enemyId == "enemy_turret_pod") {
@@ -581,7 +593,9 @@ void PlayState::updateEnemyShooting() {
     }
 
     for (auto& enemy : enemies_) {
-        if (!enemy.shouldFire()) {
+        const auto shouldFirePrimary = enemy.shouldFire();
+        const auto shouldFireSecondary = enemy.shouldFireSecondary();
+        if (!shouldFirePrimary && !shouldFireSecondary) {
             continue;
         }
 
@@ -599,34 +613,43 @@ void PlayState::updateEnemyShooting() {
             continue;
         }
 
-        if (bulletPatternSystem_.patternType(enemy.patternId()) == "continuous_laser") {
-            const auto origin = enemy.bulletSpawnPosition();
-            const auto length = std::max(0.f, logicalSize_.y - origin.y);
-            const auto duration = sf::seconds(bulletPatternSystem_.laserDuration(enemy.patternId()));
-            const auto* laserTexture = laserTextureForPattern(enemy.patternId());
-            if (length > 0.f && laserTexture) {
-                enemyLasers_.emplace_back(origin, length, duration, *laserTexture, laserDamageForPattern(enemy.patternId()));
-                enemy.startFiringVisual(duration);
-            }
+        if (shouldFirePrimary) {
+            spawnEnemyPattern(enemy, enemy.patternId(), enemy.bulletSpawnPosition());
             enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
-            continue;
         }
 
-        auto bullets = bulletPatternSystem_.spawn(
-            enemy.patternId(),
-            enemy.bulletSpawnPosition(),
-            player_->position(),
-            bulletTextureForPattern(enemy.patternId()),
-            bulletDamageForPattern(enemy.patternId()),
-            bulletVisualTypeForPattern(enemy.patternId()),
-            bulletVisualSizeForPattern(enemy.patternId()),
-            bulletVisualGrowSecondsForPattern(enemy.patternId()),
-            enemy.instanceId(),
-            bulletRotateToVelocityForPattern(enemy.patternId())
-        );
-        enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
-        enemy.resetFireTimer(bulletPatternSystem_.fireInterval(enemy.patternId()));
+        if (shouldFireSecondary) {
+            spawnEnemyPattern(enemy, enemy.secondaryPatternId(), enemy.secondaryBulletSpawnPosition());
+            enemy.resetSecondaryFireTimer(bulletPatternSystem_.fireInterval(enemy.secondaryPatternId()));
+        }
     }
+}
+
+void PlayState::spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf::Vector2f origin) {
+    if (bulletPatternSystem_.patternType(patternId) == "continuous_laser") {
+        const auto length = std::max(0.f, logicalSize_.y - origin.y);
+        const auto duration = sf::seconds(bulletPatternSystem_.laserDuration(patternId));
+        const auto* laserTexture = laserTextureForPattern(patternId);
+        if (length > 0.f && laserTexture) {
+            enemyLasers_.emplace_back(origin, length, duration, *laserTexture, laserDamageForPattern(patternId));
+            enemy.startFiringVisual(duration);
+        }
+        return;
+    }
+
+    auto bullets = bulletPatternSystem_.spawn(
+        patternId,
+        origin,
+        player_->position(),
+        bulletTextureForPattern(patternId),
+        bulletDamageForPattern(patternId),
+        bulletVisualTypeForPattern(patternId),
+        bulletVisualSizeForPattern(patternId),
+        bulletVisualGrowSecondsForPattern(patternId),
+        enemy.instanceId(),
+        bulletRotateToVelocityForPattern(patternId)
+    );
+    enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
 }
 
 void PlayState::updateCollisions() {
@@ -666,8 +689,11 @@ void PlayState::processEvents() {
             if (enemyDestroyed->enemyId == "enemy_green_cargo_tank") {
                 destroyMountedCargoSphere(enemyDestroyed->position);
             }
-            if (enemyDestroyed->enemyId != "enemy_cargo_sphere_turret" &&
-                bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId)) {
+            const auto secondaryPattern = enemyConfigSystem_.secondaryPatternFor(enemyDestroyed->enemyId);
+            const auto clearPrimary = bulletPatternSystem_.clearBulletsOnOwnerDestroyed(enemyDestroyed->patternId);
+            const auto clearSecondary = secondaryPattern != "none" &&
+                bulletPatternSystem_.clearBulletsOnOwnerDestroyed(secondaryPattern);
+            if (enemyDestroyed->enemyId != "enemy_cargo_sphere_turret" && (clearPrimary || clearSecondary)) {
                 enemyBullets_.erase(
                     std::remove_if(
                         enemyBullets_.begin(),

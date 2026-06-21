@@ -36,6 +36,8 @@ Enemy EnemySpawner::spawn(const StageDirector::SpawnEvent& spawn) const {
         enemyConfigSystem_.hitboxShapeFor(spawn.enemyId),
         enemyConfigSystem_.hitboxSizeFor(spawn.enemyId),
         enemyConfigSystem_.hitboxOffsetFor(spawn.enemyId),
+        enemyConfigSystem_.secondaryPatternFor(spawn.enemyId),
+        enemyConfigSystem_.secondarySpawnOffsetFor(spawn.enemyId),
         enemyConfigSystem_.blinkEnabledFor(spawn.enemyId),
         enemyConfigSystem_.blinkHealthThresholdFor(spawn.enemyId)
     );

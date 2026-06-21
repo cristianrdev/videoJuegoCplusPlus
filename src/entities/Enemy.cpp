@@ -53,6 +53,8 @@ Enemy::Enemy(
     std::string hitboxShape,
     sf::Vector2f configuredHitboxSize,
     sf::Vector2f configuredHitboxOffset,
+    std::string secondaryPatternId,
+    sf::Vector2f secondarySpawnOffset,
     bool blinkEnabled,
     int blinkHealthThreshold
 )
@@ -66,6 +68,8 @@ Enemy::Enemy(
     , blinkHealthThreshold_(blinkHealthThreshold)
     , enemyId_(std::move(enemyId))
     , patternId_(std::move(patternId))
+    , secondaryPatternId_(std::move(secondaryPatternId))
+    , secondarySpawnOffset_(secondarySpawnOffset)
     , movementId_(std::move(movementId))
     , sprite_(texture) {
     if (enemyId_ == "enemy_robot_fish") {
@@ -125,6 +129,7 @@ Enemy::Enemy(
 void Enemy::update(sf::Time deltaTime) {
     elapsed_ += deltaTime;
     fireTimer_ -= deltaTime;
+    secondaryFireTimer_ -= deltaTime;
     firingVisualTime_ -= deltaTime;
     if (firingVisualTime_ < sf::Time::Zero) {
         firingVisualTime_ = sf::Time::Zero;
@@ -234,12 +239,20 @@ bool Enemy::shouldFire() const {
     return !patternId_.empty() && patternId_ != "none" && fireTimer_ <= sf::Time::Zero;
 }
 
+bool Enemy::shouldFireSecondary() const {
+    return !secondaryPatternId_.empty() && secondaryPatternId_ != "none" && secondaryFireTimer_ <= sf::Time::Zero;
+}
+
 int Enemy::contactDamage() const {
     return contactDamage_;
 }
 
 void Enemy::resetFireTimer(float intervalSeconds) {
     fireTimer_ = sf::seconds(intervalSeconds);
+}
+
+void Enemy::resetSecondaryFireTimer(float intervalSeconds) {
+    secondaryFireTimer_ = sf::seconds(intervalSeconds);
 }
 
 void Enemy::startFiringVisual(sf::Time duration) {
@@ -289,6 +302,10 @@ sf::Vector2f Enemy::bulletSpawnPosition() const {
     }
 
     return {position_.x, position_.y + size_.y * 0.5f};
+}
+
+sf::Vector2f Enemy::secondaryBulletSpawnPosition() const {
+    return position_ + secondarySpawnOffset_;
 }
 
 sf::Vector2f Enemy::position() const {
@@ -378,6 +395,10 @@ const std::string& Enemy::enemyId() const {
 
 const std::string& Enemy::patternId() const {
     return patternId_;
+}
+
+const std::string& Enemy::secondaryPatternId() const {
+    return secondaryPatternId_;
 }
 
 const std::string& Enemy::movementId() const {

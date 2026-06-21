@@ -24,6 +24,8 @@ public:
         std::string hitboxShape,
         sf::Vector2f configuredHitboxSize,
         sf::Vector2f configuredHitboxOffset,
+        std::string secondaryPatternId,
+        sf::Vector2f secondarySpawnOffset,
         bool blinkEnabled,
         int blinkHealthThreshold
     );
@@ -43,11 +45,14 @@ public:
 
     bool isAlive() const;
     bool shouldFire() const;
+    bool shouldFireSecondary() const;
     int contactDamage() const;
     void resetFireTimer(float intervalSeconds);
+    void resetSecondaryFireTimer(float intervalSeconds);
     void startFiringVisual(sf::Time duration);
     bool shouldRenderNegative() const;
     sf::Vector2f bulletSpawnPosition() const;
+    sf::Vector2f secondaryBulletSpawnPosition() const;
     sf::Vector2f position() const;
     sf::Vector2f startPosition() const;
     sf::Time elapsed() const;
@@ -56,6 +61,7 @@ public:
     int instanceId() const;
     const std::string& enemyId() const;
     const std::string& patternId() const;
+    const std::string& secondaryPatternId() const;
     const std::string& movementId() const;
 
 private:
@@ -72,6 +78,7 @@ private:
     int contactDamage_{0};
     sf::Time elapsed_{sf::Time::Zero};
     sf::Time fireTimer_{sf::Time::Zero};
+    sf::Time secondaryFireTimer_{sf::Time::Zero};
     sf::Time firingVisualTime_{sf::Time::Zero};
     std::optional<sf::Vector2f> movementTargetPosition_;
     std::optional<sf::Vector2f> movementHoldPosition_;
@@ -81,6 +88,8 @@ private:
     int blinkHealthThreshold_{0};
     std::string enemyId_;
     std::string patternId_;
+    std::string secondaryPatternId_{"none"};
+    sf::Vector2f secondarySpawnOffset_{0.f, 0.f};
     std::string movementId_;
     sf::Sprite sprite_;
 };

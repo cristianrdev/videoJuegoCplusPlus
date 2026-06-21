@@ -91,6 +91,11 @@ void EnemyConfigSystem::loadFromFile(const std::string& path) {
             matchFloat(object, "hitbox_offset_x", 0.f),
             matchFloat(object, "hitbox_offset_y", 0.f)
         };
+        config.secondaryPattern = matchString(object, "secondary_pattern", "none");
+        config.secondarySpawnOffset = {
+            matchFloat(object, "secondary_spawn_offset_x", 0.f),
+            matchFloat(object, "secondary_spawn_offset_y", 0.f)
+        };
         config.blinkEnabled = matchBool(object, "blink_enabled", false);
         config.blinkHealthThreshold = matchInt(object, "blink_health_threshold", 0);
         configs_[config.id] = std::move(config);
@@ -163,6 +168,25 @@ int EnemyConfigSystem::blinkHealthThresholdFor(const std::string& enemyId) const
     }
 
     return it->second.blinkHealthThreshold;
+}
+
+const std::string& EnemyConfigSystem::secondaryPatternFor(const std::string& enemyId) const {
+    static const auto fallback = std::string{"none"};
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return fallback;
+    }
+
+    return it->second.secondaryPattern;
+}
+
+sf::Vector2f EnemyConfigSystem::secondarySpawnOffsetFor(const std::string& enemyId) const {
+    const auto it = configs_.find(enemyId);
+    if (it == configs_.end()) {
+        return {0.f, 0.f};
+    }
+
+    return it->second.secondarySpawnOffset;
 }
 
 const std::string& EnemyConfigSystem::texturePathFor(const std::string& enemyId) const {

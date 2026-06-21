@@ -59,6 +59,7 @@ private:
     void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
     void destroyMountedCargoSphere(sf::Vector2f tankPosition);
     void updateEnemyShooting();
+    void spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf::Vector2f origin);
     void updateCollisions();
     void processEvents();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
@@ -92,6 +93,7 @@ private:
     const sf::Texture* explosionInterceptorTexture_{nullptr};
     const sf::Texture* explosionGreenCargoTankTexture_{nullptr};
     const sf::Texture* explosionMechanicalSpikedShellTexture_{nullptr};
+    const sf::Texture* explosionArmoredFlailShipTexture_{nullptr};
     const sf::Texture* playerExplosionTexture_{nullptr};
     const sf::Texture* enemyHitSparkTexture_{nullptr};
     const sf::Texture* floatingRedRocksTexture_{nullptr};

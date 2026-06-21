@@ -16,6 +16,8 @@ public:
     const std::string& hitboxShapeFor(const std::string& enemyId) const;
     bool blinkEnabledFor(const std::string& enemyId) const;
     int blinkHealthThresholdFor(const std::string& enemyId) const;
+    const std::string& secondaryPatternFor(const std::string& enemyId) const;
+    sf::Vector2f secondarySpawnOffsetFor(const std::string& enemyId) const;
     const std::string& texturePathFor(const std::string& enemyId) const;
     std::vector<std::string> enemyIds() const;
 
@@ -28,6 +30,8 @@ private:
         std::string hitboxShape{"square"};
         sf::Vector2f hitboxSize{0.f, 0.f};
         sf::Vector2f hitboxOffset{0.f, 0.f};
+        std::string secondaryPattern{"none"};
+        sf::Vector2f secondarySpawnOffset{0.f, 0.f};
         bool blinkEnabled{false};
         int blinkHealthThreshold{0};
     };

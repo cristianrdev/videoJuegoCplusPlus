@@ -81,8 +81,11 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - El mangual sigue anclado al enemigo, orbita, se extiende cada 3 segundos, se retrae y vuelve a orbitar.
   - La cadena se renderiza desde runtime y la bola persiste al golpear al jugador.
   - El enemigo aprobado se integro como `enemy_armored_flail_ship`.
+  - `enemy_armored_flail_ship` tambien usa `secondary_pattern: enemy_mecha_butterfly_aimed_random_cone` desde la punta de la nariz con offset `(0, 34)`.
+  - Los enemigos soportan `secondary_pattern` con timer independiente y `secondary_spawn_offset_x/y` desde `config/enemies.json`.
   - Asset nave: `assets/textures/enemies/enemy_armored_flail_ship.png`, 56x80, nariz hacia abajo y cohetes arriba.
   - Asset bola: `assets/textures/projectiles/enemy_flail_ball.png`, 18x18.
+  - Explosion propia: `assets/textures/effects/explosion_enemy_armored_flail_ship.png`, 192x80, 3 frames de 64x80, paleta de acero/plata con chispas azules y nucleo naranja.
   - Spawn de prueba en `config/stage_01_enemies.json` al tiempo 30.0.
 - Se integro un planeta tipo Tierra como background element.
   - Asset: `assets/textures/background/earth_like_planet_horizon.png`, 240x320.
