@@ -324,30 +324,7 @@
     },
 
 
-    {
-      "time": 68.0,
-      "enemy": "enemy_metal_squid",
-      "x": 100,
-      "y": -24,
-      "pattern": "enemy_metal_squid_flower_orbs",
-      "movement": "metal_squid_cosine_medium"
-    },
-    {
-      "time": 72.0,
-      "enemy": "enemy_metal_squid",
-      "x": 140,
-      "y": -24,
-      "pattern": "enemy_metal_squid_flower_orbs",
-      "movement": "metal_squid_cosine_medium"
-    },
-    {
-      "time": 76.0,
-      "enemy": "enemy_metal_squid",
-      "x": 140,
-      "y": -24,
-      "pattern": "enemy_metal_squid_flower_orbs",
-      "movement": "metal_squid_cosine_medium"
-    },
+
     {
       "time": 28.8,
       "enemy": "enemy_hex_rock_turret_big",
@@ -526,6 +503,62 @@
 
 
 
+
+
+
+        {
+      "time": 65.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 20,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+    {
+      "time": 65.8,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 220,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+        {
+      "time": 75.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 20,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+    {
+      "time": 75.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 220,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+        {
+      "time": 85.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 20,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+    {
+      "time": 85.0,
+      "enemy": "enemy_green_rotor_drone",
+      "x": 220,
+      "y": -26,
+      "pattern": "enemy_rock_turret_fast_small",
+      "movement": "green_rotor_drone_approach_y_hold_retreat"
+    },
+
+
+
+
+
  {
       "time": 60.0,
       "enemy": "enemy_armored_flail_ship",
@@ -544,7 +577,7 @@
     },
 
  {
-      "time": 65.0,
+      "time": 70.0,
       "enemy": "enemy_armored_flail_ship",
       "x": 70,
       "y": -56,
@@ -552,7 +585,7 @@
       "movement": "slow_drop"
     },
     {
-      "time": 65.0,
+      "time": 70.0,
       "enemy": "enemy_armored_flail_ship",
       "x": 180,
       "y": -56,
@@ -560,7 +593,7 @@
       "movement": "slow_drop"
     },
  {
-      "time": 70.0,
+      "time": 80.0,
       "enemy": "enemy_armored_flail_ship",
       "x": 70,
       "y": -56,
@@ -568,7 +601,23 @@
       "movement": "slow_drop"
     },
     {
-      "time": 70.0,
+      "time": 80.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 180,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether_counterclockwise",
+      "movement": "slow_drop"
+    },
+ {
+      "time": 90.0,
+      "enemy": "enemy_armored_flail_ship",
+      "x": 70,
+      "y": -56,
+      "pattern": "enemy_armored_flail_tether",
+      "movement": "slow_drop"
+    },
+    {
+      "time": 90.0,
       "enemy": "enemy_armored_flail_ship",
       "x": 180,
       "y": -56,
@@ -685,5 +734,33 @@
       "pattern": "enemy_mecha_butterfly_aimed_random_cone",
       "movement": "mecha_butterfly_center_hold"
     }
+
+
+
+
+    {
+      "time": 168.0,
+      "enemy": "enemy_metal_squid",
+      "x": 100,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
+    },
+    {
+      "time": 172.0,
+      "enemy": "enemy_metal_squid",
+      "x": 140,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
+    },
+    {
+      "time": 176.0,
+      "enemy": "enemy_metal_squid",
+      "x": 140,
+      "y": -24,
+      "pattern": "enemy_metal_squid_flower_orbs",
+      "movement": "metal_squid_cosine_medium"
+    },
   ]
 }
