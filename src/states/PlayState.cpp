@@ -10,6 +10,8 @@
 namespace {
 constexpr auto PlayerDeathExplosionSeconds = 0.21f;
 constexpr auto GameOverDelaySeconds = 3.0f;
+constexpr auto StarfieldFadeStartSeconds = 64.0f;
+constexpr auto StarfieldFadeDurationSeconds = 6.0f;
 constexpr auto Pi = 3.14159265358979323846f;
 
 std::vector<sf::Vector2f> playerProjectileOffsets(int projectileCount) {
@@ -41,6 +43,15 @@ float rotationDegreesFacingTarget(sf::Vector2f from, sf::Vector2f target) {
     }
 
     return -std::atan2(delta.x, delta.y) * 180.f / Pi;
+}
+
+float starfieldOpacityForStageTime(sf::Time stageTime) {
+    const auto fadeElapsed = stageTime.asSeconds() - StarfieldFadeStartSeconds;
+    if (fadeElapsed <= 0.f) {
+        return 1.f;
+    }
+
+    return 1.f - std::clamp(fadeElapsed / StarfieldFadeDurationSeconds, 0.f, 1.f);
 }
 }
 
@@ -128,6 +139,7 @@ void PlayState::update(sf::Time deltaTime) {
     }
 
     stageClock_ += deltaTime;
+    starfield_.setOpacity(starfieldOpacityForStageTime(stageClock_));
 
     if (fireCooldown_ > sf::Time::Zero) {
         fireCooldown_ -= deltaTime;

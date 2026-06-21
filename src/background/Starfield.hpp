@@ -13,6 +13,7 @@ public:
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target) const;
+    void setOpacity(float opacity);
 
 private:
     struct Star {
@@ -32,4 +33,5 @@ private:
     std::vector<Star> stars_;
     std::mt19937 rng_;
     sf::Time elapsed_{sf::Time::Zero};
+    float opacity_{1.f};
 };

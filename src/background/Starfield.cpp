@@ -40,17 +40,21 @@ void Starfield::update(sf::Time deltaTime) {
 }
 
 void Starfield::render(sf::RenderTarget& target) const {
+    if (opacity_ <= 0.f) {
+        return;
+    }
+
     auto pixel = sf::RectangleShape{};
 
     for (const auto& star : stars_) {
-        auto alpha = static_cast<float>(star.color.a);
+        auto alpha = static_cast<float>(star.color.a) * opacity_;
         if (star.twinkles) {
             const auto pulse = 0.65f + 0.35f * std::sin(elapsed_.asSeconds() * star.twinkleSpeed + star.phase);
             alpha *= pulse;
         }
 
         auto color = star.color;
-        color.a = static_cast<std::uint8_t>(std::clamp(alpha, 30.f, 255.f));
+        color.a = static_cast<std::uint8_t>(std::clamp(alpha, 0.f, 255.f));
 
         pixel.setSize({
             static_cast<float>(star.size),
@@ -63,6 +67,10 @@ void Starfield::render(sf::RenderTarget& target) const {
         });
         target.draw(pixel);
     }
+}
+
+void Starfield::setOpacity(float opacity) {
+    opacity_ = std::clamp(opacity, 0.f, 1.f);
 }
 
 Starfield::Star Starfield::createStar(bool randomizeY) {

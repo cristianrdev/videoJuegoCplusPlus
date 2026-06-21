@@ -34,7 +34,7 @@
       "tile": 0,
       "x": 0,
       "y": -300,
-      "speed_y": 3.0,
+      "speed_y": 1.0,
       "contact_damage": 0
     },
     {
