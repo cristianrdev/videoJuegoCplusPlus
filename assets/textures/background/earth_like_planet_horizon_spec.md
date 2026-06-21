@@ -22,5 +22,6 @@ Elemento de fondo para sugerir entrada a un planeta tipo Tierra.
 - El planeta asoma lentamente desde la parte superior.
 - Debe verse redondo, no ovalado ni achatado.
 - El planeta fue ajustado desde una version mas grande sin deformar la circunferencia.
+- El alpha debe llegar a `x=0` y `x=240` para evitar franjas verticales negras en los laterales durante el scroll.
 - Debe conservar margen inferior transparente para que la curvatura baja no quede cortada.
 - La densidad de pixel art debe mantenerse consistente con la grilla logica 240x320.

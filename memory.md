@@ -93,6 +93,7 @@ Proyecto: shooter vertical arcade inspirado en Batsugun.
   - Spawn en `config/stage_01_background_elements.json` al segundo 60.0, `x=0`, `y=-300`, `speed_y=4.5`.
   - `PlayState` soporta este tileset con tile size especial de 240x320.
   - El asset debe verse como planeta redondo recortado en los laterales, no como ovalo achatado.
+  - El alpha del planeta fue extendido hasta los bordes laterales del PNG para evitar franjas verticales negras visibles durante el scroll.
 - Se integro `enemy_mechanical_spiked_shell`.
   - Concepto inicial de tortuga guardado en `assets/textures/enemies/concepts/enemy_mechanical_turtle_concept.png`.
   - Asset final: `assets/textures/enemies/enemy_mechanical_spiked_shell.png`, 128x32, 4 frames de 32x32.
