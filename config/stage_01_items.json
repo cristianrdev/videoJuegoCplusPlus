@@ -12,12 +12,6 @@
       "item": "power_capsule",
       "x": 120.0,
       "y": -15.0
-    },
-    {
-      "time": 90.0,
-      "item": "power_capsule",
-      "x": 120.0,
-      "y": -15.0
     }
   ]
 }

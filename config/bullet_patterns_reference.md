@@ -191,15 +191,16 @@ Si la aguja apunta a `45` grados, las balas saldrian aproximadamente en `45`, `5
 
 ### `spiral_cluster`
 
-Genera racimos de balas con forma de espiral o rueda. Cada racimo nace desde la posicion del enemigo, mantiene un centro propio que baja lentamente por la pantalla y puede expandirse o conservar un radio fijo mientras gira.
+Genera racimos de balas con forma de espiral o rueda. Cada racimo nace desde la posicion del enemigo, mantiene un centro propio que avanza por la pantalla y puede expandirse o conservar un radio fijo mientras gira.
 
-Este patron no persigue al jugador. Una vez creado el racimo, sus balas siguen la trayectoria relativa definida por la espiral.
+Si `aimed` es `true`, el centro del racimo sale orientado hacia la posicion actual del jugador y la espiral usa ese angulo como base inicial. No persigue despues de disparar; solo apunta al momento de nacer.
 
 ```json
 {
   "id": "enemy_mecha_butterfly_spiral_cluster",
   "type": "spiral_cluster",
   "fire_interval": 1.60,
+  "aimed": true,
   "bullet": "enemy_orb_purple",
   "spiral_radius": 42.0,
   "angle_step": 24.0,
@@ -224,6 +225,7 @@ Campos relevantes:
 | Campo | Descripcion |
 |---|---|
 | `spiral_radius` | Radio inicial maximo del racimo. Las balas se reparten desde el centro hasta este radio. |
+| `aimed` | Si es `true`, el centro del racimo usa `spiral_descent_speed` en direccion a la posicion actual del jugador al disparar. |
 | `angle_step` | Avance angular entre una bala y la siguiente dentro de cada brazo. |
 | `spiral_descent_speed` | Velocidad a la que baja el centro de la espiral en pixeles logicos por segundo. |
 | `bullets_per_spiral` | Cantidad total aproximada de balas del racimo. Si hay varios brazos, se reparte entre ellos. |

@@ -356,8 +356,18 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
         const auto bulletsPerArm = std::max(1, pattern.bulletsPerSpiral / armCount);
         const auto totalBullets = bulletsPerArm * armCount;
         bullets.reserve(static_cast<std::size_t>(totalBullets));
-        const auto clusterRotation = static_cast<float>(pattern.shotCounter) * pattern.rotationPerShot * pattern.rotationDirection;
+        const auto aimAngle = pattern.aimed ? aimedBaseAngleDegrees(origin, target) : 0.f;
+        const auto clusterRotation =
+            aimAngle +
+            static_cast<float>(pattern.shotCounter) * pattern.rotationPerShot * pattern.rotationDirection;
         const auto angularVelocity = degreesToRadians(pattern.angularVelocity * pattern.rotationDirection);
+        const auto clusterTravelAngle = degreesToRadians(aimAngle);
+        const auto clusterVelocity = pattern.aimed
+            ? sf::Vector2f{
+                std::sin(clusterTravelAngle) * pattern.spiralDescentSpeed,
+                std::cos(clusterTravelAngle) * pattern.spiralDescentSpeed
+            }
+            : sf::Vector2f{0.f, pattern.spiralDescentSpeed};
         const auto clusterLifetime = pattern.clusterDuration > 0.f ? pattern.clusterDuration : pattern.bulletLifetime;
         const auto flickerSeconds = pattern.bulletFlickerBeforeDeath;
 
@@ -393,7 +403,7 @@ std::vector<EnemyBullet> BulletPatternSystem::spawn(
                     clusterLifetime,
                     flickerSeconds,
                     origin,
-                    sf::Vector2f{0.f, pattern.spiralDescentSpeed},
+                    clusterVelocity,
                     initialRadius,
                     targetRadius,
                     pattern.spiralOpenSeconds,

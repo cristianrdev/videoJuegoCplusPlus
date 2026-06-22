@@ -91,6 +91,7 @@
       "id": "enemy_mecha_butterfly_spiral_cluster",
       "type": "spiral_cluster",
       "fire_interval": 1.60,
+      "aimed": true,
       "bullet": "enemy_orb_purple",
       "spiral_radius": 42.0,
       "angle_step": 24.0,
