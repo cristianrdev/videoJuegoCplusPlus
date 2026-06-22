@@ -107,7 +107,7 @@
       "angular_velocity": 80.0,
       "rotation_per_shot": 18.0,
       "bullet_flicker_seconds": 1.0,
-      "clear_bullets_on_owner_destroyed": true
+      "clear_bullets_on_owner_destroyed": false
     },
     {
       "id": "enemy_mecha_butterfly_aimed_random_cone",
@@ -122,7 +122,7 @@
       "spawn_jitter": 8.0,
       "bullet_lifetime_seconds": 5.0,
       "bullet_flicker_seconds": 1.0,
-      "clear_bullets_on_owner_destroyed": true
+      "clear_bullets_on_owner_destroyed": false
     },
     {
       "id": "enemy_rock_turret_fast_small",
@@ -167,7 +167,7 @@
       "tether_extend_seconds": 0.28,
       "tether_hold_seconds": 0.10,
       "tether_retract_seconds": 0.34,
-      "clear_bullets_on_owner_destroyed": true
+      "clear_bullets_on_owner_destroyed": false
     },
     {
       "id": "enemy_armored_flail_tether_counterclockwise",
@@ -183,7 +183,7 @@
       "tether_extend_seconds": 0.28,
       "tether_hold_seconds": 0.10,
       "tether_retract_seconds": 0.34,
-      "clear_bullets_on_owner_destroyed": true
+      "clear_bullets_on_owner_destroyed": false
     }
   ]
 }
