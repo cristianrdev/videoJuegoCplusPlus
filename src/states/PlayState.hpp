@@ -17,6 +17,8 @@
 #include "MovementPatternSystem.hpp"
 #include "Player.hpp"
 #include "PlayerConfigSystem.hpp"
+#include "PlayerHomingLaser.hpp"
+#include "PlayerLockOnConfigSystem.hpp"
 #include "ProjectileConfigSystem.hpp"
 #include "PowerUpItem.hpp"
 #include "StageDirector.hpp"
@@ -40,6 +42,7 @@ public:
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target);
     void fireLaserNormal();
+    void setFireButtonPressed(bool pressed);
     void onPaused();
 
     sf::Time stageTime() const;
@@ -58,11 +61,20 @@ private:
     void spawnPowerUp(const std::string& powerUpId, sf::Vector2f position);
     void spawnExplosion(const std::string& enemyId, sf::Vector2f position);
     void destroyMountedCargoSphere(sf::Vector2f tankPosition);
+    void updateLockOn(sf::Time deltaTime);
+    void updateHomingLasers(sf::Time deltaTime);
+    void resolveHomingLaserCollisions();
     void updateEnemyShooting();
     void spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf::Vector2f origin);
     void updateCollisions();
     void processEvents();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
+    void renderLockOnCharge(sf::RenderTarget& target) const;
+    void renderLockOnField(sf::RenderTarget& target) const;
+    void renderLockOnTargets(sf::RenderTarget& target) const;
+    void launchLockOnLasers();
+    bool enemyInsideLockOnField(const Enemy& enemy) const;
+    sf::Vector2f positionForEnemyInstance(int enemyInstanceId, bool& alive) const;
     const sf::Texture* bulletTextureForPattern(const std::string& patternId) const;
     const sf::Texture* laserTextureForPattern(const std::string& patternId) const;
     int bulletDamageForPattern(const std::string& patternId) const;
@@ -80,6 +92,7 @@ private:
     std::vector<Enemy> enemies_;
     std::vector<EnemyBullet> enemyBullets_;
     std::vector<EnemyLaser> enemyLasers_;
+    std::vector<PlayerHomingLaser> homingLasers_;
     std::vector<ItemCarrier> itemCarriers_;
     std::vector<PowerUpItem> powerUps_;
     std::vector<Explosion> explosions_;
@@ -104,6 +117,7 @@ private:
     ProjectileConfigSystem projectileConfigSystem_;
     ItemConfigSystem itemConfigSystem_;
     PlayerConfigSystem playerConfigSystem_;
+    PlayerLockOnConfigSystem lockOnConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     CollisionSystem collisionSystem_;
     EventQueue eventQueue_;
@@ -113,5 +127,10 @@ private:
     Starfield starfield_;
     std::unique_ptr<Player> player_;
     sf::Time playerDeathElapsed_{sf::Time::Zero};
+    sf::Time lockOnCharge_{sf::Time::Zero};
+    std::vector<int> lockOnTargetIds_;
     bool playerDestroyed_{false};
+    bool fireButtonPressed_{false};
+    bool wasFireButtonPressed_{false};
+    bool lockOnChargeStarted_{false};
 };

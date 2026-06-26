@@ -153,7 +153,7 @@
     {
       "id": "enemy_green_cargo_tank",
       "texture": "textures/enemies/enemy_green_cargo_tank.png",
-      "health": 35,
+      "health": 45,
       "contact_damage": 3,
       "hitbox_width": 54.0,
       "hitbox_height": 86.0,

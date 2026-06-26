@@ -1,6 +1,7 @@
 #include "PlayState.hpp"
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
 #include <algorithm>
@@ -53,6 +54,38 @@ float starfieldOpacityForStageTime(sf::Time stageTime) {
 
     return 1.f - std::clamp(fadeElapsed / StarfieldFadeDurationSeconds, 0.f, 1.f);
 }
+
+float length(sf::Vector2f value) {
+    return std::sqrt(value.x * value.x + value.y * value.y);
+}
+
+sf::Vector2f normalizedOr(sf::Vector2f value, sf::Vector2f fallback) {
+    const auto valueLength = length(value);
+    if (valueLength <= 0.001f) {
+        const auto fallbackLength = length(fallback);
+        if (fallbackLength <= 0.001f) {
+            return {0.f, -1.f};
+        }
+        return {fallback.x / fallbackLength, fallback.y / fallbackLength};
+    }
+
+    return {value.x / valueLength, value.y / valueLength};
+}
+
+void drawLine(sf::RenderTarget& target, sf::Vector2f from, sf::Vector2f to, sf::Color color, float thickness = 1.f) {
+    const auto delta = to - from;
+    const auto lineLength = length(delta);
+    if (lineLength <= 0.001f) {
+        return;
+    }
+
+    auto line = sf::RectangleShape({lineLength, thickness});
+    line.setOrigin({0.f, thickness * 0.5f});
+    line.setPosition({std::round(from.x), std::round(from.y)});
+    line.setRotation(sf::degrees(std::atan2(delta.y, delta.x) * 180.f / Pi));
+    line.setFillColor(color);
+    target.draw(line);
+}
 }
 
 PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
@@ -61,6 +94,7 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     , enemySpawner_(assets_, enemyConfigSystem_)
     , starfield_(logicalSize) {
     playerConfigSystem_.loadFromFile("config/player.json");
+    lockOnConfigSystem_.loadFromFile("config/player_lock_on.json");
     const auto& playerConfig = playerConfigSystem_.config();
     assets_.loadTexture("player_ship_sheet", playerConfig.shipTexture);
     assets_.loadTexture("player_thruster_flame", playerConfig.thrusterTexture);
@@ -175,10 +209,12 @@ void PlayState::update(sf::Time deltaTime) {
     }
 
     player_->update(deltaTime);
+    updateLockOn(deltaTime);
 
     for (auto& laser : playerLasers_) {
         laser.update(deltaTime);
     }
+    updateHomingLasers(deltaTime);
 
     for (auto& enemy : enemies_) {
         enemy.update(deltaTime);
@@ -286,6 +322,17 @@ void PlayState::update(sf::Time deltaTime) {
         playerLasers_.end()
     );
 
+    homingLasers_.erase(
+        std::remove_if(
+            homingLasers_.begin(),
+            homingLasers_.end(),
+            [this](const PlayerHomingLaser& laser) {
+                return !laser.isAlive(logicalSize_);
+            }
+        ),
+        homingLasers_.end()
+    );
+
     enemyBullets_.erase(
         std::remove_if(
             enemyBullets_.begin(),
@@ -332,6 +379,7 @@ void PlayState::update(sf::Time deltaTime) {
     );
 
     updateCollisions();
+    resolveHomingLaserCollisions();
     processEvents();
 
     enemies_.erase(
@@ -386,9 +434,11 @@ void PlayState::render(sf::RenderTarget& target) {
     for (const auto& element : backgroundElements_) {
         element.render(target, showDebugHitboxes);
     }
+    renderLockOnField(target);
     for (const auto& enemy : enemies_) {
         enemy.render(target, showDebugHitboxes);
     }
+    renderLockOnTargets(target);
     for (const auto& carrier : itemCarriers_) {
         carrier.render(target);
     }
@@ -396,6 +446,9 @@ void PlayState::render(sf::RenderTarget& target) {
         explosion.render(target);
     }
     for (const auto& laser : playerLasers_) {
+        laser.render(target);
+    }
+    for (const auto& laser : homingLasers_) {
         laser.render(target);
     }
     for (const auto& bullet : enemyBullets_) {
@@ -411,6 +464,7 @@ void PlayState::render(sf::RenderTarget& target) {
     if (!playerDestroyed_) {
         player_->render(target);
     }
+    renderLockOnCharge(target);
 }
 
 void PlayState::fireLaserNormal() {
@@ -432,6 +486,38 @@ void PlayState::fireLaserNormal() {
     }
     fireCooldown_ = sf::seconds(config.fireCooldownSeconds);
     muzzleFlashTime_ = sf::seconds(config.muzzleFlashSeconds);
+}
+
+void PlayState::setFireButtonPressed(bool pressed) {
+    fireButtonPressed_ = pressed;
+    if (playerDestroyed_ || !player_) {
+        wasFireButtonPressed_ = pressed;
+        return;
+    }
+
+    if (!pressed && wasFireButtonPressed_) {
+        lockOnChargeStarted_ = true;
+        lockOnCharge_ = sf::Time::Zero;
+        lockOnTargetIds_.clear();
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    const auto chargeComplete = lockOnCharge_.asSeconds() >= config.chargeSeconds;
+    if (pressed && !wasFireButtonPressed_ && chargeComplete && !lockOnTargetIds_.empty()) {
+        launchLockOnLasers();
+        lockOnCharge_ = sf::Time::Zero;
+        lockOnTargetIds_.clear();
+        lockOnChargeStarted_ = false;
+        wasFireButtonPressed_ = pressed;
+        return;
+    }
+
+    if (pressed) {
+        lockOnChargeStarted_ = false;
+        fireLaserNormal();
+    }
+
+    wasFireButtonPressed_ = pressed;
 }
 
 void PlayState::onPaused() {
@@ -477,6 +563,187 @@ void PlayState::togglePlayerHitbox() {
     }
 
     player_->setHitboxVisible(!player_->isHitboxVisible());
+}
+
+void PlayState::updateLockOn(sf::Time deltaTime) {
+    if (!player_ || playerDestroyed_) {
+        return;
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    if (!lockOnChargeStarted_) {
+        lockOnCharge_ = sf::Time::Zero;
+        lockOnTargetIds_.clear();
+        return;
+    }
+
+    if (fireButtonPressed_) {
+        lockOnCharge_ = sf::Time::Zero;
+        lockOnTargetIds_.clear();
+        lockOnChargeStarted_ = false;
+        return;
+    }
+
+    if (lockOnCharge_.asSeconds() < config.chargeSeconds) {
+        lockOnCharge_ += deltaTime;
+        if (lockOnCharge_.asSeconds() > config.chargeSeconds) {
+            lockOnCharge_ = sf::seconds(config.chargeSeconds);
+        }
+        lockOnTargetIds_.clear();
+        return;
+    }
+
+    lockOnTargetIds_.erase(
+        std::remove_if(
+            lockOnTargetIds_.begin(),
+            lockOnTargetIds_.end(),
+            [this](int targetId) {
+                auto alive = false;
+                positionForEnemyInstance(targetId, alive);
+                return !alive;
+            }
+        ),
+        lockOnTargetIds_.end()
+    );
+
+    for (const auto& enemy : enemies_) {
+        if (!enemy.isAlive() || !enemyInsideLockOnField(enemy)) {
+            continue;
+        }
+
+        const auto alreadyMarked = std::find(
+            lockOnTargetIds_.begin(),
+            lockOnTargetIds_.end(),
+            enemy.instanceId()
+        ) != lockOnTargetIds_.end();
+        if (alreadyMarked) {
+            continue;
+        }
+
+        lockOnTargetIds_.push_back(enemy.instanceId());
+        if (static_cast<int>(lockOnTargetIds_.size()) >= config.maxTargets) {
+            break;
+        }
+    }
+}
+
+void PlayState::updateHomingLasers(sf::Time deltaTime) {
+    for (auto& laser : homingLasers_) {
+        auto targetAlive = false;
+        const auto targetPosition = positionForEnemyInstance(laser.targetInstanceId(), targetAlive);
+        laser.update(deltaTime, targetPosition, targetAlive);
+    }
+}
+
+void PlayState::resolveHomingLaserCollisions() {
+    for (auto& laser : homingLasers_) {
+        if (!laser.isAlive(logicalSize_)) {
+            continue;
+        }
+
+        for (auto& enemy : enemies_) {
+            if (!enemy.isAlive()) {
+                continue;
+            }
+
+            if (laser.targetInstanceId() != enemy.instanceId() && !enemy.intersects(laser.hitbox())) {
+                continue;
+            }
+
+            if (!enemy.intersects(laser.hitbox())) {
+                continue;
+            }
+
+            eventQueue_.publish(EnemyHitEvent{enemy.position()});
+            enemy.takeDamage(laser.damage());
+            if (!enemy.isAlive()) {
+                eventQueue_.publish(EnemyDestroyedEvent{
+                    enemy.enemyId(),
+                    enemy.patternId(),
+                    enemy.instanceId(),
+                    enemy.position()
+                });
+            }
+            laser.destroy();
+            break;
+        }
+    }
+}
+
+bool PlayState::enemyInsideLockOnField(const Enemy& enemy) const {
+    if (!player_) {
+        return false;
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    const auto origin = player_->position();
+    const auto delta = enemy.position() - origin;
+    if (delta.y >= 0.f) {
+        return false;
+    }
+
+    const auto forwardDistance = -delta.y;
+    if (forwardDistance > config.fieldRange) {
+        return false;
+    }
+
+    const auto halfAngle = config.fieldAngleDegrees * 0.5f * Pi / 180.f;
+    const auto halfWidthAtY = std::tan(halfAngle) * forwardDistance;
+    return std::abs(delta.x) <= halfWidthAtY;
+}
+
+sf::Vector2f PlayState::positionForEnemyInstance(int enemyInstanceId, bool& alive) const {
+    for (const auto& enemy : enemies_) {
+        if (enemy.instanceId() == enemyInstanceId && enemy.isAlive()) {
+            alive = true;
+            return enemy.position();
+        }
+    }
+
+    alive = false;
+    return {logicalSize_.x * 0.5f, -16.f};
+}
+
+void PlayState::launchLockOnLasers() {
+    if (!player_) {
+        return;
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    const auto origin = player_->position();
+    const auto hitboxSize = sf::Vector2f{config.missileHitboxWidth, config.missileHitboxHeight};
+    const auto visualSize = sf::Vector2f{config.missileVisualLength, config.missileVisualWidth};
+
+    for (const auto targetId : lockOnTargetIds_) {
+        homingLasers_.emplace_back(
+            sf::Vector2f{origin.x - 12.f, origin.y - 2.f},
+            targetId,
+            -1.f,
+            config.missileSpeed,
+            config.missileTurnRate,
+            config.missileSideExitSeconds,
+            config.missileSideExitSpeed,
+            config.missileDamage,
+            hitboxSize,
+            visualSize,
+            config.missileCoreWidth,
+            config.missileGlowRadius
+        );
+        homingLasers_.emplace_back(
+            sf::Vector2f{origin.x + 12.f, origin.y - 2.f},
+            targetId,
+            1.f,
+            config.missileSpeed,
+            config.missileTurnRate,
+            config.missileSideExitSeconds,
+            config.missileSideExitSpeed,
+            config.missileDamage,
+            hitboxSize,
+            visualSize,
+            config.missileCoreWidth,
+            config.missileGlowRadius
+        );
+    }
 }
 
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
@@ -740,9 +1007,113 @@ void PlayState::processEvents() {
                 explosions_.emplace_back(player_->position(), *playerExplosionTexture_);
             }
             muzzleFlashTime_ = sf::Time::Zero;
+            lockOnCharge_ = sf::Time::Zero;
+            lockOnTargetIds_.clear();
+            lockOnChargeStarted_ = false;
             playerLasers_.clear();
+            homingLasers_.clear();
             enemyLasers_.clear();
         }
+    }
+}
+
+void PlayState::renderLockOnCharge(sf::RenderTarget& target) const {
+    if (!player_ || playerDestroyed_ || fireButtonPressed_ || lockOnCharge_ <= sf::Time::Zero) {
+        return;
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    const auto progress = std::clamp(lockOnCharge_.asSeconds() / std::max(0.001f, config.chargeSeconds), 0.f, 1.f);
+    const auto origin = player_->position();
+    const auto topLeft = sf::Vector2f{
+        std::round(origin.x - 18.f),
+        std::round(origin.y + 22.f)
+    };
+
+    auto border = sf::RectangleShape({36.f, 4.f});
+    border.setPosition(topLeft);
+    border.setFillColor(sf::Color::Transparent);
+    border.setOutlineColor(sf::Color(54, 255, 96));
+    border.setOutlineThickness(1.f);
+    target.draw(border);
+
+    auto fill = sf::RectangleShape({std::round(34.f * progress), 2.f});
+    fill.setPosition({topLeft.x + 1.f, topLeft.y + 1.f});
+    fill.setFillColor(progress >= 1.f ? sf::Color(180, 255, 190) : sf::Color(54, 255, 96));
+    target.draw(fill);
+}
+
+void PlayState::renderLockOnField(sf::RenderTarget& target) const {
+    if (!player_ || playerDestroyed_ || fireButtonPressed_) {
+        return;
+    }
+
+    const auto& config = lockOnConfigSystem_.config();
+    if (lockOnCharge_.asSeconds() < config.chargeSeconds) {
+        return;
+    }
+
+    const auto origin = player_->position();
+    const auto halfAngle = config.fieldAngleDegrees * 0.5f * Pi / 180.f;
+    const auto color = sf::Color(54, 255, 96, 116);
+    const auto faint = sf::Color(54, 255, 96, 62);
+
+    auto pointAt = [&](float distance, float normalizedAngle) {
+        const auto angle = normalizedAngle * halfAngle;
+        return sf::Vector2f{
+            origin.x + std::sin(angle) * distance,
+            origin.y - std::cos(angle) * distance
+        };
+    };
+
+    drawLine(target, origin, pointAt(config.fieldRange, -1.f), color);
+    drawLine(target, origin, pointAt(config.fieldRange, 1.f), color);
+    drawLine(target, origin, pointAt(config.fieldRange, 0.f), faint);
+    drawLine(target, origin, pointAt(config.fieldRange, -0.5f), faint);
+    drawLine(target, origin, pointAt(config.fieldRange, 0.5f), faint);
+
+    for (auto ring = 1; ring <= 3; ++ring) {
+        const auto distance = config.fieldRange * static_cast<float>(ring) / 3.f;
+        auto previous = pointAt(distance, -1.f);
+        for (auto segment = 1; segment <= 10; ++segment) {
+            const auto angleT = -1.f + static_cast<float>(segment) * 0.2f;
+            const auto current = pointAt(distance, angleT);
+            drawLine(target, previous, current, ring == 3 ? color : faint);
+            previous = current;
+        }
+    }
+}
+
+void PlayState::renderLockOnTargets(sf::RenderTarget& target) const {
+    if (lockOnTargetIds_.empty()) {
+        return;
+    }
+
+    const auto color = sf::Color(80, 255, 110);
+    for (const auto targetId : lockOnTargetIds_) {
+        auto alive = false;
+        const auto position = positionForEnemyInstance(targetId, alive);
+        if (!alive) {
+            continue;
+        }
+
+        const auto half = 9.f;
+        const auto left = std::round(position.x - half);
+        const auto right = std::round(position.x + half);
+        const auto top = std::round(position.y - half);
+        const auto bottom = std::round(position.y + half);
+        const auto corner = 5.f;
+
+        drawLine(target, {left, top}, {left + corner, top}, color);
+        drawLine(target, {left, top}, {left, top + corner}, color);
+        drawLine(target, {right, top}, {right - corner, top}, color);
+        drawLine(target, {right, top}, {right, top + corner}, color);
+        drawLine(target, {left, bottom}, {left + corner, bottom}, color);
+        drawLine(target, {left, bottom}, {left, bottom - corner}, color);
+        drawLine(target, {right, bottom}, {right - corner, bottom}, color);
+        drawLine(target, {right, bottom}, {right, bottom - corner}, color);
+        drawLine(target, {position.x - 3.f, position.y}, {position.x + 3.f, position.y}, sf::Color(180, 255, 190));
+        drawLine(target, {position.x, position.y - 3.f}, {position.x, position.y + 3.f}, sf::Color(180, 255, 190));
     }
 }
 

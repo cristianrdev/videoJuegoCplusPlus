@@ -1,0 +1,17 @@
+{
+  "charge_seconds": 0.8,
+  "field_range": 135.0,
+  "field_angle_degrees": 72.0,
+  "max_targets": 8,
+  "missile_speed": 250.0,
+  "missile_turn_rate": 7.5,
+  "missile_side_exit_seconds": 0.18,
+  "missile_side_exit_speed": 126.0,
+  "missile_damage": 20.0,
+  "missile_hitbox_width": 6.0,
+  "missile_hitbox_height": 4.0,
+  "missile_visual_length": 18.0,
+  "missile_visual_width": 5.0,
+  "missile_core_width": 2.0,
+  "missile_glow_radius": 7.0
+}

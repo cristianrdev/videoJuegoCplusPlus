@@ -138,9 +138,6 @@ void Game::processEvents() {
             } else if (keyPressed->code == sf::Keyboard::Key::Num4) {
                 presentationIntegerScale_ = 4;
                 updatePresentationSprite();
-            } else if (keyPressed->code == sf::Keyboard::Key::Space ||
-                       keyPressed->code == sf::Keyboard::Key::Z) {
-                playState_->fireLaserNormal();
             }
         }
 
@@ -224,11 +221,11 @@ void Game::update(sf::Time deltaTime) {
         return;
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) ||
+    playState_->setFireButtonPressed(
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z) ||
-        joystickFirePressed()) {
-        playState_->fireLaserNormal();
-    }
+        joystickFirePressed()
+    );
 
     playState_->update(deltaTime);
 }
