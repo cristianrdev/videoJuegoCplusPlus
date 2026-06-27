@@ -19,6 +19,7 @@ add_executable(videoJuegoCplusPlus
     src/entities/EnemyBullet.cpp
     src/entities/EnemyLaser.cpp
     src/entities/PlayerHomingLaser.cpp
+    src/entities/WallBoss.cpp
     src/entities/ItemCarrier.cpp
     src/entities/PowerUpItem.cpp
     src/entities/BackgroundElement.cpp
@@ -36,6 +37,7 @@ add_executable(videoJuegoCplusPlus
     src/config/PlayerConfigSystem.cpp
     src/config/PlayerLockOnConfigSystem.cpp
     src/config/ProjectileConfigSystem.cpp
+    src/config/WallBossConfigSystem.cpp
     src/background/Starfield.cpp
 )
 

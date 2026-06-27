@@ -23,6 +23,8 @@
 #include "PowerUpItem.hpp"
 #include "StageDirector.hpp"
 #include "Starfield.hpp"
+#include "WallBoss.hpp"
+#include "WallBossConfigSystem.hpp"
 #include "CollisionSystem.hpp"
 #include "EventQueue.hpp"
 
@@ -65,8 +67,11 @@ private:
     void updateHomingLasers(sf::Time deltaTime);
     void resolveHomingLaserCollisions();
     void updateEnemyShooting();
+    void updateWallBossShooting();
     void spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf::Vector2f origin);
+    void spawnEnemyPatternForOwner(const std::string& patternId, sf::Vector2f origin, int ownerInstanceId);
     void updateCollisions();
+    void resolveWallBossCollisions();
     void processEvents();
     void renderMuzzleFlash(sf::RenderTarget& target) const;
     void renderLockOnCharge(sf::RenderTarget& target) const;
@@ -74,7 +79,10 @@ private:
     void renderLockOnTargets(sf::RenderTarget& target) const;
     void launchLockOnLasers();
     bool enemyInsideLockOnField(const Enemy& enemy) const;
+    bool positionInsideLockOnField(sf::Vector2f position) const;
     sf::Vector2f positionForEnemyInstance(int enemyInstanceId, bool& alive) const;
+    bool isBulletOwnerAlive(int ownerInstanceId) const;
+    void spawnWallBossCrystalExplosion(sf::Vector2f position);
     const sf::Texture* bulletTextureForPattern(const std::string& patternId) const;
     const sf::Texture* laserTextureForPattern(const std::string& patternId) const;
     int bulletDamageForPattern(const std::string& patternId) const;
@@ -93,6 +101,7 @@ private:
     std::vector<EnemyBullet> enemyBullets_;
     std::vector<EnemyLaser> enemyLasers_;
     std::vector<PlayerHomingLaser> homingLasers_;
+    std::vector<WallBoss> wallBosses_;
     std::vector<ItemCarrier> itemCarriers_;
     std::vector<PowerUpItem> powerUps_;
     std::vector<Explosion> explosions_;
@@ -118,6 +127,7 @@ private:
     ItemConfigSystem itemConfigSystem_;
     PlayerConfigSystem playerConfigSystem_;
     PlayerLockOnConfigSystem lockOnConfigSystem_;
+    WallBossConfigSystem wallBossConfigSystem_;
     MovementPatternSystem movementPatternSystem_;
     CollisionSystem collisionSystem_;
     EventQueue eventQueue_;

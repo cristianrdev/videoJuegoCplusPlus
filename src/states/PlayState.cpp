@@ -106,6 +106,11 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
         assets_.loadTexture(enemyId, enemyConfigSystem_.texturePathFor(enemyId));
     }
 
+    wallBossConfigSystem_.loadFromFile("config/wall_bosses.json");
+    for (const auto& wallBossId : wallBossConfigSystem_.wallBossIds()) {
+        assets_.loadTexture(wallBossId, wallBossConfigSystem_.texturePathFor(wallBossId));
+    }
+
     explosionDroneTexture_ = &assets_.loadTexture("explosion_enemy_drone", "textures/effects/explosion_enemy_drone.png");
     explosionTurretPodTexture_ = &assets_.loadTexture("explosion_enemy_turret_pod", "textures/effects/explosion_enemy_turret_pod.png");
     explosionInterceptorTexture_ = &assets_.loadTexture("explosion_enemy_interceptor", "textures/effects/explosion_enemy_interceptor.png");
@@ -207,6 +212,9 @@ void PlayState::update(sf::Time deltaTime) {
     for (auto& element : backgroundElements_) {
         element.update(deltaTime);
     }
+    for (auto& wallBoss : wallBosses_) {
+        wallBoss.update(deltaTime);
+    }
 
     player_->update(deltaTime);
     updateLockOn(deltaTime);
@@ -273,12 +281,14 @@ void PlayState::update(sf::Time deltaTime) {
     }
 
     updateEnemyShooting();
+    updateWallBossShooting();
 
     for (auto& bullet : enemyBullets_) {
         if (!bullet.isPixelLine() && !bullet.followsOwnerAnchor()) {
             continue;
         }
 
+        auto anchorFound = false;
         for (const auto& enemy : enemies_) {
             if (enemy.instanceId() == bullet.ownerInstanceId() && enemy.isAlive()) {
                 if (bullet.followsOwnerAnchor()) {
@@ -286,8 +296,28 @@ void PlayState::update(sf::Time deltaTime) {
                 } else {
                     bullet.setPosition(enemy.bulletSpawnPosition());
                 }
+                anchorFound = true;
                 break;
             }
+        }
+
+        if (anchorFound) {
+            continue;
+        }
+
+        for (const auto& wallBoss : wallBosses_) {
+            auto alive = false;
+            const auto crystalPosition = wallBoss.crystalPositionForOwner(bullet.ownerInstanceId(), alive);
+            if (!alive) {
+                continue;
+            }
+
+            if (bullet.followsOwnerAnchor()) {
+                bullet.setTetherOrigin(crystalPosition);
+            } else {
+                bullet.setPosition(crystalPosition);
+            }
+            break;
         }
     }
 
@@ -338,17 +368,8 @@ void PlayState::update(sf::Time deltaTime) {
             enemyBullets_.begin(),
             enemyBullets_.end(),
             [this](const EnemyBullet& bullet) {
-                if (bullet.followsOwnerAnchor()) {
-                    const auto ownerAlive = std::any_of(
-                        enemies_.begin(),
-                        enemies_.end(),
-                        [&bullet](const Enemy& enemy) {
-                            return enemy.instanceId() == bullet.ownerInstanceId() && enemy.isAlive();
-                        }
-                    );
-                    if (!ownerAlive) {
-                        return true;
-                    }
+                if (bullet.followsOwnerAnchor() && !isBulletOwnerAlive(bullet.ownerInstanceId())) {
+                    return true;
                 }
                 return !bullet.isAlive(logicalSize_);
             }
@@ -378,7 +399,19 @@ void PlayState::update(sf::Time deltaTime) {
         backgroundElements_.end()
     );
 
+    wallBosses_.erase(
+        std::remove_if(
+            wallBosses_.begin(),
+            wallBosses_.end(),
+            [this](const WallBoss& wallBoss) {
+                return !wallBoss.isAlive(logicalSize_.y);
+            }
+        ),
+        wallBosses_.end()
+    );
+
     updateCollisions();
+    resolveWallBossCollisions();
     resolveHomingLaserCollisions();
     processEvents();
 
@@ -435,6 +468,9 @@ void PlayState::render(sf::RenderTarget& target) {
         element.render(target, showDebugHitboxes);
     }
     renderLockOnField(target);
+    for (const auto& wallBoss : wallBosses_) {
+        wallBoss.render(target, showDebugHitboxes);
+    }
     for (const auto& enemy : enemies_) {
         enemy.render(target, showDebugHitboxes);
     }
@@ -625,6 +661,32 @@ void PlayState::updateLockOn(sf::Time deltaTime) {
             break;
         }
     }
+
+    for (const auto& wallBoss : wallBosses_) {
+        if (static_cast<int>(lockOnTargetIds_.size()) >= config.maxTargets) {
+            break;
+        }
+
+        for (const auto& crystal : wallBoss.crystals()) {
+            if (!crystal.alive || !positionInsideLockOnField(crystal.position)) {
+                continue;
+            }
+
+            const auto alreadyMarked = std::find(
+                lockOnTargetIds_.begin(),
+                lockOnTargetIds_.end(),
+                crystal.instanceId
+            ) != lockOnTargetIds_.end();
+            if (alreadyMarked) {
+                continue;
+            }
+
+            lockOnTargetIds_.push_back(crystal.instanceId);
+            if (static_cast<int>(lockOnTargetIds_.size()) >= config.maxTargets) {
+                break;
+            }
+        }
+    }
 }
 
 void PlayState::updateHomingLasers(sf::Time deltaTime) {
@@ -667,17 +729,43 @@ void PlayState::resolveHomingLaserCollisions() {
             laser.destroy();
             break;
         }
+
+        if (!laser.isAlive(logicalSize_)) {
+            continue;
+        }
+
+        for (auto& wallBoss : wallBosses_) {
+            const auto result = wallBoss.damageCrystal(
+                laser.hitbox(),
+                laser.damage(),
+                laser.targetInstanceId()
+            );
+            if (!result.hit) {
+                continue;
+            }
+
+            eventQueue_.publish(EnemyHitEvent{result.position});
+            if (result.destroyed) {
+                spawnWallBossCrystalExplosion(result.position);
+            }
+            laser.destroy();
+            break;
+        }
     }
 }
 
 bool PlayState::enemyInsideLockOnField(const Enemy& enemy) const {
+    return positionInsideLockOnField(enemy.position());
+}
+
+bool PlayState::positionInsideLockOnField(sf::Vector2f position) const {
     if (!player_) {
         return false;
     }
 
     const auto& config = lockOnConfigSystem_.config();
     const auto origin = player_->position();
-    const auto delta = enemy.position() - origin;
+    const auto delta = position - origin;
     if (delta.y >= 0.f) {
         return false;
     }
@@ -700,8 +788,31 @@ sf::Vector2f PlayState::positionForEnemyInstance(int enemyInstanceId, bool& aliv
         }
     }
 
+    for (const auto& wallBoss : wallBosses_) {
+        const auto position = wallBoss.crystalPositionForOwner(enemyInstanceId, alive);
+        if (alive) {
+            return position;
+        }
+    }
+
     alive = false;
     return {logicalSize_.x * 0.5f, -16.f};
+}
+
+bool PlayState::isBulletOwnerAlive(int ownerInstanceId) const {
+    for (const auto& enemy : enemies_) {
+        if (enemy.instanceId() == ownerInstanceId && enemy.isAlive()) {
+            return true;
+        }
+    }
+
+    for (const auto& wallBoss : wallBosses_) {
+        if (wallBoss.isCrystalOwnerAlive(ownerInstanceId)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void PlayState::launchLockOnLasers() {
@@ -747,6 +858,15 @@ void PlayState::launchLockOnLasers() {
 }
 
 void PlayState::spawnEnemy(const StageDirector::SpawnEvent& spawn) {
+    if (wallBossConfigSystem_.hasWallBoss(spawn.enemyId)) {
+        wallBosses_.emplace_back(
+            sf::Vector2f{spawn.x, spawn.y},
+            assets_.getTexture(spawn.enemyId),
+            wallBossConfigSystem_.configFor(spawn.enemyId)
+        );
+        return;
+    }
+
     enemies_.push_back(enemySpawner_.spawn(spawn));
 }
 
@@ -834,6 +954,15 @@ void PlayState::spawnExplosion(const std::string& enemyId, sf::Vector2f position
     explosions_.emplace_back(position, *texture);
 }
 
+void PlayState::spawnWallBossCrystalExplosion(sf::Vector2f position) {
+    const auto texture = explosionInterceptorTexture_ ? explosionInterceptorTexture_ : explosionDroneTexture_;
+    if (!texture) {
+        return;
+    }
+
+    explosions_.emplace_back(position, *texture);
+}
+
 void PlayState::destroyMountedCargoSphere(sf::Vector2f tankPosition) {
     for (auto& enemy : enemies_) {
         if (!enemy.isAlive() || enemy.enemyId() != "enemy_cargo_sphere_turret") {
@@ -904,6 +1033,28 @@ void PlayState::updateEnemyShooting() {
     }
 }
 
+void PlayState::updateWallBossShooting() {
+    if (!player_) {
+        return;
+    }
+
+    for (auto& wallBoss : wallBosses_) {
+        for (auto crystalIndex = std::size_t{0}; crystalIndex < wallBoss.crystalCount(); ++crystalIndex) {
+            if (!wallBoss.shouldFire(crystalIndex)) {
+                continue;
+            }
+
+            const auto crystal = wallBoss.crystal(crystalIndex);
+            if (!crystal.alive) {
+                continue;
+            }
+
+            spawnEnemyPatternForOwner(crystal.patternId, crystal.position, crystal.instanceId);
+            wallBoss.resetFireTimer(crystalIndex, bulletPatternSystem_.fireInterval(crystal.patternId));
+        }
+    }
+}
+
 void PlayState::spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf::Vector2f origin) {
     if (bulletPatternSystem_.patternType(patternId) == "continuous_laser") {
         const auto length = std::max(0.f, logicalSize_.y - origin.y);
@@ -926,6 +1077,22 @@ void PlayState::spawnEnemyPattern(Enemy& enemy, const std::string& patternId, sf
         bulletVisualSizeForPattern(patternId),
         bulletVisualGrowSecondsForPattern(patternId),
         enemy.instanceId(),
+        bulletRotateToVelocityForPattern(patternId)
+    );
+    enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
+}
+
+void PlayState::spawnEnemyPatternForOwner(const std::string& patternId, sf::Vector2f origin, int ownerInstanceId) {
+    auto bullets = bulletPatternSystem_.spawn(
+        patternId,
+        origin,
+        player_->position(),
+        bulletTextureForPattern(patternId),
+        bulletDamageForPattern(patternId),
+        bulletVisualTypeForPattern(patternId),
+        bulletVisualSizeForPattern(patternId),
+        bulletVisualGrowSecondsForPattern(patternId),
+        ownerInstanceId,
         bulletRotateToVelocityForPattern(patternId)
     );
     enemyBullets_.insert(enemyBullets_.end(), bullets.begin(), bullets.end());
@@ -959,6 +1126,61 @@ void PlayState::updateCollisions() {
         *player_,
         eventQueue_
     );
+}
+
+void PlayState::resolveWallBossCollisions() {
+    if (!player_) {
+        return;
+    }
+
+    for (auto laserIt = playerLasers_.begin(); laserIt != playerLasers_.end();) {
+        auto hitCrystal = false;
+        for (auto& wallBoss : wallBosses_) {
+            const auto result = wallBoss.damageCrystal(laserIt->hitbox(), laserIt->damage());
+            if (!result.hit) {
+                continue;
+            }
+
+            eventQueue_.publish(EnemyHitEvent{result.position});
+            if (result.destroyed) {
+                spawnWallBossCrystalExplosion(result.position);
+                if (bulletPatternSystem_.clearBulletsOnOwnerDestroyed(result.patternId)) {
+                    enemyBullets_.erase(
+                        std::remove_if(
+                            enemyBullets_.begin(),
+                            enemyBullets_.end(),
+                            [&result](const EnemyBullet& bullet) {
+                                return bullet.ownerInstanceId() == result.instanceId;
+                            }
+                        ),
+                        enemyBullets_.end()
+                    );
+                }
+            }
+
+            hitCrystal = true;
+            break;
+        }
+
+        if (hitCrystal) {
+            laserIt = playerLasers_.erase(laserIt);
+        } else {
+            ++laserIt;
+        }
+    }
+
+    for (const auto& wallBoss : wallBosses_) {
+        if (wallBoss.contactDamage() <= 0 || !wallBoss.intersectsSolid(player_->hitbox())) {
+            continue;
+        }
+
+        if (player_->takeDamage(wallBoss.contactDamage())) {
+            eventQueue_.publish(PlayerHitEvent{wallBoss.contactDamage(), player_->health()});
+            if (!player_->isAlive()) {
+                eventQueue_.publish(PlayerDestroyedEvent{});
+            }
+        }
+    }
 }
 
 void PlayState::processEvents() {
