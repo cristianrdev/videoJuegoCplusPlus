@@ -88,7 +88,7 @@ void drawLine(sf::RenderTarget& target, sf::Vector2f from, sf::Vector2f to, sf::
 }
 }
 
-PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
+PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize, sf::Time initialStageTime)
     : assets_(assets)
     , logicalSize_(logicalSize)
     , enemySpawner_(assets_, enemyConfigSystem_)
@@ -138,8 +138,16 @@ PlayState::PlayState(AssetManager& assets, sf::Vector2f logicalSize)
     backgroundElementConfigSystem_.loadFromFile("config/background_elements.json");
     bulletPatternSystem_.loadFromFile("config/bullet_patterns.json");
     movementPatternSystem_.loadFromFile("config/movement_patterns.json");
+    checkpointSystem_.loadFromFile("config/stage_01_checkpoint.json");
     stageDirector_.loadFromFile("config/stage_01_enemies.json");
     backgroundElementDirector_.loadFromFile("config/stage_01_background_elements.json");
+    stageClock_ = initialStageTime;
+    stageDirector_.seekTo(initialStageTime);
+    backgroundElementDirector_.seekTo(initialStageTime);
+    while (nextItemSpawnIndex_ < itemConfigSystem_.spawns().size() &&
+           itemConfigSystem_.spawns()[nextItemSpawnIndex_].time <= initialStageTime) {
+        ++nextItemSpawnIndex_;
+    }
 
     player_ = std::make_unique<Player>(assets_, logicalSize_, playerConfigSystem_.config());
 }
@@ -562,6 +570,14 @@ void PlayState::onPaused() {
 
 sf::Time PlayState::stageTime() const {
     return stageClock_;
+}
+
+int PlayState::activeCheckpointIndex() const {
+    return checkpointSystem_.activeCheckpointIndex(stageClock_);
+}
+
+sf::Time PlayState::activeCheckpointTime() const {
+    return checkpointSystem_.activeCheckpointTime(stageClock_);
 }
 
 bool PlayState::isPlayerDestroyed() const {

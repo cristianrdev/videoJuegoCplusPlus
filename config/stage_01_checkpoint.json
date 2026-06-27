@@ -1,0 +1,9 @@
+{
+  "stage_id": "stage_01",
+  "checkpoints": [
+    {
+      "id": "checkpoint_100",
+      "time_seconds": 50
+    }
+  ]
+}

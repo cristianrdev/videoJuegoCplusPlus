@@ -29,6 +29,7 @@ add_executable(videoJuegoCplusPlus
     src/systems/CollisionSystem.cpp
     src/systems/EnemySpawner.cpp
     src/systems/EventQueue.cpp
+    src/systems/StageCheckpointSystem.cpp
     src/systems/StageDirector.cpp
     src/systems/MovementPatternSystem.cpp
     src/config/EnemyConfigSystem.cpp

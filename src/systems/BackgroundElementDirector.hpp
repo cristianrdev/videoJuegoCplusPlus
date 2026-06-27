@@ -19,6 +19,7 @@ public:
 
     void loadFromFile(const std::string& path);
     std::vector<SpawnEvent> update(sf::Time deltaTime);
+    void seekTo(sf::Time elapsed);
     void reset();
 
 private:

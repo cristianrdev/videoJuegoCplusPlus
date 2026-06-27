@@ -105,6 +105,15 @@ std::vector<BackgroundElementDirector::SpawnEvent> BackgroundElementDirector::up
     return ready;
 }
 
+void BackgroundElementDirector::seekTo(sf::Time elapsed) {
+    elapsed_ = elapsed;
+    nextSpawnIndex_ = 0;
+    while (nextSpawnIndex_ < spawns_.size() &&
+           spawns_[nextSpawnIndex_].time <= elapsed_.asSeconds()) {
+        ++nextSpawnIndex_;
+    }
+}
+
 void BackgroundElementDirector::reset() {
     elapsed_ = sf::Time::Zero;
     nextSpawnIndex_ = 0;

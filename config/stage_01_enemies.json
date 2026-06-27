@@ -757,7 +757,7 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 108.0,
+      "time": 100.0,
       "enemy": "enemy_wall_boss",
       "x": 120,
       "y": -16,
@@ -765,7 +765,7 @@
       "movement": "wall_boss_slow_drop"
     },
     {
-      "time": 118.0,
+      "time": 120.0,
       "enemy": "enemy_wall_boss_left",
       "x": 120,
       "y": -16,
@@ -773,7 +773,7 @@
       "movement": "wall_boss_slow_drop"
     },
     {
-      "time": 128.0,
+      "time": 130.0,
       "enemy": "enemy_wall_boss_right",
       "x": 120,
       "y": -16,

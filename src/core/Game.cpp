@@ -109,7 +109,7 @@ void Game::processEvents() {
                        playState_->isGameOverVisible() &&
                        (keyPressed->code == sf::Keyboard::Key::Enter ||
                         keyPressed->code == sf::Keyboard::Key::Space)) {
-                restartPlayState();
+                restartPlayState(playState_->activeCheckpointTime());
             } else if (keyPressed->code == sf::Keyboard::Key::P) {
                 togglePause();
             } else if (keyPressed->code == sf::Keyboard::Key::G) {
@@ -149,14 +149,15 @@ void Game::processEvents() {
     }
 }
 
-void Game::restartPlayState() {
+void Game::restartPlayState(sf::Time initialStageTime) {
     paused_ = false;
     playState_ = std::make_unique<PlayState>(
         assets_,
         sf::Vector2f{
             static_cast<float>(LogicalWidth),
             static_cast<float>(LogicalHeight)
-        }
+        },
+        initialStageTime
     );
 }
 
@@ -382,6 +383,8 @@ void Game::renderDebugHud() {
          << " s\n\n"
          << "VIDA\n"
          << playState_->playerHealth()
+         << "\n\nCHECKPOINT\n"
+         << playState_->activeCheckpointIndex()
          << "\n\nGOD\n"
          << (playState_->isGodModeEnabled() ? "ON" : "OFF")
          << "\n\nHITBOX\n"

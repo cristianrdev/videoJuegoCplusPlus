@@ -22,6 +22,7 @@
 #include "ProjectileConfigSystem.hpp"
 #include "PowerUpItem.hpp"
 #include "StageDirector.hpp"
+#include "StageCheckpointSystem.hpp"
 #include "Starfield.hpp"
 #include "WallBoss.hpp"
 #include "WallBossConfigSystem.hpp"
@@ -39,7 +40,7 @@
 
 class PlayState {
 public:
-    PlayState(AssetManager& assets, sf::Vector2f logicalSize);
+    PlayState(AssetManager& assets, sf::Vector2f logicalSize, sf::Time initialStageTime = sf::Time::Zero);
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target);
@@ -48,6 +49,8 @@ public:
     void onPaused();
 
     sf::Time stageTime() const;
+    int activeCheckpointIndex() const;
+    sf::Time activeCheckpointTime() const;
     bool isPlayerDestroyed() const;
     bool isGameOverVisible() const;
     int playerHealth() const;
@@ -121,6 +124,7 @@ private:
     const sf::Texture* floatingRedRocksTexture_{nullptr};
     const sf::Texture* earthLikePlanetTexture_{nullptr};
     BulletPatternSystem bulletPatternSystem_;
+    StageCheckpointSystem checkpointSystem_;
     EnemyConfigSystem enemyConfigSystem_;
     EnemySpawner enemySpawner_;
     ProjectileConfigSystem projectileConfigSystem_;

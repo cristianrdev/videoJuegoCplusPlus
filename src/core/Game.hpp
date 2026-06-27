@@ -28,7 +28,7 @@ private:
     };
 
     void processEvents();
-    void restartPlayState();
+    void restartPlayState(sf::Time initialStageTime = sf::Time::Zero);
     void togglePause();
     void applyFramePacingMode(FramePacingMode mode);
     const char* framePacingLabel() const;
