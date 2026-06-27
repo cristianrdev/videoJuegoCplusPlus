@@ -22,7 +22,7 @@
           "id": "center",
           "offset_x": 0.0,
           "offset_y": 0.0,
-          "pattern": "enemy_mecha_butterfly_spiral_cluster",
+          "pattern": "enemy_mecha_butterfly_rotating_clock",
           "health": 40,
           "hitbox_width": 24.0,
           "hitbox_height": 24.0

@@ -467,13 +467,13 @@ void PlayState::render(sf::RenderTarget& target) {
     for (const auto& element : backgroundElements_) {
         element.render(target, showDebugHitboxes);
     }
-    renderLockOnField(target);
     for (const auto& wallBoss : wallBosses_) {
         wallBoss.render(target, showDebugHitboxes);
     }
     for (const auto& enemy : enemies_) {
         enemy.render(target, showDebugHitboxes);
     }
+    renderLockOnField(target);
     renderLockOnTargets(target);
     for (const auto& carrier : itemCarriers_) {
         carrier.render(target);
