@@ -8,6 +8,7 @@
       "speed_y": 18.0,
       "contact_damage": 3,
       "hole_width": 40.0,
+      "texture_offset_x": 0.0,
       "crystals": [
         {
           "id": "left",
@@ -30,6 +31,84 @@
         {
           "id": "right",
           "offset_x": 84.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        }
+      ]
+    },
+    {
+      "id": "enemy_wall_boss_left",
+      "texture": "textures/enemies/enemy_wall_boss.png",
+      "width": 240.0,
+      "height": 32.0,
+      "speed_y": 18.0,
+      "contact_damage": 3,
+      "hole_width": 40.0,
+      "texture_offset_x": 16.0,
+      "crystals": [
+        {
+          "id": "left",
+          "offset_x": -100.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        },
+        {
+          "id": "center",
+          "offset_x": -16.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_rotating_clock",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        },
+        {
+          "id": "right",
+          "offset_x": 68.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        }
+      ]
+    },
+    {
+      "id": "enemy_wall_boss_right",
+      "texture": "textures/enemies/enemy_wall_boss.png",
+      "width": 240.0,
+      "height": 32.0,
+      "speed_y": 18.0,
+      "contact_damage": 3,
+      "hole_width": 40.0,
+      "texture_offset_x": -16.0,
+      "crystals": [
+        {
+          "id": "left",
+          "offset_x": -68.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_aimed_random_cone",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        },
+        {
+          "id": "center",
+          "offset_x": 16.0,
+          "offset_y": 0.0,
+          "pattern": "enemy_mecha_butterfly_rotating_clock",
+          "health": 40,
+          "hitbox_width": 24.0,
+          "hitbox_height": 24.0
+        },
+        {
+          "id": "right",
+          "offset_x": 100.0,
           "offset_y": 0.0,
           "pattern": "enemy_mecha_butterfly_aimed_random_cone",
           "health": 40,

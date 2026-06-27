@@ -764,6 +764,22 @@
       "pattern": "none",
       "movement": "wall_boss_slow_drop"
     },
+    {
+      "time": 118.0,
+      "enemy": "enemy_wall_boss_left",
+      "x": 120,
+      "y": -16,
+      "pattern": "none",
+      "movement": "wall_boss_slow_drop"
+    },
+    {
+      "time": 128.0,
+      "enemy": "enemy_wall_boss_right",
+      "x": 120,
+      "y": -16,
+      "pattern": "none",
+      "movement": "wall_boss_slow_drop"
+    },
 
 
 

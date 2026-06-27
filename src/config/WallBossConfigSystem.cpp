@@ -56,21 +56,63 @@ int matchIntOr(const std::string& text, const std::string& field, int fallback) 
 
     return std::stoi(match[1].str());
 }
+
+std::string arrayBodyFor(const std::string& text, const std::string& field) {
+    const auto fieldPosition = text.find("\"" + field + "\"");
+    if (fieldPosition == std::string::npos) {
+        return {};
+    }
+
+    const auto arrayStart = text.find('[', fieldPosition);
+    if (arrayStart == std::string::npos) {
+        return {};
+    }
+
+    auto depth = 0;
+    for (auto index = arrayStart; index < text.size(); ++index) {
+        if (text[index] == '[') {
+            ++depth;
+        } else if (text[index] == ']') {
+            --depth;
+            if (depth == 0) {
+                return text.substr(arrayStart + 1, index - arrayStart - 1);
+            }
+        }
+    }
+
+    return {};
+}
+
+std::vector<std::string> objectsInArray(const std::string& text, const std::string& field) {
+    const auto body = arrayBodyFor(text, field);
+    auto objects = std::vector<std::string>{};
+    auto depth = 0;
+    auto objectStart = std::string::npos;
+
+    for (auto index = std::size_t{0}; index < body.size(); ++index) {
+        if (body[index] == '{') {
+            if (depth == 0) {
+                objectStart = index;
+            }
+            ++depth;
+        } else if (body[index] == '}') {
+            --depth;
+            if (depth == 0 && objectStart != std::string::npos) {
+                objects.push_back(body.substr(objectStart, index - objectStart + 1));
+                objectStart = std::string::npos;
+            }
+        }
+    }
+
+    return objects;
+}
 }
 
 void WallBossConfigSystem::loadFromFile(const std::string& path) {
     const auto text = readTextFile(path);
-    const auto wallPattern = std::regex(
-        "\\{[\\s\\S]*?\"id\"[\\s\\S]*?\"crystals\"\\s*:\\s*\\[([\\s\\S]*?)\\][\\s\\S]*?\\}"
-    );
 
     configs_.clear();
-    for (auto it = std::sregex_iterator(text.begin(), text.end(), wallPattern);
-         it != std::sregex_iterator{};
-         ++it) {
-        const auto object = (*it)[0].str();
-        const auto crystalsBody = (*it)[1].str();
-
+    for (const auto& object : objectsInArray(text, "wall_bosses")) {
         auto config = WallBossConfig{};
         config.id = matchString(object, "id");
         config.texturePath = matchString(object, "texture");
@@ -81,12 +123,9 @@ void WallBossConfigSystem::loadFromFile(const std::string& path) {
         config.speedY = matchFloatOr(object, "speed_y", 18.f);
         config.contactDamage = matchIntOr(object, "contact_damage", 3);
         config.holeWidth = matchFloatOr(object, "hole_width", 40.f);
+        config.textureOffsetX = matchFloatOr(object, "texture_offset_x", 0.f);
 
-        const auto crystalPattern = std::regex("\\{[^\\{\\}]*\"id\"[^\\{\\}]*\\}");
-        for (auto crystalIt = std::sregex_iterator(crystalsBody.begin(), crystalsBody.end(), crystalPattern);
-             crystalIt != std::sregex_iterator{};
-             ++crystalIt) {
-            const auto crystalObject = (*crystalIt)[0].str();
+        for (const auto& crystalObject : objectsInArray(object, "crystals")) {
             auto crystal = CrystalConfig{};
             crystal.id = matchString(crystalObject, "id");
             crystal.offset = {

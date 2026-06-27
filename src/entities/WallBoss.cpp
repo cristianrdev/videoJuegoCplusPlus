@@ -29,6 +29,7 @@ WallBoss::WallBoss(
     , size_(config.size)
     , speedY_(config.speedY)
     , holeWidth_(config.holeWidth)
+    , textureOffsetX_(config.textureOffsetX)
     , contactDamage_(config.contactDamage)
     , texture_(&texture) {
     crystals_.reserve(config.crystals.size());
@@ -58,22 +59,31 @@ void WallBoss::render(sf::RenderTarget& target, bool showHitbox) const {
         std::round(position_.y - size_.y * 0.5f)
     };
 
+    auto sourceXFor = [this](int localX) {
+        const auto width = static_cast<int>(size_.x);
+        auto sourceX = (localX + static_cast<int>(std::round(textureOffsetX_))) % width;
+        if (sourceX < 0) {
+            sourceX += width;
+        }
+        return sourceX;
+    };
+
     auto segmentStart = 0.f;
     auto drawSegment = [&](float from, float to) {
-        const auto start = static_cast<int>(std::round(from));
-        const auto end = static_cast<int>(std::round(to));
-        const auto width = end - start;
-        if (width <= 0) {
-            return;
+        auto destinationStart = static_cast<int>(std::round(from));
+        const auto destinationEnd = static_cast<int>(std::round(to));
+        while (destinationStart < destinationEnd) {
+            const auto sourceStart = sourceXFor(destinationStart);
+            const auto runWidth = std::min(destinationEnd - destinationStart, static_cast<int>(size_.x) - sourceStart);
+            auto sprite = sf::Sprite(*texture_);
+            sprite.setTextureRect({
+                {sourceStart, 0},
+                {runWidth, static_cast<int>(size_.y)}
+            });
+            sprite.setPosition({topLeft.x + static_cast<float>(destinationStart), topLeft.y});
+            target.draw(sprite);
+            destinationStart += runWidth;
         }
-
-        auto sprite = sf::Sprite(*texture_);
-        sprite.setTextureRect({
-            {start, 0},
-            {width, static_cast<int>(size_.y)}
-        });
-        sprite.setPosition({topLeft.x + static_cast<float>(start), topLeft.y});
-        target.draw(sprite);
     };
 
     for (auto x = 0; x <= static_cast<int>(size_.x); ++x) {

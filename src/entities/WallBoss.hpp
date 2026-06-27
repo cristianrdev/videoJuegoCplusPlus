@@ -75,6 +75,7 @@ private:
     sf::Vector2f size_{240.f, 32.f};
     float speedY_{18.f};
     float holeWidth_{40.f};
+    float textureOffsetX_{0.f};
     int contactDamage_{3};
     const sf::Texture* texture_{nullptr};
     std::vector<Crystal> crystals_;

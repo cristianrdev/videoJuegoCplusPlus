@@ -23,6 +23,7 @@ public:
         float speedY{18.f};
         int contactDamage{3};
         float holeWidth{40.f};
+        float textureOffsetX{0.f};
         std::vector<CrystalConfig> crystals;
     };
 
