@@ -4,7 +4,7 @@
     "thruster_texture": "textures/player/player_thruster_flame.png",
     "laser_texture": "textures/player/player_laser_normal.png",
     "muzzle_flash_texture": "textures/player/player_laser_muzzle_flash.png",
-    "health": 3,
+    "health": 1,
     "initial_projectile_count": 2,
     "speed": 170.0,
     "hitbox_width": 6.0,

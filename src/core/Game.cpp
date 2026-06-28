@@ -16,6 +16,8 @@
 #include <stdexcept>
 
 namespace {
+constexpr auto RespawnPauseSeconds = 1.0f;
+
 int firstConnectedJoystick() {
     for (auto joystick = 0u; joystick < sf::Joystick::Count; ++joystick) {
         if (sf::Joystick::isConnected(joystick)) {
@@ -109,7 +111,7 @@ void Game::processEvents() {
                        playState_->isGameOverVisible() &&
                        (keyPressed->code == sf::Keyboard::Key::Enter ||
                         keyPressed->code == sf::Keyboard::Key::Space)) {
-                restartPlayState(playState_->activeCheckpointTime());
+                startNewGame();
             } else if (keyPressed->code == sf::Keyboard::Key::P) {
                 togglePause();
             } else if (keyPressed->code == sf::Keyboard::Key::G) {
@@ -149,8 +151,17 @@ void Game::processEvents() {
     }
 }
 
+void Game::startNewGame() {
+    playerLives_ = InitialPlayerLives;
+    restartPlayState(sf::Time::Zero);
+}
+
 void Game::restartPlayState(sf::Time initialStageTime) {
     paused_ = false;
+    deathHandled_ = false;
+    respawnPending_ = false;
+    respawnCountdown_ = sf::Time::Zero;
+    pendingRespawnStageTime_ = initialStageTime;
     playState_ = std::make_unique<PlayState>(
         assets_,
         sf::Vector2f{
@@ -222,6 +233,14 @@ void Game::update(sf::Time deltaTime) {
         return;
     }
 
+    if (respawnPending_) {
+        respawnCountdown_ -= deltaTime;
+        if (respawnCountdown_ <= sf::Time::Zero) {
+            restartPlayState(pendingRespawnStageTime_);
+        }
+        return;
+    }
+
     playState_->setFireButtonPressed(
         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z) ||
@@ -229,10 +248,24 @@ void Game::update(sf::Time deltaTime) {
     );
 
     playState_->update(deltaTime);
+
+    if (playState_->isPlayerDestroyed() && !deathHandled_) {
+        deathHandled_ = true;
+        playerLives_ = std::max(0, playerLives_ - 1);
+        if (playerLives_ > 0) {
+            pendingRespawnStageTime_ = playState_->activeCheckpointTime();
+            respawnCountdown_ = sf::seconds(RespawnPauseSeconds);
+            respawnPending_ = true;
+            playState_->onPaused();
+        } else {
+            pendingRespawnStageTime_ = sf::Time::Zero;
+        }
+    }
 }
 
 void Game::render() {
     playState_->render(logicalTarget_);
+    renderLifeRespawnOverlay(logicalTarget_);
     renderGameOverOverlay(logicalTarget_);
     logicalTarget_.display();
 
@@ -290,6 +323,30 @@ void Game::renderGameOverOverlay(sf::RenderTarget& target) {
         static_cast<float>(LogicalHeight) * 0.5f
     });
     target.draw(gameOverText);
+}
+
+void Game::renderLifeRespawnOverlay(sf::RenderTarget& target) {
+    if (!respawnPending_) {
+        return;
+    }
+
+    auto text = sf::Text(debugFont_);
+    text.setString("Vidas restantes: " + std::to_string(playerLives_));
+    text.setCharacterSize(18);
+    text.setFillColor(sf::Color(235, 245, 255));
+    text.setOutlineColor(sf::Color(8, 12, 20));
+    text.setOutlineThickness(1.f);
+
+    const auto bounds = text.getLocalBounds();
+    text.setOrigin({
+        bounds.position.x + bounds.size.x * 0.5f,
+        bounds.position.y + bounds.size.y * 0.5f
+    });
+    text.setPosition({
+        static_cast<float>(LogicalWidth) * 0.5f,
+        static_cast<float>(LogicalHeight) * 0.5f
+    });
+    target.draw(text);
 }
 
 void Game::renderPixelGrid() {
@@ -383,6 +440,8 @@ void Game::renderDebugHud() {
          << " s\n\n"
          << "VIDA\n"
          << playState_->playerHealth()
+         << "\n\nNAVES\n"
+         << playerLives_
          << "\n\nCHECKPOINT\n"
          << playState_->activeCheckpointIndex()
          << "\n\nGOD\n"
