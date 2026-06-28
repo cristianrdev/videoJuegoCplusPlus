@@ -717,46 +717,6 @@
       "movement": "mech_spider_random_zigzag"
     },
     {
-      "time": 99.0,
-      "enemy": "enemy_mech_spider",
-      "x": 170,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 100.0,
-      "enemy": "enemy_mech_spider",
-      "x": 95,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 101.0,
-      "enemy": "enemy_mech_spider",
-      "x": 145,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 102.0,
-      "enemy": "enemy_mech_spider",
-      "x": 190,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
-      "time": 103.5,
-      "enemy": "enemy_mech_spider",
-      "x": 50,
-      "y": -20,
-      "pattern": "enemy_rock_turret_fast_small",
-      "movement": "mech_spider_random_zigzag"
-    },
-    {
       "time": 100.0,
       "enemy": "enemy_wall_boss",
       "x": 120,

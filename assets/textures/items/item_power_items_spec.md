@@ -6,6 +6,7 @@ Sprites finales aprobados para gameplay.
 
 - `item_power_capsule.png`
 - `item_power_p.png`
+- `power_s.png`
 
 ## Especificacion
 
@@ -19,3 +20,4 @@ Sprites finales aprobados para gameplay.
 
 - `power_capsule`: esfera metalica destructible con cuatro luces azules.
 - `power_p`: orbe azul brillante con letra `P` de power up.
+- `power_s`: variante verde de `power_p` con letra `S`, usada para escudo de un impacto.

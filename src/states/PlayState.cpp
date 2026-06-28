@@ -922,6 +922,17 @@ void PlayState::spawnItemCarrier(const ItemSpawnConfig& spawn) {
 
 void PlayState::spawnPowerUp(const std::string& powerUpId, sf::Vector2f position) {
     const auto& config = itemConfigSystem_.powerUpConfigFor(powerUpId);
+    if (config.transformTo != "none") {
+        powerUps_.emplace_back(
+            position,
+            assets_.getTexture(powerUpId),
+            config,
+            assets_.getTexture(config.transformTo),
+            config.transformTo
+        );
+        return;
+    }
+
     powerUps_.emplace_back(position, assets_.getTexture(powerUpId), config);
 }
 
@@ -1237,6 +1248,8 @@ void PlayState::processEvents() {
         } else if (const auto* powerUpCollected = std::get_if<PowerUpCollectedEvent>(&event)) {
             if (powerUpCollected->powerUpId == "power_p") {
                 player_->collectPowerUpP();
+            } else if (powerUpCollected->powerUpId == "power_s") {
+                player_->collectPowerUpS();
             }
         } else if (std::holds_alternative<PlayerDestroyedEvent>(event)) {
             playerDestroyed_ = true;

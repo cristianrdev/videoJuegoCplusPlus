@@ -139,6 +139,10 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::render(sf::RenderTarget& target) const {
+    if (shieldActive_) {
+        renderShieldHalo(target);
+    }
+
     const auto shouldRenderSprite = [this] {
         if (invincibilityRemaining_ <= sf::Time::Zero) {
             return true;
@@ -231,6 +235,15 @@ bool Player::takeDamage(int damage) {
         return false;
     }
 
+    if (shieldActive_) {
+        shieldActive_ = false;
+        if (config_.damageInvincibilitySeconds > 0.f) {
+            invincibilityRemaining_ = sf::seconds(config_.damageInvincibilitySeconds);
+            invincibilityElapsed_ = sf::Time::Zero;
+        }
+        return true;
+    }
+
     health_ = std::max(0, health_ - damage);
     if (health_ > 0 && config_.damageInvincibilitySeconds > 0.f) {
         invincibilityRemaining_ = sf::seconds(config_.damageInvincibilitySeconds);
@@ -244,8 +257,16 @@ void Player::collectPowerUpP() {
     projectileCount_ = std::min(8, projectileCount_ * 2);
 }
 
+void Player::collectPowerUpS() {
+    shieldActive_ = true;
+}
+
 int Player::projectileCount() const {
     return projectileCount_;
+}
+
+bool Player::hasShield() const {
+    return shieldActive_;
 }
 
 void Player::setVisualState(VisualState state) {
@@ -318,4 +339,22 @@ void Player::renderThrusters(sf::RenderTarget& target) const {
         });
         target.draw(flame);
     }
+}
+
+void Player::renderShieldHalo(sf::RenderTarget& target) const {
+    auto outer = sf::CircleShape(19.f, 28);
+    outer.setOrigin({19.f, 19.f});
+    outer.setPosition({std::round(position_.x), std::round(position_.y)});
+    outer.setFillColor(sf::Color::Transparent);
+    outer.setOutlineColor(sf::Color(40, 255, 105, 160));
+    outer.setOutlineThickness(1.f);
+    target.draw(outer);
+
+    auto inner = sf::CircleShape(16.f, 28);
+    inner.setOrigin({16.f, 16.f});
+    inner.setPosition({std::round(position_.x), std::round(position_.y)});
+    inner.setFillColor(sf::Color::Transparent);
+    inner.setOutlineColor(sf::Color(145, 255, 170, 100));
+    inner.setOutlineThickness(1.f);
+    target.draw(inner);
 }

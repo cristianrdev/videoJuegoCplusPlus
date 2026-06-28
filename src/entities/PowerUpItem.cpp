@@ -11,8 +11,10 @@ PowerUpItem::PowerUpItem(sf::Vector2f position, const sf::Texture& texture, cons
     , position_(position)
     , hitboxSize_({config.hitboxWidth, config.hitboxHeight})
     , powerUpId_(config.id)
+    , basePowerUpId_(config.id)
     , lifetime_(sf::seconds(config.lifetimeSeconds))
     , flickerTime_(sf::seconds(config.flickerSeconds))
+    , transformInterval_(sf::seconds(config.transformIntervalSeconds))
     , amplitude_(config.amplitude)
     , frequency_(config.frequency)
     , speedY_(config.speedY)
@@ -24,11 +26,36 @@ PowerUpItem::PowerUpItem(sf::Vector2f position, const sf::Texture& texture, cons
     });
 }
 
+PowerUpItem::PowerUpItem(
+    sf::Vector2f position,
+    const sf::Texture& texture,
+    const PowerUpConfig& config,
+    const sf::Texture& alternateTexture,
+    const std::string& alternatePowerUpId
+)
+    : PowerUpItem(position, texture, config) {
+    alternatePowerUpId_ = alternatePowerUpId;
+    alternateSprite_.emplace(alternateTexture);
+    const auto size = alternateTexture.getSize();
+    alternateSprite_->setOrigin({
+        static_cast<float>(size.x / 2u),
+        static_cast<float>(size.y / 2u)
+    });
+}
+
 void PowerUpItem::update(sf::Time deltaTime) {
     elapsed_ += deltaTime;
     const auto seconds = elapsed_.asSeconds();
     position_.x = startPosition_.x + std::sin(seconds * frequency_ * Pi * 2.f) * amplitude_;
     position_.y += speedY_ * deltaTime.asSeconds();
+
+    powerUpId_ = basePowerUpId_;
+    if (alternateSprite_ && transformInterval_ > sf::Time::Zero) {
+        const auto cycleIndex = static_cast<int>(elapsed_.asSeconds() / transformInterval_.asSeconds());
+        if (cycleIndex % 2 == 1) {
+            powerUpId_ = alternatePowerUpId_;
+        }
+    }
 }
 
 void PowerUpItem::render(sf::RenderTarget& target) const {
@@ -36,7 +63,9 @@ void PowerUpItem::render(sf::RenderTarget& target) const {
         return;
     }
 
-    auto sprite = sprite_;
+    auto sprite = (powerUpId_ == alternatePowerUpId_ && alternateSprite_)
+        ? *alternateSprite_
+        : sprite_;
     sprite.setPosition({std::round(position_.x), std::round(position_.y)});
     target.draw(sprite);
 }

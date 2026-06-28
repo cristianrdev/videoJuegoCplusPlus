@@ -3,6 +3,7 @@
 #include "AssetManager.hpp"
 #include "PlayerConfigSystem.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -29,7 +30,9 @@ public:
     void setHitboxVisible(bool visible);
     bool takeDamage(int damage);
     void collectPowerUpP();
+    void collectPowerUpS();
     int projectileCount() const;
+    bool hasShield() const;
 
 private:
     enum class VisualState {
@@ -42,6 +45,7 @@ private:
     void clampToLogicalArea();
     void updateSpriteFrame();
     void renderThrusters(sf::RenderTarget& target) const;
+    void renderShieldHalo(sf::RenderTarget& target) const;
     void renderHitbox(sf::RenderTarget& target) const;
 
     sf::Vector2f logicalSize_;
@@ -59,6 +63,7 @@ private:
     sf::Time invincibilityElapsed_{sf::Time::Zero};
     bool godModeEnabled_{false};
     bool hitboxVisible_{false};
+    bool shieldActive_{false};
 
     const sf::Texture* spriteSheetTexture_{nullptr};
     const sf::Texture* thrusterTexture_{nullptr};

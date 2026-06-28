@@ -438,7 +438,7 @@ void Game::renderDebugHud() {
          << "TIME\n"
          << playState_->stageTime().asSeconds()
          << " s\n\n"
-         << "VIDA\n"
+         << "HP\n"
          << playState_->playerHealth()
          << "\n\nNAVES\n"
          << playerLives_

@@ -26,6 +26,8 @@ struct PowerUpConfig {
     float speedY{8.f};
     float hitboxWidth{13.f};
     float hitboxHeight{13.f};
+    std::string transformTo{"none"};
+    float transformIntervalSeconds{0.f};
 };
 
 struct ItemSpawnConfig {

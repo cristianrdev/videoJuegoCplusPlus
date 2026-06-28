@@ -114,6 +114,8 @@ void ItemConfigSystem::loadFromFile(const std::string& path) {
         config.speedY = matchFloat(object, "speed_y", 8.f);
         config.hitboxWidth = matchFloat(object, "hitbox_width", 13.f);
         config.hitboxHeight = matchFloat(object, "hitbox_height", 13.f);
+        config.transformTo = matchString(object, "transform_to", "none");
+        config.transformIntervalSeconds = matchFloat(object, "transform_interval_seconds", 0.f);
         powerUps_[config.id] = std::move(config);
     }
 
